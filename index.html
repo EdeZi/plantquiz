@@ -26,14 +26,11 @@
     ol.results{display:grid;gap:12px;padding-left:0;list-style:none} .result-item{display:flex;gap:12px}
     .num{min-width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
     .num.ok{background:var(--ok)} .num.ko{background:var(--ko)}
-
     .rowL{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .field{display:grid;gap:6px}
     select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
     .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
     .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
-    .toolbar{display:flex;gap:8px;margin:8px 0}
-
     /* Pédantix */
     .pedantix-text{line-height:1.6}
     .mask{background:#111;color:#111;border-radius:4px;padding:2px 6px;}
@@ -81,7 +78,7 @@
         <label class="field"><span class="muted">Master</span><select id="selMaster"></select></label>
         <label class="field"><span class="muted">Semestre</span><select id="selSem"></select></label>
       </div>
-      <div class="toolbar">
+      <div class="row" style="gap:8px;margin:10px 0">
         <button id="btnAllCore" class="btn outline">Tout Tronc commun</button>
         <button id="btnAllOpt" class="btn outline">Tout Options</button>
         <button id="btnClear" class="btn outline">Tout décocher</button>
@@ -140,55 +137,160 @@
   <footer class="container" style="text-align:center;color:#777">Compatible GitHub Pages — utilise /data/*.json</footer>
 
   <script>
-    /* === fonctions utilitaires et variables globales === */
+    // ===== utilitaires & état =====
     const $ = id => document.getElementById(id);
     const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
-
     let mode='Accueil', elo=1000, level=1, points=0, qpos=0, currentQ=null, history=[];
     let QUESTIONS=[], REV_INDEX=null, PED_PASSAGES=[];
 
     function show(sec){ ['home','revSelect','quiz','pedantix','results'].forEach(id=>$(id).hidden=true); sec.hidden=false; }
-    function reset(){ points=0; qpos=0; history=[]; }
+    function reset(){ points=0; qpos=0; history=[]; $("pointsPill").textContent=points; $("qposPill").textContent=qpos; $("modePill").textContent=mode; $("levelPill").textContent=level; $("eloPill").textContent=elo; }
 
-    async function loadJSON(path){ const r=await fetch(path); if(!r.ok) throw Error(path); return r.json(); }
-    async function init(){
-      try{QUESTIONS=await loadJSON("./data/questions_normal.json");}catch{QUESTIONS=[];}
-      try{REV_INDEX=await loadJSON("./data/revision_index.json");}catch{REV_INDEX={};}
-      try{PED_PASSAGES=await loadJSON("./data/pedantix_passages.json");}catch{PED_PASSAGES=[];}
+    async function tryFetch(path){
+      try { const r=await fetch(path,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); }
+      catch(e){ console.warn('fallback →', path); return null; }
     }
 
-    /* === Normal quiz === */
-    function pickQ(){ return QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)]; }
-    function renderQ(){ qpos++; currentQ=pickQ(); $("qPrompt").textContent=currentQ.prompt; $("choices").innerHTML=""; currentQ.choices.forEach(c=>{ const b=document.createElement("button"); b.className="choice"; b.textContent=c.text; b.onclick=()=>{ [...$("choices").children].forEach(x=>x.classList.remove("selected")); b.classList.add("selected"); $("nextBtn").disabled=false; $("nextBtn").dataset.pick=c.id; }; $("choices").appendChild(b); }); $("nextBtn").disabled=true; }
-    function nextQ(){ const pick=$("nextBtn").dataset.pick; const ok=currentQ.choices.find(c=>c.correct)?.id===pick; if(ok) points++; history.push({prompt:currentQ.prompt,ok,picked:pick}); renderQ(); }
+    // ===== DEMO fallbacks (utilisés si /data absent) =====
+    const DEMO_QUESTIONS=[
+      {id:'L1Q1',level:1,prompt:'Quelle partie réalise la photosynthèse ?',choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}]},
+      {id:'L1Q2',level:1,prompt:'Quel pigment donne la couleur verte ?',choices:[{id:'a',text:'Carotène'},{id:'b',text:'Chlorophylle',correct:true},{id:'c',text:'Anthocyane'},{id:'d',text:'Bétalaïne'}]}
+    ];
+    const DEMO_REV_INDEX={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'M1-S7',core:[{id:'biostat_R',label:'Biostatistiques avec R'}],options:[{id:'opt_demo',label:'Option démo'}]}]}]};
+    const DEMO_PED=[{id:'P1',title:'Photosynthèse (démo)',target:'chloroplaste',sentences:[
+      "Le CHAMP est un organite où se déroule la photosynthèse.",
+      "Les thylakoïdes du CHAMP portent les pigments.",
+      "Le stroma du CHAMP héberge le cycle de Calvin."
+    ]}];
 
-    /* === Révision (UE placeholders) === */
-    function fillMasters(){ $("selMaster").innerHTML=REV_INDEX.masters.map(m=>`<option value=\"${m.key}\">${m.label}</option>`).join(""); fillSems(); }
-    function fillSems(){ const m=REV_INDEX.masters.find(x=>x.key===$("selMaster").value); $("selSem").innerHTML=m.semesters.map(s=>`<option value=\"${s.sem}\">${s.sem}</option>`).join(""); fillUEs(); }
-    function fillUEs(){ const m=REV_INDEX.masters.find(x=>x.key===$("selMaster").value); const s=m.semesters.find(x=>x.sem===$("selSem").value); $("ueCore").innerHTML=s.core.map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join(""); $("ueOpt").innerHTML=s.options.map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join(""); $("revLaunch").disabled=true; document.querySelectorAll("#revSelect input").forEach(i=>i.onchange=()=>{ $("revLaunch").disabled=!document.querySelector("#revSelect input:checked"); }); }
-    function buildUEset(){ return [...document.querySelectorAll("#revSelect input:checked")].map(i=>({prompt:`UE: ${i.parentElement.textContent} — démo`,choices:[{id:'a',text:'A'},{id:'b',text:'B',correct:true}]})); }
+    // ===== init données (avec fallback automatique) =====
+    (async function init(){
+      QUESTIONS = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
+      REV_INDEX = await tryFetch("./data/revision_index.json") || DEMO_REV_INDEX;
+      PED_PASSAGES = await tryFetch("./data/pedantix_passages.json") || DEMO_PED;
+      // attache les handlers une fois que tout est prêt
+      attachHandlers();
+    })();
 
-    /* === Pédantix === */
+    // ===== Quiz normal =====
+    function pickQ(){
+      // choix proche du niveau courant si possible
+      const near = QUESTIONS.filter(q => Math.abs((q.level||1)-level)<=1);
+      const src = near.length? near : QUESTIONS;
+      return src[Math.floor(Math.random()*src.length)];
+    }
+    function renderQ(){
+      if(!QUESTIONS.length){ alert("Pas de questions (questions_normal.json)."); show($("home")); return; }
+      qpos++; $("qposPill").textContent=qpos; $("bar").style.width = `${(qpos%10)*10}%`;
+      currentQ=pickQ(); $("qPrompt").textContent=currentQ.prompt; $("choices").innerHTML="";
+      (currentQ.choices||[]).forEach(c=>{
+        const b=document.createElement("button"); b.className="choice"; b.textContent=c.text;
+        b.onclick=()=>{ [...$("choices").children].forEach(x=>x.classList.remove("selected")); b.classList.add("selected"); $("nextBtn").disabled=false; $("nextBtn").dataset.pick=c.id; };
+        $("choices").appendChild(b);
+      });
+      $("nextBtn").disabled=true; $("qCounter").textContent = `Question ${qpos}`;
+    }
+    function nextQ(){
+      const pick=$("nextBtn").dataset.pick;
+      const ok=(currentQ.choices||[]).find(c=>c.correct)?.id===pick;
+      if(ok) points++;
+      $("pointsPill").textContent=points;
+      history.push({prompt:currentQ.prompt, ok, picked: (currentQ.choices||[]).find(c=>c.id===pick)?.text||"—",
+                    correctText: (currentQ.choices||[]).find(c=>c.correct)?.text||""});
+      renderQ();
+    }
+
+    // ===== Révision (UE placeholders) =====
+    function fillMasters(){
+      const mSel=$("selMaster"); mSel.innerHTML="";
+      (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m.key; o.textContent=m.label; mSel.appendChild(o); });
+      fillSems();
+    }
+    function fillSems(){
+      const m=(REV_INDEX.masters||[]).find(x=>x.key===$("selMaster").value);
+      const sSel=$("selSem"); sSel.innerHTML="";
+      (m?.semesters||[]).forEach(s=>{ const o=document.createElement("option"); o.value=s.sem; o.textContent=s.sem; sSel.appendChild(o); });
+      fillUEs();
+    }
+    function fillUEs(){
+      const m=(REV_INDEX.masters||[]).find(x=>x.key===$("selMaster").value);
+      const s=m?.semesters?.find(x=>x.sem===$("selSem").value);
+      $("ueCore").innerHTML=(s?.core||[]).map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join("");
+      $("ueOpt").innerHTML=(s?.options||[]).map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join("");
+      $("revLaunch").disabled=true;
+      document.querySelectorAll("#revSelect input[type=checkbox]").forEach(i=> i.onchange=()=>{ $("revLaunch").disabled = !document.querySelector("#revSelect input:checked"); });
+      $("btnAllCore").onclick=()=>{ document.querySelectorAll("#ueCore input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
+      $("btnAllOpt").onclick=()=>{ document.querySelectorAll("#ueOpt input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
+      $("btnClear").onclick=()=>{ document.querySelectorAll("#revSelect input[type=checkbox]").forEach(i=>i.checked=false); $("revLaunch").disabled=true; };
+    }
+    function buildUEset(){
+      const picked=[...document.querySelectorAll("#revSelect input:checked")].map(i=>i.parentElement.textContent.trim());
+      if(!picked.length) return [];
+      return picked.map((label,ix)=>({
+        id:"UE_"+ix, level:5,
+        prompt:`UE: ${label} — question démo`,
+        choices:[{id:'a',text:'Réponse A'},{id:'b',text:'Réponse B',correct:true},{id:'c',text:'Réponse C'},{id:'d',text:'Réponse D'}],
+        explanation:"Remplace ce placeholder par une vraie question si tu veux."
+      }));
+    }
+
+    // ===== Pédantix =====
     let pedCurrent=null, pedShown=1;
-    function pickPed(){ pedCurrent=PED_PASSAGES[Math.floor(Math.random()*PED_PASSAGES.length)]; pedShown=1; renderPed(); }
-    function mask(s,t){ const re=new RegExp(t,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
-    function renderPed(){ $("pedTitle").textContent=pedCurrent.title; $("pedGuesses").innerHTML=""; $("pedScore").hidden=true; $("pedText").innerHTML=pedCurrent.sentences.slice(0,pedShown).map(x=>`<p>${mask(x,pedCurrent.target)}</p>`).join(""); }
-    function guessPed(){ const g=strip($("pedInput").value); if(!g) return; const ok=g===strip(pedCurrent.target); const li=document.createElement("li"); li.innerHTML=`<div class='num ${ok?'ok':'ko'}'>${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`; $("pedGuesses").prepend(li); if(ok) { $("pedScore").hidden=false; $("pedScore").textContent=\"Bravo! Mot: \"+pedCurrent.target; } $("pedInput").value=\"\"; }
-    function revealPed(){ if(pedShown<pedCurrent.sentences.length){ pedShown++; renderPed(); } }
+    function pickPed(){
+      if(!PED_PASSAGES.length){ alert("Pas de passages (pedantix_passages.json)."); show($("home")); return; }
+      pedCurrent = PED_PASSAGES[Math.floor(Math.random()*PED_PASSAGES.length)];
+      pedShown=1; renderPed();
+    }
+    function maskAll(s,t){ const esc=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); const re=new RegExp(esc,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
+    function renderPed(){
+      $("pedTitle").textContent = pedCurrent.title||"";
+      $("pedGuesses").innerHTML=""; $("pedScore").hidden=true; $("pedInput").value="";
+      const shown = pedCurrent.sentences.slice(0,pedShown).map(x=>`<p>${maskAll(x, pedCurrent.target)}</p>`).join("");
+      $("pedText").innerHTML = shown; $("pedInput").focus();
+    }
+    function guessPed(){
+      const g=strip($("pedInput").value); if(!g) return;
+      const ok = g===strip(pedCurrent.target);
+      const li=document.createElement("li");
+      li.className="result-item";
+      li.innerHTML=`<div class='num ${ok?'ok':'ko'}'>${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`;
+      $("pedGuesses").prepend(li);
+      if(ok){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Mot : "+pedCurrent.target; }
+      $("pedInput").value="";
+    }
+    function revealPed(){ if(pedShown < pedCurrent.sentences.length){ pedShown++; renderPed(); } }
 
-    /* === Nav === */
-    $("logo").onclick=()=>show($("home"));
-    $("startNormal").onclick=()=>{mode='Normal';reset();show($("quiz"));renderQ();};
-    $("nextBtn").onclick=nextQ; $("finishBtn").onclick=()=>show($("results"));
-    $("startRevision").onclick=()=>{mode='Révision';fillMasters();show($("revSelect"));};
-    $("selMaster").onchange=fillSems; $("selSem").onchange=fillUEs;
-    $("revLaunch").onclick=()=>{QUESTIONS=buildUEset();show($("quiz"));renderQ();};
-    $("revBack").onclick=()=>show($("home"));
-    $("startPedantix").onclick=()=>{mode='Pédantix';pickPed();show($("pedantix"));};
-    $("pedInput").onkeydown=e=>{if(e.key==='Enter')guessPed();};
-    $("pedNew").onclick=pickPed; $("pedReveal").onclick=revealPed;
+    // ===== Handlers & nav =====
+    function attachHandlers(){
+      $("logo").onclick=()=>{ mode='Accueil'; reset(); show($("home")); };
+      $("homeBtn").onclick=()=>{ mode='Accueil'; reset(); show($("home")); };
 
-    init();
+      $("startNormal").onclick=()=>{ mode='Normal'; reset(); show($("quiz")); renderQ(); };
+      $("nextBtn").onclick=nextQ;
+      $("finishBtn").onclick=()=>{ // résumé très simple
+        $("resultsList").innerHTML = history.map((h,i)=>`<li class="result-item"><div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">${h.prompt}</div><div class="muted">Votre: ${h.picked||'—'} — Bonne: ${h.correctText||''}</div></div></li>`).join("");
+        $("scoreLine").textContent = `Questions: ${history.length} — Points: ${points}`;
+        show($("results"));
+      };
+      $("retryBtn").onclick=()=>{ mode='Normal'; reset(); show($("quiz")); renderQ(); };
+
+      $("startRevision").onclick=()=>{ mode='Révision'; reset(); fillMasters(); show($("revSelect")); };
+      $("selMaster").onchange=fillSems; $("selSem").onchange=fillUEs;
+      $("revBack").onclick=()=>{ mode='Accueil'; reset(); show($("home")); };
+      $("revLaunch").onclick=()=>{
+        const set=buildUEset();
+        if(!set.length){ alert("Coche au moins une UE."); return; }
+        const saved=QUESTIONS.slice();
+        QUESTIONS = set; mode='Révision'; reset(); show($("quiz")); renderQ();
+        // quand on termine, on remet la banque normale
+        const finishOnce = ()=>{ $("finishBtn").removeEventListener('click', finishOnce); QUESTIONS = saved; $("resultsList").innerHTML = history.map((h,i)=>`<li class="result-item"><div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">${h.prompt}</div><div class="muted">Votre: ${h.picked||'—'} — Bonne: ${h.correctText||''}</div></div></li>`).join(""); $("scoreLine").textContent = `Questions: ${history.length} — Points: ${points}`; show($("results")); };
+        $("finishBtn").addEventListener('click', finishOnce);
+      };
+
+      $("startPedantix").onclick=()=>{ mode='Pédantix'; reset(); pickPed(); show($("pedantix")); };
+      $("pedInput").onkeydown=e=>{ if(e.key==='Enter') guessPed(); };
+      $("pedNew").onclick=pickPed; $("pedReveal").onclick=revealPed;
+    }
   </script>
 </body>
 </html>
