@@ -1,55 +1,194 @@
 <!doctype html>
-const g = strip(pedInput.value.trim()); if(!g) return;
-const tgt = strip(pedCurrent.target);
-const ok = g===tgt;
-const li=document.createElement('li'); li.className='result-item';
-li.innerHTML = `<div class="num ${ok?'ok':'ko'}">${pedGuesses.children.length+1}</div><div><b>${pedInput.value}</b><div class="muted">${ok?'✅ Correct':'❌ Incorrect'}</div></div>`;
-pedGuesses.prepend(li);
-if(ok){ pedScore.hidden=false; pedScore.textContent = `Bravo ! Mot: ${pedCurrent.target}`; }
-pedInput.value='';
-}
-function pedRevealMore(){
-if(!pedCurrent) return; const total=(pedCurrent.sentences||[]).length; if(pedShownSentences<total){ pedShownSentences++; renderPedantix(); }
-}
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plant’Quiz — Normal / Révision / Pédantix</title>
+  <style>
+    :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
+    *{box-sizing:border-box} :focus-visible{outline:3px solid #11133b;outline-offset:2px}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+    header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
+    nav{display:flex;gap:12px;align-items:center;max-width:1120px;margin:0 auto;padding:12px 24px}
+    .brand{font-size:20px;font-weight:800;cursor:pointer}
+    .meta{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+    .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
+    .container{max-width:1120px;margin:0 auto;padding:24px}
+    .grid{display:grid;gap:14px} .grid3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
+    .btn{appearance:none;border:0;border-radius:999px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+    .btn[disabled]{background:#9ca3af;cursor:not-allowed} .btn.outline{background:#fff;color:#111;border:1px solid #e5e7eb}
+    .muted{color:var(--muted)} .progress{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden} .progress>div{height:100%;background:var(--brand)}
+    .choices{display:grid;gap:10px;margin-top:12px}
+    .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer}
+    .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)} .choice.selected{outline:3px solid var(--brand);border-color:var(--brand)}
+    .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+    ol.results{display:grid;gap:12px;padding-left:0;list-style:none} .result-item{display:flex;gap:12px}
+    .num{min-width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    .num.ok{background:var(--ok)} .num.ko{background:var(--ko)}
 
+    .rowL{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .field{display:grid;gap:6px}
+    select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
+    .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
+    .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
+    .toolbar{display:flex;gap:8px;margin:8px 0}
 
-// RÉSULTATS
-function showResults(){ const total=history.length, ok=history.filter(h=>h.ok).length, pct=Math.round(ok/Math.max(1,total)*100); const line=`Session : ${ok}/${total} (${pct}%) — Elo : ${Math.round(elo)} — Niveau : ${level}`; $('scoreLine').textContent=line; const list=$('resultsList'); list.innerHTML=''; history.forEach((h,i)=>{ const li=document.createElement('li'); li.className='result-item'; li.innerHTML=`<div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">${h.prompt}</div><div class="muted">Votre réponse : <b>${h.picked}</b></div><div class="muted">Bonne réponse : <b>${h.correctText}</b></div>${h.explanation?`<div style=\"margin-top:6px\">💡 ${h.explanation}</div>`:''}</div>`; list.appendChild(li); }); show(resultsSec); updateMeta(); }
+    /* Pédantix */
+    .pedantix-text{line-height:1.6}
+    .mask{background:#111;color:#111;border-radius:4px;padding:2px 6px;}
+    .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div id="logo" class="brand">🌿 Plant’Quiz</div>
+      <div class="meta">
+        <div class="pill">Mode : <b id="modePill">Accueil</b></div>
+        <div class="pill">Niveau : <b id="levelPill">1</b></div>
+        <div class="pill">Elo : <b id="eloPill">1000</b></div>
+        <div class="pill">Points : <b id="pointsPill">0</b></div>
+        <div class="pill">Q : <b id="qposPill">0</b></div>
+      </div>
+    </nav>
+  </header>
 
+  <main class="container">
+    <!-- ACCUEIL -->
+    <section id="home" class="grid grid3">
+      <div class="card modeCard">
+        <h3>Quiz normal</h3>
+        <p class="muted">Flux infini. Difficulté adaptative (Elo) sur 10 niveaux.</p>
+        <div class="row"><button id="startNormal" class="btn">Commencer</button></div>
+      </div>
+      <div class="card modeCard">
+        <h3>Quiz révision (par UE)</h3>
+        <p class="muted">Choisis Master → Semestre → Tronc commun / Options.</p>
+        <div class="row"><button id="startRevision" class="btn">Sélectionner des UE</button></div>
+      </div>
+      <div class="card modeCard">
+        <h3>Pédantix végétal</h3>
+        <p class="muted">Devine le mot principal d’un passage.</p>
+        <div class="row"><button id="startPedantix" class="btn">Jouer</button></div>
+      </div>
+    </section>
 
-// NAVIGATION
-function goHome(){ mode='Accueil'; updateMeta(); show(homeSec); }
-$('logo').addEventListener('click', goHome); $('homeBtn').addEventListener('click', goHome);
+    <!-- RÉVISION -->
+    <section id="revSelect" class="card" hidden>
+      <h3>Révision — Choix des UE</h3>
+      <div class="rowL">
+        <label class="field"><span class="muted">Master</span><select id="selMaster"></select></label>
+        <label class="field"><span class="muted">Semestre</span><select id="selSem"></select></label>
+      </div>
+      <div class="toolbar">
+        <button id="btnAllCore" class="btn outline">Tout Tronc commun</button>
+        <button id="btnAllOpt" class="btn outline">Tout Options</button>
+        <button id="btnClear" class="btn outline">Tout décocher</button>
+      </div>
+      <div class="group"><b>Tronc commun</b><div id="ueCore"></div></div>
+      <div class="group"><b>Options</b><div id="ueOpt"></div></div>
+      <div class="row" style="justify-content:flex-start">
+        <button id="revBack" class="btn outline">Retour</button>
+        <button id="revLaunch" class="btn" disabled>Lancer</button>
+      </div>
+    </section>
 
+    <!-- QUIZ (Normal / Révision) -->
+    <section id="quiz" class="card" hidden>
+      <div class="progress"><div id="bar" style="width:0%"></div></div>
+      <p class="muted" id="qCounter"></p>
+      <article>
+        <h2 id="qPrompt"></h2>
+        <div class="choices" id="choices"></div>
+        <div class="row">
+          <button id="finishBtn" class="btn outline">Terminer</button>
+          <button id="nextBtn" class="btn" disabled>Suivant</button>
+        </div>
+      </article>
+    </section>
 
-startNormalBtn.addEventListener('click', ()=>{ resetSession(); mode='Normal'; updateMeta(); show(quizSec); renderChoiceQuestion(); });
-nextBtn.addEventListener('click', handleNextChoice); finishBtn.addEventListener('click', showResults);
+    <!-- PÉDANTIX -->
+    <section id="pedantix" class="card" hidden>
+      <div class="rowL" style="justify-content:space-between">
+        <h2>Pédantix <span id="pedScore" class="pillScore" hidden></span></h2>
+        <div class="rowL">
+          <button id="pedNew" class="btn">Nouveau</button>
+          <button id="pedReveal" class="btn outline">Indice</button>
+        </div>
+      </div>
+      <p class="muted" id="pedTitle"></p>
+      <div id="pedText" class="pedantix-text"></div>
+      <div class="row" style="justify-content:flex-start;margin-top:12px">
+        <input id="pedInput" class="choice" placeholder="Propose un mot puis Entrée" />
+      </div>
+      <ol id="pedGuesses" class="results"></ol>
+    </section>
 
+    <!-- RÉSULTATS -->
+    <section id="results" class="card" hidden>
+      <h2>Résultats</h2>
+      <p id="scoreLine"></p>
+      <div class="row">
+        <button id="homeBtn" class="btn outline">Accueil</button>
+        <button id="retryBtn" class="btn">Rejouer</button>
+      </div>
+      <ol id="resultsList" class="results"></ol>
+    </section>
+  </main>
 
-startRevisionBtn.addEventListener('click', ()=>{ mode='Révision'; updateMeta(); fillMasters(); show(revSelectSec); });
-selMaster.addEventListener('change', fillSemesters); selSem.addEventListener('change', fillUELists);
-revBack.addEventListener('click', goHome);
-revLaunch.addEventListener('click', ()=>{ const SET=buildRevisionSet(); if(!SET.length) return; const saved=QUESTIONS; resetSession(); QUESTIONS=SET; show(quizSec); renderChoiceQuestion(); finishBtn.onclick=()=>{ showResults(); QUESTIONS=saved; }; nextBtn.onclick=handleNextChoice; });
+  <footer class="container" style="text-align:center;color:#777">Compatible GitHub Pages — utilise /data/*.json</footer>
 
+  <script>
+    /* === fonctions utilitaires et variables globales === */
+    const $ = id => document.getElementById(id);
+    const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
 
-startPedBtn.addEventListener('click', ()=>{ mode='Pédantix'; updateMeta(); pickPedantix(); show(pedSec); });
-pedInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ pedCheckGuess(); }});
-pedNew.addEventListener('click', ()=>{ pickPedantix(); });
-pedReveal.addEventListener('click', ()=>{ pedRevealMore(); });
+    let mode='Accueil', elo=1000, level=1, points=0, qpos=0, currentQ=null, history=[];
+    let QUESTIONS=[], REV_INDEX=null, PED_PASSAGES=[];
 
+    function show(sec){ ['home','revSelect','quiz','pedantix','results'].forEach(id=>$(id).hidden=true); sec.hidden=false; }
+    function reset(){ points=0; qpos=0; history=[]; }
 
-// DEMO FALLBACKS si /data/ absent
-const DEMO_QUESTIONS=[{id:'L1Q1',level:1,prompt:'Quelle partie réalise la photosynthèse ?',choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}],explanation:'Les feuilles contiennent des chloroplastes.'}];
-const DEMO_REV_INDEX={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'S7',core:[{id:'biostat_R',label:'Biostatistiques avec R'}],options:[{id:'opt_demo',label:'Option démo'}]}]}]};
-const DEMO_PED=[{id:'P1',title:'Photosynthèse (démo)',target:'chloroplaste',sentences:[
-"Le CHAMP s'effectue dans les organites spécialisés des cellules végétales.",
-"Chaque CHAMP contient des thylakoïdes disposés en grana.",
-"La chlorophylle est localisée dans le CHAMP.",
-"Le cycle de Calvin s'y déroule dans le stroma du CHAMP."
-]}];
+    async function loadJSON(path){ const r=await fetch(path); if(!r.ok) throw Error(path); return r.json(); }
+    async function init(){
+      try{QUESTIONS=await loadJSON("./data/questions_normal.json");}catch{QUESTIONS=[];}
+      try{REV_INDEX=await loadJSON("./data/revision_index.json");}catch{REV_INDEX={};}
+      try{PED_PASSAGES=await loadJSON("./data/pedantix_passages.json");}catch{PED_PASSAGES=[];}
+    }
 
+    /* === Normal quiz === */
+    function pickQ(){ return QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)]; }
+    function renderQ(){ qpos++; currentQ=pickQ(); $("qPrompt").textContent=currentQ.prompt; $("choices").innerHTML=""; currentQ.choices.forEach(c=>{ const b=document.createElement("button"); b.className="choice"; b.textContent=c.text; b.onclick=()=>{ [...$("choices").children].forEach(x=>x.classList.remove("selected")); b.classList.add("selected"); $("nextBtn").disabled=false; $("nextBtn").dataset.pick=c.id; }; $("choices").appendChild(b); }); $("nextBtn").disabled=true; }
+    function nextQ(){ const pick=$("nextBtn").dataset.pick; const ok=currentQ.choices.find(c=>c.correct)?.id===pick; if(ok) points++; history.push({prompt:currentQ.prompt,ok,picked:pick}); renderQ(); }
 
-initData(); updateMeta();
-</script>
+    /* === Révision (UE placeholders) === */
+    function fillMasters(){ $("selMaster").innerHTML=REV_INDEX.masters.map(m=>`<option value=\"${m.key}\">${m.label}</option>`).join(""); fillSems(); }
+    function fillSems(){ const m=REV_INDEX.masters.find(x=>x.key===$("selMaster").value); $("selSem").innerHTML=m.semesters.map(s=>`<option value=\"${s.sem}\">${s.sem}</option>`).join(""); fillUEs(); }
+    function fillUEs(){ const m=REV_INDEX.masters.find(x=>x.key===$("selMaster").value); const s=m.semesters.find(x=>x.sem===$("selSem").value); $("ueCore").innerHTML=s.core.map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join(""); $("ueOpt").innerHTML=s.options.map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join(""); $("revLaunch").disabled=true; document.querySelectorAll("#revSelect input").forEach(i=>i.onchange=()=>{ $("revLaunch").disabled=!document.querySelector("#revSelect input:checked"); }); }
+    function buildUEset(){ return [...document.querySelectorAll("#revSelect input:checked")].map(i=>({prompt:`UE: ${i.parentElement.textContent} — démo`,choices:[{id:'a',text:'A'},{id:'b',text:'B',correct:true}]})); }
+
+    /* === Pédantix === */
+    let pedCurrent=null, pedShown=1;
+    function pickPed(){ pedCurrent=PED_PASSAGES[Math.floor(Math.random()*PED_PASSAGES.length)]; pedShown=1; renderPed(); }
+    function mask(s,t){ const re=new RegExp(t,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
+    function renderPed(){ $("pedTitle").textContent=pedCurrent.title; $("pedGuesses").innerHTML=""; $("pedScore").hidden=true; $("pedText").innerHTML=pedCurrent.sentences.slice(0,pedShown).map(x=>`<p>${mask(x,pedCurrent.target)}</p>`).join(""); }
+    function guessPed(){ const g=strip($("pedInput").value); if(!g) return; const ok=g===strip(pedCurrent.target); const li=document.createElement("li"); li.innerHTML=`<div class='num ${ok?'ok':'ko'}'>${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`; $("pedGuesses").prepend(li); if(ok) { $("pedScore").hidden=false; $("pedScore").textContent=\"Bravo! Mot: \"+pedCurrent.target; } $("pedInput").value=\"\"; }
+    function revealPed(){ if(pedShown<pedCurrent.sentences.length){ pedShown++; renderPed(); } }
+
+    /* === Nav === */
+    $("logo").onclick=()=>show($("home"));
+    $("startNormal").onclick=()=>{mode='Normal';reset();show($("quiz"));renderQ();};
+    $("nextBtn").onclick=nextQ; $("finishBtn").onclick=()=>show($("results"));
+    $("startRevision").onclick=()=>{mode='Révision';fillMasters();show($("revSelect"));};
+    $("selMaster").onchange=fillSems; $("selSem").onchange=fillUEs;
+    $("revLaunch").onclick=()=>{QUESTIONS=buildUEset();show($("quiz"));renderQ();};
+    $("revBack").onclick=()=>show($("home"));
+    $("startPedantix").onclick=()=>{mode='Pédantix';pickPed();show($("pedantix"));};
+    $("pedInput").onkeydown=e=>{if(e.key==='Enter')guessPed();};
+    $("pedNew").onclick=pickPed; $("pedReveal").onclick=revealPed;
+
+    init();
+  </script>
 </body>
 </html>
