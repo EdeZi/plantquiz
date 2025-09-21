@@ -1,63 +1,54 @@
 <!doctype html>
-function fillUELists(){ ueCore.innerHTML=''; ueOpt.innerHTML=''; const m = REV_INDEX.masters.find(x=>x.key===selMaster.value); const s = m.semesters.find(x=>x.sem===selSem.value); (s.core||[]).forEach(u=> ueCore.appendChild(checkbox(u.id,u.label,'core')) ); (s.options||[]).forEach(u=> ueOpt.appendChild(checkbox(u.id,u.label,'opt')) ); revLaunch.disabled=true; ueCore.onchange=ueOpt.onchange=()=>{ revLaunch.disabled = !document.querySelector('#revSelect input[type="checkbox"]:checked'); };
-btnAllCore.onclick=()=>{ ueCore.querySelectorAll('input[type="checkbox"]').forEach(i=>i.checked=true); revLaunch.disabled=false; };
-btnAllOpt.onclick=()=>{ ueOpt.querySelectorAll('input[type="checkbox"]').forEach(i=>i.checked=true); revLaunch.disabled=false; };
-btnClear.onclick=()=>{ document.querySelectorAll('#revSelect input[type="checkbox"]').forEach(i=>i.checked=false); revLaunch.disabled=true; };
+const g = strip(pedInput.value.trim()); if(!g) return;
+const tgt = strip(pedCurrent.target);
+const ok = g===tgt;
+const li=document.createElement('li'); li.className='result-item';
+li.innerHTML = `<div class="num ${ok?'ok':'ko'}">${pedGuesses.children.length+1}</div><div><b>${pedInput.value}</b><div class="muted">${ok?'✅ Correct':'❌ Incorrect'}</div></div>`;
+pedGuesses.prepend(li);
+if(ok){ pedScore.hidden=false; pedScore.textContent = `Bravo ! Mot: ${pedCurrent.target}`; }
+pedInput.value='';
 }
-function buildRevisionSet(){
-const picked = [...document.querySelectorAll('#revSelect input[type="checkbox"]:checked')].map(i=>({ id:i.dataset.id, label:i.parentElement.textContent.trim() }));
-// Génère 1 question placeholder par UE choisie (tu remplaceras après)
-return picked.map((u,ix)=>({ id:`UE_${u.id}`, level:5, prompt:`UE: ${u.label} — question démo`, choices:[{id:'a',text:'Réponse A'},{id:'b',text:'Réponse B',correct:true},{id:'c',text:'Réponse C'},{id:'d',text:'Réponse D'}], explanation:'À éditer: remplace ce placeholder par une vraie question.' }));
+function pedRevealMore(){
+if(!pedCurrent) return; const total=(pedCurrent.sentences||[]).length; if(pedShownSentences<total){ pedShownSentences++; renderPedantix(); }
 }
 
 
-// ————————————————————————————————
-// MODE SÉMANTIX (mini — hors ligne)
-// ————————————————————————————————
-function trigs(s){ s=strip(s); const t=[]; for(let i=0;i<s.length-2;i++) t.push(s.slice(i,i+3)); return t; }
-function cos(a,b){ const ma=new Map(),mb=new Map(); a.forEach(x=>ma.set(x,(ma.get(x)||0)+1)); b.forEach(x=>mb.set(x,(mb.get(x)||0)+1)); let dot=0,na=0,nb=0; ma.forEach((va,k)=>{na+=va*va; if(mb.has(k)) dot+=va*mb.get(k)}); mb.forEach(vb=>nb+=vb*vb); return (na&&nb)? dot/Math.sqrt(na*nb):0; }
-let semTarget=null;
-function newSem(){ semTarget = SEM_CORPUS[Math.floor(Math.random()*SEM_CORPUS.length)]; semList.innerHTML=''; semHint.textContent='Mot secret choisi. Propose des mots.'; semInput.value=''; semInput.focus(); }
-function addGuess(v){ const g=v.trim(); if(!g) return; const s=cos(trigs(g), trigs(semTarget.word)); const li=document.createElement('li'); li.className='result-item'; li.innerHTML=`<div class="num ${s>0.5?'ok':'ko'}">${(s*100|0)}%</div><div><b>${g}</b><div class="muted">${s>0.75?'🔥 Très proche': s>0.5?'👍 Proche': s>0.3?'🟡 Moyen':'🧊 Loin'}</div></div>`; semList.prepend(li); if(strip(g)===strip(semTarget.word)) semHint.innerHTML=`✅ Bravo ! Mot : <b>${semTarget.word}</b>`; }
-
-
-// ————————————————————————————————
-// RÉSULTATS & NAVIGATION
-// ————————————————————————————————
+// RÉSULTATS
 function showResults(){ const total=history.length, ok=history.filter(h=>h.ok).length, pct=Math.round(ok/Math.max(1,total)*100); const line=`Session : ${ok}/${total} (${pct}%) — Elo : ${Math.round(elo)} — Niveau : ${level}`; $('scoreLine').textContent=line; const list=$('resultsList'); list.innerHTML=''; history.forEach((h,i)=>{ const li=document.createElement('li'); li.className='result-item'; li.innerHTML=`<div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">${h.prompt}</div><div class="muted">Votre réponse : <b>${h.picked}</b></div><div class="muted">Bonne réponse : <b>${h.correctText}</b></div>${h.explanation?`<div style=\"margin-top:6px\">💡 ${h.explanation}</div>`:''}</div>`; list.appendChild(li); }); show(resultsSec); updateMeta(); }
 
 
+// NAVIGATION
 function goHome(){ mode='Accueil'; updateMeta(); show(homeSec); }
 $('logo').addEventListener('click', goHome); $('homeBtn').addEventListener('click', goHome);
 
 
-// Normal
 startNormalBtn.addEventListener('click', ()=>{ resetSession(); mode='Normal'; updateMeta(); show(quizSec); renderChoiceQuestion(); });
-nextBtn.addEventListener('click', ()=>{ if(!currentQ) return; const pickedId=nextBtn.dataset.picked; const correct=(currentQ.choices||[]).find(c=>c.correct); const ok= pickedId && correct && pickedId===correct.id; if(ok){points++;} applyElo(!!ok, currentQ.level); history.push({id:currentQ.id, ok, level:currentQ.level||5, prompt:currentQ.prompt, picked:(currentQ.choices||[]).find(c=>c.id===pickedId)?.text||'—', correctText:correct?.text||'', explanation: currentQ.explanation||''}); renderChoiceQuestion(); });
-finishBtn.addEventListener('click', showResults);
+nextBtn.addEventListener('click', handleNextChoice); finishBtn.addEventListener('click', showResults);
 
 
-// Révision
 startRevisionBtn.addEventListener('click', ()=>{ mode='Révision'; updateMeta(); fillMasters(); show(revSelectSec); });
 selMaster.addEventListener('change', fillSemesters); selSem.addEventListener('change', fillUELists);
 revBack.addEventListener('click', goHome);
-revLaunch.addEventListener('click', ()=>{ const SET=buildRevisionSet(); if(!SET.length) return; const saved=QUESTIONS; resetSession(); QUESTIONS=SET; show(quizSec); renderChoiceQuestion(); finishBtn.onclick=()=>{ showResults(); QUESTIONS=saved; }; nextBtn.onclick=()=>{ if(!currentQ) return; const pickedId=nextBtn.dataset.picked; const correct=(currentQ.choices||[]).find(c=>c.correct); const ok= pickedId && correct && pickedId===correct.id; if(ok){points++;} history.push({id:currentQ.id, ok, level:currentQ.level||5, prompt:currentQ.prompt, picked:(currentQ.choices||[]).find(c=>c.id===pickedId)?.text||'—', correctText:correct?.text||'', explanation: currentQ.explanation||''}); renderChoiceQuestion(); }; });
+revLaunch.addEventListener('click', ()=>{ const SET=buildRevisionSet(); if(!SET.length) return; const saved=QUESTIONS; resetSession(); QUESTIONS=SET; show(quizSec); renderChoiceQuestion(); finishBtn.onclick=()=>{ showResults(); QUESTIONS=saved; }; nextBtn.onclick=handleNextChoice; });
 
 
-// Sémantix
-startSemBtn.addEventListener('click', ()=>{ mode='Sémantix'; updateMeta(); newSem(); show(semSec); });
-semInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ addGuess(semInput.value); semInput.value=''; }});
-semGiveUp.addEventListener('click', ()=>{ semHint.innerHTML=`🔎 Réponse : <b>${semTarget.word}</b>`; });
-semNew.addEventListener('click', newSem);
+startPedBtn.addEventListener('click', ()=>{ mode='Pédantix'; updateMeta(); pickPedantix(); show(pedSec); });
+pedInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ pedCheckGuess(); }});
+pedNew.addEventListener('click', ()=>{ pickPedantix(); });
+pedReveal.addEventListener('click', ()=>{ pedRevealMore(); });
 
 
 // DEMO FALLBACKS si /data/ absent
 const DEMO_QUESTIONS=[{id:'L1Q1',level:1,prompt:'Quelle partie réalise la photosynthèse ?',choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}],explanation:'Les feuilles contiennent des chloroplastes.'}];
-const DEMO_SEMANTIX=[{word:'chloroplaste'},{word:'xyleme'},{word:'phloeme'}];
 const DEMO_REV_INDEX={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'S7',core:[{id:'biostat_R',label:'Biostatistiques avec R'}],options:[{id:'opt_demo',label:'Option démo'}]}]}]};
+const DEMO_PED=[{id:'P1',title:'Photosynthèse (démo)',target:'chloroplaste',sentences:[
+"Le CHAMP s'effectue dans les organites spécialisés des cellules végétales.",
+"Chaque CHAMP contient des thylakoïdes disposés en grana.",
+"La chlorophylle est localisée dans le CHAMP.",
+"Le cycle de Calvin s'y déroule dans le stroma du CHAMP."
+]}];
 
 
-// init
 initData(); updateMeta();
 </script>
 </body>
