@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plant’Quiz — niveaux & Elo</title>
+  <style>
+    :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+    header{position:sticky;top:0;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
+    nav{display:flex;gap:12px;align-items:center;max-width:960px;margin:0 auto;padding:12px 24px}
+    .brand{font-size:20px;font-weight:700}
+    .meta{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+    .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
+    .container{max-width:960px;margin:0 auto;padding:24px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
+    .progress{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+    .progress>div{height:100%;background:var(--brand)}
+    .choices{display:grid;gap:10px;margin-top:12px}
+    .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;cursor:pointer}
+    .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+    .choice.selected{outline:3px solid var(--brand);border-color:var(--brand)}
+    .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+    button{appearance:none;border:0;border-radius:999px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+    button[disabled]{background:#9ca3af;cursor:not-allowed}
+    .muted{color:var(--muted)}
+    ol.results{display:grid;gap:12px;padding-left:0;list-style:none}
+    .result-item{display:flex;gap:12px}
+    .num{width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    .num.ok{background:var(--ok)} .num.ko{background:var(--ko)}
+    img{max-height:260px;width:100%;object-fit:cover;border-radius:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="brand">🌿 Plant’Quiz</div>
+      <div class="meta">
+        <div class="pill">Niveau : <b id="levelPill">1</b></div>
+        <div class="pill">Elo : <b id="eloPill">1000</b></div>
+        <div class="pill">Points : <b id="pointsPill">0</b></div>
+        <div class="pill">Q: <b id="qposPill">0</b></div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section id="intro" class="card">
+      <h1 style="margin:0 0 8px">Quiz plantes — simple & progressif</h1>
+      <p class="muted">Fonctionne dans un seul fichier. Elo et niveaux automatiques, sans comptes.</p>
+      <div class="row" style="justify-content:flex-start"><button id="startBtn">Commencer</button></div>
+    </section>
+
+    <section id="quiz" class="card" hidden>
+      <div class="progress"><div id="bar" style="width:0%"></div></div>
+      <p class="muted" id="qCounter" style="margin:8px 0 0"></p>
+      <article style="margin-top:12px">
+        <h2 id="qPrompt" style="margin:0 0 12px"></h2>
+        <img id="qImage" alt="illustration" style="display:none"/>
+        <div class="choices" id="choices"></div>
+        <div class="row"><button id="nextBtn" disabled>Suivant</button></div>
+      </article>
+    </section>
+
+    <section id="results" class="card" hidden>
+      <h2 style="margin:0">Résultats</h2>
+      <p id="scoreLine" style="font-size:18px;margin-top:6px"></p>
+      <div class="row" style="justify-content:flex-start"><button id="retryBtn">Rejouer</button></div>
+      <hr style="margin:16px 0"/>
+      <ol id="resultsList" class="results"></ol>
+    </section>
+  </main>
+
+  <script>
+    // ————————————————————————————
+    // 1) QUESTIONS (ajoutez ici). difficulty: 'facile' | 'moyen' | 'difficile'
+    // ————————————————————————————
+    const QUESTIONS = [
+      { id:'q1', difficulty:'facile', prompt:'Quelle partie fait la photosynthèse ?', choices:[
+        {id:'a', text:'Racines'}, {id:'b', text:'Feuilles', correct:true}, {id:'c', text:'Fleurs'}, {id:'d', text:'Graines'}
+      ], explanation:"Les feuilles via les chloroplastes." },
+      { id:'q2', difficulty:'moyen', prompt:'Quel tissu transporte la sève élaborée ?', choices:[
+        {id:'a', text:'Xylème'}, {id:'b', text:'Phloème', correct:true}, {id:'c', text:'Périderme'}, {id:'d', text:'Cambium'}
+      ], explanation:"Le phloème distribue les sucres." },
+      { id:'q3', difficulty:'facile', prompt:'Lequel est un macroélément essentiel ?', choices:[
+        {id:'a', text:'Bore'}, {id:'b', text:'Molybdène'}, {id:'c', text:'Azote', correct:true}, {id:'d', text:'Zinc'}
+      ], explanation:"L'azote est requis en grande quantité." },
+      { id:'q4', difficulty:'difficile', prompt:"Où se situe le méristème apical racinaire ?", choices:[
+        {id:'a', text:"Sous la coiffe", correct:true}, {id:'b', text:"Au-dessus de l'endoderme"}, {id:'c', text:"Dans l'épiderme"}, {id:'d', text:"Dans le phloème"}
+      ], explanation:"Protégé par la coiffe." },
+    ];
+
+    // Map difficulté -> rating pour le calcul Elo (réglages simples)
+    const DIFF_RATING = { facile: 900, moyen: 1000, difficile: 1100 };
+
+    // ————————————————————————————
+    // 2) ÉTAT
+    // ————————————————————————————
+    const $ = id => document.getElementById(id);
+    const intro = $('intro');
+    const quiz = $('quiz');
+    const results = $('results');
+    const startBtn = $('startBtn');
+    const nextBtn = $('nextBtn');
+    const retryBtn = $('retryBtn');
+
+    const qPrompt = $('qPrompt');
+    const qCounter = $('qCounter');
+    const qImage = $('qImage');
+    const choicesBox = $('choices');
+    const bar = $('bar');
+
+    const levelPill = $('levelPill');
+    const eloPill = $('eloPill');
+    const pointsPill = $('pointsPill');
+    const qposPill = $('qposPill');
+
+    const scoreLine = $('scoreLine');
+    const resultsList = $('resultsList');
+
+    let level = 1;  // 1=facile, 2=moyen, 3=difficile
+    let elo = 1000;
+    let points = 0; // nb de bonnes réponses
+    let idx = 0;    // position dans la série
+    let run = [];   // série construite dynamiquement selon le niveau
+    let answers = {};
+
+    // paramètres progression
+    const K = 32;              // facteur d'ajustement Elo
+    const WIN_FOR_NEXT = 3;    // bonnes réponses avant montée de niveau
+
+    function buildRun(){
+      // Crée une série de 12 questions en piochant selon le niveau
+      const pool = {
+        1: QUESTIONS.filter(q=>q.difficulty==='facile'),
+        2: QUESTIONS.filter(q=>q.difficulty!=='difficile'), // facile + moyen
+        3: QUESTIONS,                                       // toutes
+      }[level];
+      // Shuffle simple
+      const arr = [...pool].sort(()=>Math.random()-0.5);
+      run = arr.slice(0, Math.min(12, arr.length));
+      idx = 0; answers = {}; points = 0; updateMeta();
+    }
+
+    function updateMeta(){
+      levelPill.textContent = level;
+      eloPill.textContent = Math.round(elo);
+      pointsPill.textContent = points;
+      qposPill.textContent = `${idx}/${run.length}`;
+    }
+
+    function renderQuestion(){
+      const q = run[idx];
+      if (!q) return;
+      qPrompt.textContent = q.prompt;
+      qCounter.textContent = `Question ${idx + 1} / ${run.length}`;
+      bar.style.width = `${Math.round(idx / run.length * 100)}%`;
+
+      if (q.imageUrl){ qImage.src = q.imageUrl; qImage.style.display='block'; }
+      else { qImage.style.display='none'; }
+
+      choicesBox.innerHTML = '';
+      q.choices.forEach(c=>{
+        const btn = document.createElement('button');
+        btn.className = 'choice';
+        btn.textContent = c.text;
+        btn.addEventListener('click', ()=>selectAnswer(q.id, c.id, btn));
+        choicesBox.appendChild(btn);
+      });
+      nextBtn.disabled = !answers[q.id];
+      nextBtn.textContent = idx < run.length - 1 ? 'Suivant' : 'Terminer';
+      updateMeta();
+    }
+
+    function selectAnswer(qid, cid, btnEl){
+      answers[qid] = cid;
+      Array.from(choicesBox.children).forEach(el=>el.classList.remove('selected'));
+      btnEl.classList.add('selected');
+      nextBtn.disabled = false;
+    }
+
+    function applyElo(isWin, difficulty){
+      const opp = DIFF_RATING[difficulty] || 1000;
+      const expected = 1 / (1 + Math.pow(10, (opp - elo) / 400));
+      const score = isWin ? 1 : 0;
+      elo = elo + K * (score - expected);
+    }
+
+    let streak = 0; // série de bonnes réponses
+
+    function next(){
+      const q = run[idx];
+      const correct = q.choices.find(c=>c.correct)?.id;
+      const isOk = answers[q.id] === correct;
+
+      // maj points & Elo
+      if (isOk){ points++; streak++; } else { streak = 0; }
+      applyElo(isOk, q.difficulty);
+
+      // progression de niveau : tous les WIN_FOR_NEXT succès consécutifs
+      if (streak >= WIN_FOR_NEXT && level < 3){
+        level++; streak = 0; // on remonte d'un niveau et on recrée une série
+        buildRun();
+        renderQuestion();
+        return;
+      }
+
+      if (idx < run.length - 1){
+        idx++; renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults(){
+      const total = run.length;
+      const pct = Math.round(points / Math.max(1,total) * 100);
+      scoreLine.textContent = `Score : ${points} / ${total} (${pct}%) — Elo final : ${Math.round(elo)}`;
+      resultsList.innerHTML = '';
+
+      run.forEach((q,i)=>{
+        const picked = answers[q.id];
+        const correct = q.choices.find(c=>c.correct)?.id;
+        const isOk = picked === correct;
+        const li = document.createElement('li');
+        li.className = 'result-item';
+        li.innerHTML = `
+          <div class="num ${isOk ? 'ok' : 'ko'}">${i+1}</div>
+          <div>
+            <div style="font-weight:600">[${q.difficulty}] ${q.prompt}</div>
+            <div class="muted" style="margin-top:4px">Votre réponse : <b>${(q.choices.find(c=>c.id===picked)||{}).text || '—'}</b></div>
+            <div class="muted">Bonne réponse : <b>${(q.choices.find(c=>c.correct)||{}).text || ''}</b></div>
+            ${q.explanation ? `<div style="margin-top:6px">💡 ${q.explanation}</div>` : ''}
+          </div>`;
+        resultsList.appendChild(li);
+      });
+
+      quiz.hidden = true; intro.hidden = true; results.hidden = false; bar.style.width='100%';
+      updateMeta();
+    }
+
+    // ————————————————————————————
+    // 3) NAV
+    // ————————————————————————————
+    startBtn.addEventListener('click', ()=>{
+      level = 1; elo = 1000; points = 0; streak = 0; answers = {};
+      buildRun();
+      intro.hidden = true; results.hidden = true; quiz.hidden = false;
+      renderQuestion();
+    });
+
+    nextBtn.addEventListener('click', next);
+    retryBtn.addEventListener('click', ()=>{
+      level = 1; elo = 1000; points = 0; streak = 0; answers = {};
+      buildRun(); renderQuestion();
+      results.hidden = true; quiz.hidden = false; intro.hidden = true;
+    });
+  </script>
+</body>
+</html>
