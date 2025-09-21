@@ -1,42 +1,31 @@
-<script type="application/json" id="questions_normal.json">
 [
-{"id":"L1Q1","level":1,"prompt":"Quelle partie réalise la photosynthèse ?","choices":[{"id":"a","text":"Racines"},{"id":"b","text":"Feuilles","correct":true},{"id":"c","text":"Fleurs"},{"id":"d","text":"Graines"}],"explanation":"Les feuilles contiennent des chloroplastes."},
-{"id":"L1Q2","level":1,"prompt":"Quel pigment donne la couleur verte ?","choices":[{"id":"a","text":"Carotène"},{"id":"b","text":"Chlorophylle","correct":true},{"id":"c","text":"Anthocyane"},{"id":"d","text":"Bétalaïne"}],"explanation":"La chlorophylle."},
+  {"id":"L1Q1","level":1,"prompt":"Quelle partie réalise la photosynthèse ?","choices":[{"id":"a","text":"Racines"},{"id":"b","text":"Feuilles","correct":true},{"id":"c","text":"Fleurs"},{"id":"d","text":"Graines"}],"explanation":"Les feuilles contiennent des chloroplastes."},
+  {"id":"L1Q2","level":1,"prompt":"Quel pigment donne la couleur verte ?","choices":[{"id":"a","text":"Carotène"},{"id":"b","text":"Chlorophylle","correct":true},{"id":"c","text":"Anthocyane"},{"id":"d","text":"Bétalaïne"}],"explanation":"La chlorophylle."},
 
+  {"id":"L2Q1","level":2,"prompt":"Tissu qui transporte la sève brute ?","choices":[{"id":"a","text":"Phloème"},{"id":"b","text":"Xylème","correct":true},{"id":"c","text":"Épiderme"},{"id":"d","text":"Périderme"}],"explanation":"Le xylème transporte eau + minéraux."},
+  {"id":"L2Q2","level":2,"prompt":"Ouverture/fermeture des stomates contrôlée par…","choices":[{"id":"a","text":"Cellules mésophylles"},{"id":"b","text":"Cellules de garde","correct":true},{"id":"c","text":"Trichomes"},{"id":"d","text":"Poils absorbants"}],"explanation":"Cellules de garde."},
 
-{"id":"L2Q1","level":2,"prompt":"Tissu qui transporte la sève brute ?","choices":[{"id":"a","text":"Phloème"},{"id":"b","text":"Xylème","correct":true},{"id":"c","text":"Épiderme"},{"id":"d","text":"Périderme"}],"explanation":"Le xylème transporte eau + minéraux."},
-{"id":"L2Q2","level":2,"prompt":"Ouverture/fermeture des stomates contrôlée par…","choices":[{"id":"a","text":"Cellules mésophylles"},{"id":"b","text":"Cellules de garde","correct":true},{"id":"c","text":"Trichomes"},{"id":"d","text":"Poils absorbants"}],"explanation":"Cellules de garde."},
+  {"id":"L3Q1","level":3,"prompt":"Macroélément essentiel ?","choices":[{"id":"a","text":"Bore"},{"id":"b","text":"Azote","correct":true},{"id":"c","text":"Zinc"},{"id":"d","text":"Cuivre"}],"explanation":"Azote = majeur."},
+  {"id":"L3Q2","level":3,"prompt":"Organe d’ancrage principal ?","choices":[{"id":"a","text":"Feuille"},{"id":"b","text":"Tige"},{"id":"c","text":"Racine","correct":true},{"id":"d","text":"Fruit"}],"explanation":"Racines."},
 
+  {"id":"L4Q1","level":4,"prompt":"Le phloème transporte surtout…","choices":[{"id":"a","text":"Eau"},{"id":"b","text":"Sucres","correct":true},{"id":"c","text":"O₂"},{"id":"d","text":"CO₂"}],"explanation":"Sucres élaborés."},
+  {"id":"L4Q2","level":4,"prompt":"Organe reproducteur mâle ?","choices":[{"id":"a","text":"Pistil"},{"id":"b","text":"Étamine","correct":true},{"id":"c","text":"Sépale"},{"id":"d","text":"Pétale"}],"explanation":"Étamine."},
 
-{"id":"L3Q1","level":3,"prompt":"Macroélément essentiel ?","choices":[{"id":"a","text":"Bore"},{"id":"b","text":"Azote","correct":true},{"id":"c","text":"Zinc"},{"id":"d","text":"Cuivre"}],"explanation":"Azote = majeur."},
-{"id":"L3Q2","level":3,"prompt":"Organe d’ancrage principal ?","choices":[{"id":"a","text":"Feuille"},{"id":"b","text":"Tige"},{"id":"c","text":"Racine","correct":true},{"id":"d","text":"Fruit"}],"explanation":"Racines."},
+  {"id":"L5Q1","level":5,"prompt":"Méristème apical racinaire se situe…","choices":[{"id":"a","text":"Sous la coiffe","correct":true},{"id":"b","text":"Dans le phloème"},{"id":"c","text":"Dans l’épiderme"},{"id":"d","text":"Au-dessus de l’endoderme"}],"explanation":"Sous la coiffe."},
+  {"id":"L5Q2","level":5,"prompt":"Gaz entrant par les stomates pour la photosynthèse ?","choices":[{"id":"a","text":"O₂"},{"id":"b","text":"CO₂","correct":true},{"id":"c","text":"N₂"},{"id":"d","text":"CH₄"}],"explanation":"CO₂."},
 
+  {"id":"L6Q1","level":6,"prompt":"Bois + liber forment…","choices":[{"id":"a","text":"Faisceau vasculaire","correct":true},{"id":"b","text":"Péricycle"},{"id":"c","text":"Collenchyme"},{"id":"d","text":"Endoderme"}],"explanation":"Xylème + Phloème."},
+  {"id":"L6Q2","level":6,"prompt":"Phototropisme = croissance…","choices":[{"id":"a","text":"Vers la lumière","correct":true},{"id":"b","text":"Vers la gravité"},{"id":"c","text":"Au hasard"},{"id":"d","text":"Contre le vent"}],"explanation":"Vers la lumière."},
 
-{"id":"L4Q1","level":4,"prompt":"Le phloème transporte surtout…","choices":[{"id":"a","text":"Eau"},{"id":"b","text":"Sucres","correct":true},{"id":"c","text":"O₂"},{"id":"d","text":"CO₂"}],"explanation":"Sucres élaborés."},
-{"id":"L4Q2","level":4,"prompt":"Organe reproducteur mâle ?","choices":[{"id":"a","text":"Pistil"},{"id":"b","text":"Étamine","correct":true},{"id":"c","text":"Sépale"},{"id":"d","text":"Pétale"}],"explanation":"Étamine."},
+  {"id":"L7Q1","level":7,"prompt":"Double fécondation produit zygote et…","choices":[{"id":"a","text":"Albumen (endosperme)","correct":true},{"id":"b","text":"Sépales"},{"id":"c","text":"Péricarpe"},{"id":"d","text":"Rachis"}],"explanation":"Endosperme."},
+  {"id":"L7Q2","level":7,"prompt":"Cuticule foliaire limite surtout…","choices":[{"id":"a","text":"Transpiration","correct":true},{"id":"b","text":"Photosynthèse"},{"id":"c","text":"Respiration"},{"id":"d","text":"Floraison"}],"explanation":"Perte en eau."},
 
+  {"id":"L8Q1","level":8,"prompt":"Chargement du phloème utilise…","choices":[{"id":"a","text":"Diffusion simple"},{"id":"b","text":"Symport H⁺-saccharose","correct":true},{"id":"c","text":"Aquaporines"},{"id":"d","text":"Canaux K⁺"}],"explanation":"Gradient de protons."},
+  {"id":"L8Q2","level":8,"prompt":"Bande de Caspary se trouve dans…","choices":[{"id":"a","text":"Endoderme","correct":true},{"id":"b","text":"Péricycle"},{"id":"c","text":"Collenchyme"},{"id":"d","text":"Xylème"}],"explanation":"Endoderme racinaire."},
 
-{"id":"L5Q1","level":5,"prompt":"Méristème apical racinaire se situe…","choices":[{"id":"a","text":"Sous la coiffe","correct":true},{"id":"b","text":"Dans le phloème"},{"id":"c","text":"Dans l’épiderme"},{"id":"d","text":"Au-dessus de l’endoderme"}],"explanation":"Sous la coiffe."},
-{"id":"L5Q2","level":5,"prompt":"Gaz entrant par les stomates pour la photosynthèse ?","choices":[{"id":"a","text":"O₂"},{"id":"b","text":"CO₂","correct":true},{"id":"c","text":"N₂"},{"id":"d","text":"CH₄"}],"explanation":"CO₂."},
+  {"id":"L9Q1","level":9,"prompt":"Hormone clé de fermeture stomatique ?","choices":[{"id":"a","text":"IAA"},{"id":"b","text":"ABA","correct":true},{"id":"c","text":"GA"},{"id":"d","text":"CK"}],"explanation":"ABA."},
+  {"id":"L9Q2","level":9,"prompt":"Photorespiration implique…","choices":[{"id":"a","text":"Chloroplaste, peroxysome, mitochondrie","correct":true},{"id":"b","text":"Noyau + vacuole"},{"id":"c","text":"Golgi"},{"id":"d","text":"REL"}],"explanation":"Voie quand Rubisco fixe O₂."},
 
-
-{"id":"L6Q1","level":6,"prompt":"Bois + liber forment…","choices":[{"id":"a","text":"Faisceau vasculaire","correct":true},{"id":"b","text":"Péricycle"},{"id":"c","text":"Collenchyme"},{"id":"d","text":"Endoderme"}],"explanation":"Xylème + Phloème."},
-{"id":"L6Q2","level":6,"prompt":"Phototropisme = croissance…","choices":[{"id":"a","text":"Vers la lumière","correct":true},{"id":"b","text":"Vers la gravité"},{"id":"c","text":"Au hasard"},{"id":"d","text":"Contre le vent"}],"explanation":"Vers la lumière."},
-
-
-{"id":"L7Q1","level":7,"prompt":"Double fécondation produit zygote et…","choices":[{"id":"a","text":"Albumen (endosperme)","correct":true},{"id":"b","text":"Sépales"},{"id":"c","text":"Péricarpe"},{"id":"d","text":"Rachis"}],"explanation":"Endosperme."},
-{"id":"L7Q2","level":7,"prompt":"Cuticule foliaire limite surtout…","choices":[{"id":"a","text":"Transpiration","correct":true},{"id":"b","text":"Photosynthèse"},{"id":"c","text":"Respiration"},{"id":"d","text":"Floraison"}],"explanation":"Perte en eau."},
-
-
-{"id":"L8Q1","level":8,"prompt":"Chargement du phloème utilise…","choices":[{"id":"a","text":"Diffusion simple"},{"id":"b","text":"Symport H⁺-saccharose","correct":true},{"id":"c","text":"Aquaporines"},{"id":"d","text":"Canaux K⁺"}],"explanation":"Gradient de protons."},
-{"id":"L8Q2","level":8,"prompt":"Bande de Caspary se trouve dans…","choices":[{"id":"a","text":"Endoderme","correct":true},{"id":"b","text":"Péricycle"},{"id":"c","text":"Collenchyme"},{"id":"d","text":"Xylème"}],"explanation":"Endoderme racinaire."},
-
-
-{"id":"L9Q1","level":9,"prompt":"Hormone clé de fermeture stomatique ?","choices":[{"id":"a","text":"IAA"},{"id":"b","text":"ABA","correct":true},{"id":"c","text":"GA"},{"id":"d","text":"CK"}],"explanation":"ABA."},
-{"id":"L9Q2","level":9,"prompt":"Photorespiration implique…","choices":[{"id":"a","text":"Chloroplaste, peroxysome, mitochondrie","correct":true},{"id":"b","text":"Noyau + vacuole"},{"id":"c","text":"Golgi"},{"id":"d","text":"REL"}],"explanation":"Voie quand Rubisco fixe O₂."},
-
-
-{"id":"L10Q1","level":10,"prompt":"Voie plastidiale des isoprénoïdes ?","choices":[{"id":"a","text":"MVA"},{"id":"b","text":"MEP","correct":true},{"id":"c","text":"Shikimate"},{"id":"d","text":"Glyoxylate"}],"explanation":"MEP (DOXP)."},
-{"id":"L10Q2","level":10,"prompt":"En C4, enzyme primaire de fixation du CO₂ ?","choices":[{"id":"a","text":"Rubisco"},{"id":"b","text":"PEPC","correct":true},{"id":"c","text":"Nitrate réductase"},{"id":"d","text":"Malate DH"}],"explanation":"PEPC d’abord; Rubisco ensuite."}
+  {"id":"L10Q1","level":10,"prompt":"Voie plastidiale des isoprénoïdes ?","choices":[{"id":"a","text":"MVA"},{"id":"b","text":"MEP","correct":true},{"id":"c","text":"Shikimate"},{"id":"d","text":"Glyoxylate"}],"explanation":"MEP (DOXP)."},
+  {"id":"L10Q2","level":10,"prompt":"En C4, enzyme primaire de fixation du CO₂ ?","choices":[{"id":"a","text":"Rubisco"},{"id":"b","text":"PEPC","correct":true},{"id":"c","text":"Nitrate réductase"},{"id":"d","text":"Malate DH"}],"explanation":"PEPC d’abord; Rubisco ensuite."}
 ]
-</script>
