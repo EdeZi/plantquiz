@@ -1,308 +1,64 @@
 <!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Plant’Quiz — 3 modes, 10 niveaux, Elo + Sémantix</title>
-  <style>
-    :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
-    *{box-sizing:border-box}
-    :focus-visible{outline:3px solid #11133b;outline-offset:2px}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
-    header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
-    nav{display:flex;gap:12px;align-items:center;max-width:1080px;margin:0 auto;padding:12px 24px}
-    .brand{font-size:20px;font-weight:800;cursor:pointer}
-    .meta{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
-    .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
-    .container{max-width:1080px;margin:0 auto;padding:24px}
-    .grid{display:grid;gap:14px}
-    .grid3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
-    .btn{appearance:none;border:0;border-radius:999px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
-    .btn[disabled]{background:#9ca3af;cursor:not-allowed}
-    .btn.outline{background:#fff;color:#111;border:1px solid #e5e7eb}
-    .muted{color:var(--muted)}
-    .progress{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden}
-    .progress>div{height:100%;background:var(--brand)}
-    .choices{display:grid;gap:10px;margin-top:12px}
-    .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer}
-    .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
-    .choice.selected{outline:3px solid var(--brand);border-color:var(--brand)}
-    .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
-    ol.results{display:grid;gap:12px;padding-left:0;list-style:none}
-    .result-item{display:flex;gap:12px}
-    .num{min-width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
-    .num.ok{background:var(--ok)} .num.ko{background:var(--ko)}
-    img{max-height:260px;width:100%;object-fit:cover;border-radius:12px}
-    .modeCard{display:flex;flex-direction:column;height:100%}
-    .modeCard h3{margin:0 0 6px}
-    .modeCard p{margin:0 0 14px}
-    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#f1f5f9;border:1px solid #e2e8f0;border-bottom-width:3px;padding:.1rem .4rem;border-radius:.4rem}
-    .table{width:100%;border-collapse:collapse}
-    .table th,.table td{border-bottom:1px solid #e5e7eb;padding:8px 6px;text-align:left}
-    .hot{color:#16a34a;font-weight:700}
-    .cold{color:#ef4444;font-weight:700}
-  </style>
-</head>
-<body>
-  <header>
-    <nav>
-      <div id="logo" class="brand">🌿 Plant’Quiz</div>
-      <div class="meta">
-        <div class="pill">Mode : <b id="modePill">Accueil</b></div>
-        <div class="pill">Niveau : <b id="levelPill">1</b></div>
-        <div class="pill">Elo : <b id="eloPill">1000</b></div>
-        <div class="pill">Points : <b id="pointsPill">0</b></div>
-        <div class="pill">Q : <b id="qposPill">0</b></div>
-      </div>
-    </nav>
-  </header>
+function fillUELists(){ ueCore.innerHTML=''; ueOpt.innerHTML=''; const m = REV_INDEX.masters.find(x=>x.key===selMaster.value); const s = m.semesters.find(x=>x.sem===selSem.value); (s.core||[]).forEach(u=> ueCore.appendChild(checkbox(u.id,u.label,'core')) ); (s.options||[]).forEach(u=> ueOpt.appendChild(checkbox(u.id,u.label,'opt')) ); revLaunch.disabled=true; ueCore.onchange=ueOpt.onchange=()=>{ revLaunch.disabled = !document.querySelector('#revSelect input[type="checkbox"]:checked'); };
+btnAllCore.onclick=()=>{ ueCore.querySelectorAll('input[type="checkbox"]').forEach(i=>i.checked=true); revLaunch.disabled=false; };
+btnAllOpt.onclick=()=>{ ueOpt.querySelectorAll('input[type="checkbox"]').forEach(i=>i.checked=true); revLaunch.disabled=false; };
+btnClear.onclick=()=>{ document.querySelectorAll('#revSelect input[type="checkbox"]').forEach(i=>i.checked=false); revLaunch.disabled=true; };
+}
+function buildRevisionSet(){
+const picked = [...document.querySelectorAll('#revSelect input[type="checkbox"]:checked')].map(i=>({ id:i.dataset.id, label:i.parentElement.textContent.trim() }));
+// Génère 1 question placeholder par UE choisie (tu remplaceras après)
+return picked.map((u,ix)=>({ id:`UE_${u.id}`, level:5, prompt:`UE: ${u.label} — question démo`, choices:[{id:'a',text:'Réponse A'},{id:'b',text:'Réponse B',correct:true},{id:'c',text:'Réponse C'},{id:'d',text:'Réponse D'}], explanation:'À éditer: remplace ce placeholder par une vraie question.' }));
+}
 
-  <main class="container">
-    <!-- ACCUEIL -->
-    <section id="home" class="grid grid3">
-      <div class="card modeCard">
-        <h3>Quiz normal</h3>
-        <p class="muted">Flux infini. Difficulté adaptative (Elo) sur 10 niveaux.</p>
-        <div style="margin-top:auto" class="row" justify="start"><button id="startNormal" class="btn">Commencer</button></div>
-      </div>
-      <div class="card modeCard">
-        <h3>Quiz révision</h3>
-        <p class="muted">S’entraîner uniquement sur les questions ratées. Pas d’impact sur l’Elo.</p>
-        <div style="margin-top:auto" class="row" justify="start"><button id="startRevision" class="btn">Réviser</button></div>
-      </div>
-      <div class="card modeCard">
-        <h3>Sémantix végétal</h3>
-        <p class="muted">Devine le mot cible scientifique à partir d’indices sémantiques (type Semantle).</p>
-        <div style="margin-top:auto" class="row" justify="start"><button id="startSemantix" class="btn">Jouer</button></div>
-      </div>
-    </section>
 
-    <!-- QUIZ CHOIX -->
-    <section id="quiz" class="card" hidden>
-      <div class="progress"><div id="bar" style="width:0%"></div></div>
-      <p class="muted" id="qCounter" style="margin:8px 0 0"></p>
-      <article style="margin-top:12px">
-        <h2 id="qPrompt" style="margin:0 0 12px"></h2>
-        <img id="qImage" alt="illustration" style="display:none"/>
-        <div class="choices" id="choices"></div>
-        <div class="row">
-          <button id="finishBtn" class="btn outline">Terminer</button>
-          <button id="nextBtn" class="btn" disabled>Suivant</button>
-        </div>
-      </article>
-    </section>
+// ————————————————————————————————
+// MODE SÉMANTIX (mini — hors ligne)
+// ————————————————————————————————
+function trigs(s){ s=strip(s); const t=[]; for(let i=0;i<s.length-2;i++) t.push(s.slice(i,i+3)); return t; }
+function cos(a,b){ const ma=new Map(),mb=new Map(); a.forEach(x=>ma.set(x,(ma.get(x)||0)+1)); b.forEach(x=>mb.set(x,(mb.get(x)||0)+1)); let dot=0,na=0,nb=0; ma.forEach((va,k)=>{na+=va*va; if(mb.has(k)) dot+=va*mb.get(k)}); mb.forEach(vb=>nb+=vb*vb); return (na&&nb)? dot/Math.sqrt(na*nb):0; }
+let semTarget=null;
+function newSem(){ semTarget = SEM_CORPUS[Math.floor(Math.random()*SEM_CORPUS.length)]; semList.innerHTML=''; semHint.textContent='Mot secret choisi. Propose des mots.'; semInput.value=''; semInput.focus(); }
+function addGuess(v){ const g=v.trim(); if(!g) return; const s=cos(trigs(g), trigs(semTarget.word)); const li=document.createElement('li'); li.className='result-item'; li.innerHTML=`<div class="num ${s>0.5?'ok':'ko'}">${(s*100|0)}%</div><div><b>${g}</b><div class="muted">${s>0.75?'🔥 Très proche': s>0.5?'👍 Proche': s>0.3?'🟡 Moyen':'🧊 Loin'}</div></div>`; semList.prepend(li); if(strip(g)===strip(semTarget.word)) semHint.innerHTML=`✅ Bravo ! Mot : <b>${semTarget.word}</b>`; }
 
-    <!-- SÉMANTIX -->
-    <section id="semantix" class="card" hidden>
-      <h2 style="margin:0 0 8px">Sémantix végétal</h2>
-      <p class="muted" id="semHint">Un mot scientifique secret a été choisi. Tape des mots ; je t’indique la proximité.</p>
-      <div class="row" style="justify-content:flex-start;margin-top:8px">
-        <input id="semInput" class="choice" placeholder="Écris un mot (ex: chloroplaste) puis Entrée" />
-        <button id="semGiveUp" class="btn outline">Révéler</button>
-        <button id="semNew" class="btn">Nouveau mot</button>
-      </div>
-      <div style="margin-top:16px;overflow:auto">
-        <table class="table" id="semTable">
-          <thead>
-            <tr><th>#</th><th>Proposition</th><th>Proximité</th><th>Indice</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
 
-    <!-- RÉSULTATS -->
-    <section id="results" class="card" hidden>
-      <h2 style="margin:0">Résultats</h2>
-      <p id="scoreLine" style="font-size:18px;margin-top:6px"></p>
-      <div class="row" style="justify-content:flex-start">
-        <button id="homeBtn" class="btn outline">Retour à l’accueil</button>
-        <button id="retryBtn" class="btn">Rejouer</button>
-      </div>
-      <hr style="margin:16px 0"/>
-      <ol id="resultsList" class="results"></ol>
-    </section>
-  </main>
+// ————————————————————————————————
+// RÉSULTATS & NAVIGATION
+// ————————————————————————————————
+function showResults(){ const total=history.length, ok=history.filter(h=>h.ok).length, pct=Math.round(ok/Math.max(1,total)*100); const line=`Session : ${ok}/${total} (${pct}%) — Elo : ${Math.round(elo)} — Niveau : ${level}`; $('scoreLine').textContent=line; const list=$('resultsList'); list.innerHTML=''; history.forEach((h,i)=>{ const li=document.createElement('li'); li.className='result-item'; li.innerHTML=`<div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">${h.prompt}</div><div class="muted">Votre réponse : <b>${h.picked}</b></div><div class="muted">Bonne réponse : <b>${h.correctText}</b></div>${h.explanation?`<div style=\"margin-top:6px\">💡 ${h.explanation}</div>`:''}</div>`; list.appendChild(li); }); show(resultsSec); updateMeta(); }
 
-  <footer class="container" style="text-align:center;color:#777">
-    1 seul fichier. Déployable tel quel sur GitHub Pages.
-  </footer>
 
-  <script>
-    // ————————————————————————————————————————
-    // 0) OUTILS
-    // ————————————————————————————————————————
-    const $ = (id) => document.getElementById(id);
-    const sleep = (ms) => new Promise(r=>setTimeout(r,ms));
-    const stripAccents = (s)=> (s||'').toString().normalize('NFD').replace(/\p{Diacritic}/gu,'');
+function goHome(){ mode='Accueil'; updateMeta(); show(homeSec); }
+$('logo').addEventListener('click', goHome); $('homeBtn').addEventListener('click', goHome);
 
-    // n-gram similarity (3-gram cosine) + bonus catégories (simplifié)
-    function trigramSet(s){
-      s = stripAccents(s.toLowerCase());
-      const t=[]; for(let i=0;i<s.length-2;i++) t.push(s.slice(i,i+3));
-      return t;
-    }
-    function cosineSim(a,b){
-      const ma = new Map(); a.forEach(x=>ma.set(x,(ma.get(x)||0)+1));
-      const mb = new Map(); b.forEach(x=>mb.set(x,(mb.get(x)||0)+1));
-      let dot=0,na=0,nb=0; ma.forEach((va,k)=>{na+=va*va; if(mb.has(k)) dot+=va*mb.get(k)}); mb.forEach(vb=>nb+=vb*vb);
-      if(na===0||nb===0) return 0; return dot/Math.sqrt(na*nb);
-    }
 
-    // ————————————————————————————————————————
-    // 1) QUESTIONS (10 niveaux, 2 Q / niveau)
-    // ————————————————————————————————————————
-    const QUESTIONS = [
-      {id:'L1Q1', level:1, prompt:'Quelle partie réalise principalement la photosynthèse ?', choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}], explanation:'Les feuilles contiennent des chloroplastes riches en chlorophylle.'},
-      {id:'L1Q2', level:1, prompt:'La graine germe mieux avec…', choices:[{id:'a',text:'De l’eau',correct:true},{id:'b',text:'Du sel'},{id:'c',text:'Aucune eau'},{id:'d',text:'Uniquement de la lumière'}], explanation:"L'eau déclenche l'imbibition et la reprise du métabolisme."},
-      {id:'L2Q1', level:2, prompt:'Quel pigment vert capte la lumière ?', choices:[{id:'a',text:'Carotène'},{id:'b',text:'Chlorophylle',correct:true},{id:'c',text:'Anthocyane'},{id:'d',text:'Xanthophylle'}], explanation:'La chlorophylle a/b capte surtout le rouge et le bleu.'},
-      {id:'L2Q2', level:2, prompt:'Nom du tissu qui transporte la sève brute ?', choices:[{id:'a',text:'Phloème'},{id:'b',text:'Xylème',correct:true},{id:'c',text:'Épiderme'},{id:'d',text:'Périderme'}], explanation:'Le xylème transporte l’eau et minéraux des racines vers les feuilles.'},
-      {id:'L3Q1', level:3, prompt:'Quel élément est un macroélément essentiel ?', choices:[{id:'a',text:'Zinc'},{id:'b',text:'Azote',correct:true},{id:'c',text:'Bore'},{id:'d',text:'Cuivre'}], explanation:"Entrant majeur des acides aminés et chlorophylle."},
-      {id:'L3Q2', level:3, prompt:'Organe qui ancre la plante et absorbe l’eau ?', choices:[{id:'a',text:'Racine',correct:true},{id:'b',text:'Feuille'},{id:'c',text:'Fruit'},{id:'d',text:'Tige'}], explanation:'Système racinaire = ancrage + absorption.'},
-      {id:'L4Q1', level:4, prompt:'Le phloème transporte principalement…', choices:[{id:'a',text:'Eau et sels minéraux'},{id:'b',text:'Sucres élaborés',correct:true},{id:'c',text:'Oxygène'},{id:'d',text:'CO₂'}], explanation:'Des produits de la photosynthèse vers organes puits.'},
-      {id:'L4Q2', level:4, prompt:'Organe reproducteur mâle chez les fleurs ?', choices:[{id:'a',text:'Pistil'},{id:'b',text:'Étamine',correct:true},{id:'c',text:'Sépale'},{id:'d',text:'Pétale'}], explanation:'Étamine = filet + anthère (pollen).'},
-      {id:'L5Q1', level:5, prompt:'Où se situe le méristème apical racinaire ?', choices:[{id:'a',text:'Sous la coiffe',correct:true},{id:'b',text:"Dans l'épiderme"},{id:'c',text:'Dans le phloème'},{id:'d',text:"Au-dessus de l'endoderme"}], explanation:'Protégé mécaniquement par la coiffe.'},
-      {id:'L5Q2', level:5, prompt:'Quel gaz entre par les stomates ?', choices:[{id:'a',text:'CO₂',correct:true},{id:'b',text:'O₂ uniquement'},{id:'c',text:'N₂ uniquement'},{id:'d',text:'CH₄'}], explanation:'CO₂ fixé par le cycle de Calvin.'},
-      {id:'L6Q1', level:6, prompt:'Nom du faisceau conducteur bois + liber ?', choices:[{id:'a',text:'Faisceau vasculaire',correct:true},{id:'b',text:'Faisceau cortical'},{id:'c',text:'Péricycle'},{id:'d',text:'Parenchyme'}], explanation:'Xylème (bois) + phloème (liber).'},
-      {id:'L6Q2', level:6, prompt:'Le phototropisme est une croissance…', choices:[{id:'a',text:'Vers la lumière',correct:true},{id:'b',text:'Vers la gravité'},{id:'c',text:'Contre le vent'},{id:'d',text:'Au hasard'}], explanation:"Contrôlé par l'auxine et gradients lumineux."},
-      {id:'L7Q1', level:7, prompt:'La double fécondation produit zygote et…', choices:[{id:'a',text:'Albumen (endosperme)',correct:true},{id:'b',text:'Sépales'},{id:'c',text:'Péricarpe'},{id:'d',text:'Rachis'}], explanation:'Caractéristique des Angiospermes.'},
-      {id:'L7Q2', level:7, prompt:'La cuticule foliaire limite surtout…', choices:[{id:'a',text:'La transpiration',correct:true},{id:'b',text:'La photosynthèse'},{id:'c',text:'La respiration'},{id:'d',text:'La floraison'}], explanation:'Barrière hydrophobe (cutine + cire).'},
-      {id:'L8Q1', level:8, prompt:'Transport actif des sucres dans le phloème utilise surtout…', choices:[{id:'a',text:'Pompes H⁺-saccharose (symport)',correct:true},{id:'b',text:'Diffusion simple'},{id:'c',text:'Canaux K⁺'},{id:'d',text:'Aquaporines'}], explanation:'Chargement apoplasmique couplé au gradient de protons.'},
-      {id:'L8Q2', level:8, prompt:'La zone de Caspary se trouve dans…', choices:[{id:'a',text:'L’endoderme',correct:true},{id:'b',text:'Le péricycle'},{id:'c',text:'Le collenchyme'},{id:'d',text:'Le xylème'}], explanation:'Bande subérisée imperméable de l’endoderme racinaire.'},
-      {id:'L9Q1', level:9, prompt:'Hormone clé de la fermeture stomatique en stress hydrique ?', choices:[{id:'a',text:'IAA'},{id:'b',text:'GA'},{id:'c',text:'ABA',correct:true},{id:'d',text:'CK'}], explanation:"ABA induit la sortie d'ions → fermeture."},
-      {id:'L9Q2', level:9, prompt:'La photorespiration implique principalement…', choices:[{id:'a',text:'Chloroplaste, peroxysome, mitochondrie',correct:true},{id:'b',text:'Noyau et vacuole'},{id:'c',text:'Golgi'},{id:'d',text:'Réticulum lisse'}], explanation:'Voie métabolique quand Rubisco fixe O₂.'},
-      {id:'L10Q1', level:10, prompt:'Voie de biosynthèse des isoprénoïdes plastidiques ?', choices:[{id:'a',text:'MVA cytosolique'},{id:'b',text:'MEP plastidiale',correct:true},{id:'c',text:'Shikimate'},{id:'d',text:'Glyoxylate'}], explanation:'MEP (DOXP) dans les plastes; MVA dans le cytosol.'},
-      {id:'L10Q2', level:10, prompt:'En C4, l’enzyme primaire de fixation du CO₂ est…', choices:[{id:'a',text:'Rubisco'},{id:'b',text:'PEPC',correct:true},{id:'c',text:'Nitrate réductase'},{id:'d',text:'Malate déshydrogénase'}], explanation:'La Rubisco agit ensuite dans les cellules de gaine périvasculaire.'},
-    ];
+// Normal
+startNormalBtn.addEventListener('click', ()=>{ resetSession(); mode='Normal'; updateMeta(); show(quizSec); renderChoiceQuestion(); });
+nextBtn.addEventListener('click', ()=>{ if(!currentQ) return; const pickedId=nextBtn.dataset.picked; const correct=(currentQ.choices||[]).find(c=>c.correct); const ok= pickedId && correct && pickedId===correct.id; if(ok){points++;} applyElo(!!ok, currentQ.level); history.push({id:currentQ.id, ok, level:currentQ.level||5, prompt:currentQ.prompt, picked:(currentQ.choices||[]).find(c=>c.id===pickedId)?.text||'—', correctText:correct?.text||'', explanation: currentQ.explanation||''}); renderChoiceQuestion(); });
+finishBtn.addEventListener('click', showResults);
 
-    // ————————————————————————————————————————
-    // 2) SÉMANTIX — mini-corpus hors ligne (démo)
-    //  - Chaque entrée: {word, cats[], hints[]}
-    //  - Similarité = trigram cosine + bonus catégories partagées
-    // ————————————————————————————————————————
-    const SEM_CORPUS = [
-      {word:'chloroplaste', cats:['physiologie','organite','photosynthese'], hints:['organite vert','contient chlorophylle','site du cycle de Calvin']},
-      {word:'xyleme', cats:['anatomie','conducteur'], hints:['bois','conduit seve brute','trachéides et vaisseaux']},
-      {word:'phloeme', cats:['anatomie','conducteur'], hints:['liber','transporte sucres','tubes criblés']},
-      {word:'stomate', cats:['anatomie','echange','feuille'], hints:['ostiole','cellules de garde','gaz et transpiration']},
-      {word:'auxine', cats:['hormone','croissance'], hints:['IAA','elongation','phototropisme']},
-      {word:'rubisco', cats:['enzyme','carboxylation'], hints:['cycle de Calvin','fixation du CO₂','photorespiration']},
-      {word:'endoderme', cats:['anatomie','racine'], hints:['bande de Caspary','barrière apoplastique','régule flux']},
-      {word:'cuticule', cats:['anatomie','feuille'], hints:['cire','limite transpiration','épiderme']},
-      {word:'ABA', cats:['hormone','stress'], hints:['fermeture stomatique','secheresse','abscission']},
-      {word:'MEP', cats:['voie','metabolisme'], hints:['isoprénoïdes','plastidiale','DOXP']},
-    ];
 
-    // ————————————————————————————————————————
-    // 3) PERSISTANCE & CONSTANTES
-    // ————————————————————————————————————————
-    const LS = { elo:'pq_elo', level:'pq_level', missed:'pq_missed' };
-    const DEFAULT_ELO = 1000, DEFAULT_LEVEL = 1, MAX_LEVEL = 10, K = 24;
-    const levelToRating = (lvl)=> 800 + (lvl-1)*70; // 1:800 … 10:1430
-    const loadNumber = (k,d)=>{ const v = Number(localStorage.getItem(k)); return Number.isFinite(v)&&v>0? v:d; };
-    const saveNumber = (k,v)=> localStorage.setItem(k,String(Math.round(v)));
-    const loadMissed = ()=> { try{return JSON.parse(localStorage.getItem(LS.missed)||'[]');}catch{return[]} };
-    const saveMissed = (arr)=> localStorage.setItem(LS.missed, JSON.stringify([...new Set(arr)]));
+// Révision
+startRevisionBtn.addEventListener('click', ()=>{ mode='Révision'; updateMeta(); fillMasters(); show(revSelectSec); });
+selMaster.addEventListener('change', fillSemesters); selSem.addEventListener('change', fillUELists);
+revBack.addEventListener('click', goHome);
+revLaunch.addEventListener('click', ()=>{ const SET=buildRevisionSet(); if(!SET.length) return; const saved=QUESTIONS; resetSession(); QUESTIONS=SET; show(quizSec); renderChoiceQuestion(); finishBtn.onclick=()=>{ showResults(); QUESTIONS=saved; }; nextBtn.onclick=()=>{ if(!currentQ) return; const pickedId=nextBtn.dataset.picked; const correct=(currentQ.choices||[]).find(c=>c.correct); const ok= pickedId && correct && pickedId===correct.id; if(ok){points++;} history.push({id:currentQ.id, ok, level:currentQ.level||5, prompt:currentQ.prompt, picked:(currentQ.choices||[]).find(c=>c.id===pickedId)?.text||'—', correctText:correct?.text||'', explanation: currentQ.explanation||''}); renderChoiceQuestion(); }; });
 
-    // ————————————————————————————————————————
-    // 4) ÉTAT GLOBAL + DOM
-    // ————————————————————————————————————————
-    let mode='Accueil', elo=loadNumber(LS.elo,DEFAULT_ELO), level=Math.min(Math.max(loadNumber(LS.level,DEFAULT_LEVEL),1),MAX_LEVEL), points=0, qpos=0;
-    let currentQ=null, history=[];
 
-    const logo=$('logo');
-    const modePill=$('modePill'), levelPill=$('levelPill'), eloPill=$('eloPill'), pointsPill=$('pointsPill'), qposPill=$('qposPill');
-    const homeSec=$('home'), quizSec=$('quiz'), semSec=$('semantix'), resultsSec=$('results');
-    const startNormalBtn=$('startNormal'), startRevisionBtn=$('startRevision'), startSemBtn=$('startSemantix');
-    const bar=$('bar'), qCounter=$('qCounter'), qPrompt=$('qPrompt'), qImage=$('qImage'), choicesBox=$('choices'), nextBtn=$('nextBtn'), finishBtn=$('finishBtn');
-    const scoreLine=$('scoreLine'), resultsList=$('resultsList'), retryBtn=$('retryBtn'), homeBtn=$('homeBtn');
+// Sémantix
+startSemBtn.addEventListener('click', ()=>{ mode='Sémantix'; updateMeta(); newSem(); show(semSec); });
+semInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ addGuess(semInput.value); semInput.value=''; }});
+semGiveUp.addEventListener('click', ()=>{ semHint.innerHTML=`🔎 Réponse : <b>${semTarget.word}</b>`; });
+semNew.addEventListener('click', newSem);
 
-    // Sémantix DOM
-    const semInput=$('semInput'), semTable=$('semTable').querySelector('tbody'), semHint=$('semHint'), semGiveUp=$('semGiveUp'), semNew=$('semNew');
-    let semTarget=null, semGuesses=[]; // {guess,score,hotness,hint}
 
-    // ————————————————————————————————————————
-    // 5) UTILITAIRES DE QUIZ
-    // ————————————————————————————————————————
-    function updateMeta(){ modePill.textContent=mode; levelPill.textContent=level; eloPill.textContent=Math.round(elo); pointsPill.textContent=points; qposPill.textContent=qpos; saveNumber(LS.elo,elo); saveNumber(LS.level,level); }
-    function expectedScore(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
-    function applyElo(isWin, qLevel){ const opp=levelToRating(qLevel); const exp=expectedScore(elo,opp); elo = elo + K*((isWin?1:0)-exp); level = Math.min(MAX_LEVEL, Math.max(1, Math.round((elo-800)/70 + 1))); }
-    function show(section){ homeSec.hidden=true; quizSec.hidden=true; semSec.hidden=true; resultsSec.hidden=true; section.hidden=false; }
-    function resetSession(){ points=0; qpos=0; history=[]; updateMeta(); }
-    function pickQuestionForLevel(lvl){ const pool=QUESTIONS.filter(q=>Math.abs(q.level-lvl)<=1); return (pool.length? pool:QUESTIONS)[Math.floor(Math.random()*(pool.length?pool.length:QUESTIONS.length))]; }
-    function pickMissedQuestion(){ const missed=loadMissed(); const pool=QUESTIONS.filter(q=>missed.includes(q.id)); if(pool.length===0) return null; return pool[Math.floor(Math.random()*pool.length)]; }
-    function recordMiss(id){ const a=loadMissed(); a.push(id); saveMissed(a); }
-    function clearMissIfOk(id){ const a=loadMissed().filter(x=>x!==id); saveMissed(a); }
+// DEMO FALLBACKS si /data/ absent
+const DEMO_QUESTIONS=[{id:'L1Q1',level:1,prompt:'Quelle partie réalise la photosynthèse ?',choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}],explanation:'Les feuilles contiennent des chloroplastes.'}];
+const DEMO_SEMANTIX=[{word:'chloroplaste'},{word:'xyleme'},{word:'phloeme'}];
+const DEMO_REV_INDEX={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'S7',core:[{id:'biostat_R',label:'Biostatistiques avec R'}],options:[{id:'opt_demo',label:'Option démo'}]}]}]};
 
-    // ————————————————————————————————————————
-    // 6) MODE CHOIX (NORMAL / RÉVISION)
-    // ————————————————————————————————————————
-    function renderChoiceQuestion(){
-      qpos++; updateMeta();
-      bar.style.width = `${Math.min(100,(qpos%10)*10)}%`;
-      qCounter.textContent = `Question ${qpos}`;
-      currentQ = (mode==='Révision') ? pickMissedQuestion() : pickQuestionForLevel(level);
-      if(!currentQ){ showResults(); return; }
-      qPrompt.textContent=currentQ.prompt; if(currentQ.imageUrl){qImage.src=currentQ.imageUrl; qImage.style.display='block';} else {qImage.style.display='none';}
-      choicesBox.innerHTML='';
-      (currentQ.choices||[]).forEach(c=>{ const btn=document.createElement('button'); btn.className='choice'; btn.textContent=c.text; btn.addEventListener('click',()=>{ Array.from(choicesBox.children).forEach(el=>el.classList.remove('selected')); btn.classList.add('selected'); nextBtn.disabled=false; nextBtn.dataset.picked=c.id; }); choicesBox.appendChild(btn); });
-      nextBtn.disabled=true;
-    }
-    function handleNextChoice(){ if(!currentQ) return; const pickedId=nextBtn.dataset.picked; const correct=(currentQ.choices||[]).find(c=>c.correct); const ok= pickedId && correct && pickedId===correct.id; if(ok){points++; clearMissIfOk(currentQ.id);} else {recordMiss(currentQ.id);} if(mode==='Normal') applyElo(!!ok,currentQ.level); history.push({id:currentQ.id, ok, level:currentQ.level, prompt:currentQ.prompt, picked:(currentQ.choices||[]).find(c=>c.id===pickedId)?.text||'—', correctText:correct?.text||'', explanation: currentQ.explanation||''}); renderChoiceQuestion(); }
 
-    // ————————————————————————————————————————
-    // 7) SÉMANTIX (offline, trigram + catégories)
-    // ————————————————————————————————————————
-    function newSemTarget(){ semTarget = SEM_CORPUS[Math.floor(Math.random()*SEM_CORPUS.length)]; semGuesses=[]; semTable.innerHTML=''; semHint.textContent='Un mot scientifique secret a été choisi. Tape des mots ; je t’indique la proximité.'; semInput.value=''; semInput.focus(); }
-    function semScore(guess){
-      const g=stripAccents(guess.trim().toLowerCase()); if(!g) return 0;
-      const s1=cosineSim(trigramSet(g), trigramSet(semTarget.word.toLowerCase()));
-      const cats=semTarget.cats||[]; let bonus=0; // mini bonus si le mot contient une catégorie
-      cats.forEach(c=>{ if(g.includes(c)) bonus+=0.05; });
-      return Math.min(1, s1+bonus);
-    }
-    function addSemGuess(guess){
-      const score=semScore(guess);
-      const prev = semGuesses.length? semGuesses[semGuesses.length-1].score : null;
-      const hotness = prev===null? '' : (score>prev? 'plus chaud' : (score<prev? 'plus froid' : 'stable'));
-      const hint = score>0.75? '🔥 Très proche' : score>0.5? '👍 Proche' : score>0.3? '🟡 Moyen' : '🧊 Loin';
-      semGuesses.push({guess,score,hotness,hint});
-      const tr=document.createElement('tr');
-      tr.innerHTML = `<td>${semGuesses.length}</td><td>${guess}</td><td>${(score*100|0)}%</td><td class="${score>0.5?'hot':'cold'}">${hotness||hint}</td>`;
-      semTable.prepend(tr);
-      if(stripAccents(guess.toLowerCase())===stripAccents(semTarget.word.toLowerCase())){
-        semHint.innerHTML = `✅ Bravo ! Le mot était <b>${semTarget.word}</b>. Indices : ${semTarget.hints.join(' · ')}`;
-      }
-    }
-
-    // ————————————————————————————————————————
-    // 8) RÉSULTATS
-    // ————————————————————————————————————————
-    function showResults(){ const total=history.length; const ok=history.filter(h=>h.ok).length; const pct=Math.round(ok/Math.max(1,total)*100); scoreLine.textContent=`Session : ${ok}/${total} (${pct}%) — Elo : ${Math.round(elo)} — Niveau : ${level}`; resultsList.innerHTML=''; history.forEach((h,i)=>{ const li=document.createElement('li'); li.className='result-item'; li.innerHTML=`<div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">[Niv ${h.level}] ${h.prompt}</div><div class="muted">Votre réponse : <b>${h.picked}</b></div><div class="muted">Bonne réponse : <b>${h.correctText}</b></div>${h.explanation?`<div style="margin-top:6px">💡 ${h.explanation}</div>`:''}</div>`; resultsList.appendChild(li); }); show(resultsSec); updateMeta(); }
-
-    // ————————————————————————————————————————
-    // 9) NAVIGATION
-    // ————————————————————————————————————————
-    function showSec(section){ show(section); }
-    function goHome(){ mode='Accueil'; updateMeta(); show(homeSec); }
-    logo.addEventListener('click', goHome);
-    $('homeBtn').addEventListener('click', goHome);
-
-    $('finishBtn').addEventListener('click', showResults);
-    $('retryBtn').addEventListener('click', ()=>{ if(mode==='Normal' || mode==='Révision'){ resetSession(); show(quizSec); renderChoiceQuestion(); } else { newSemTarget(); show(semSec); } });
-
-    $('startNormal').addEventListener('click', ()=>{ resetSession(); mode='Normal'; updateMeta(); show(quizSec); renderChoiceQuestion(); });
-    $('startRevision').addEventListener('click', ()=>{ resetSession(); mode='Révision'; updateMeta(); show(quizSec); renderChoiceQuestion(); });
-
-    // Semantix events
-    $('startSemantix').addEventListener('click', ()=>{ mode='Sémantix'; updateMeta(); newSemTarget(); show(semSec); });
-    semInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ const v=semInput.value.trim(); if(v){ addSemGuess(v); semInput.value=''; } }});
-    semGiveUp.addEventListener('click', ()=>{ semHint.innerHTML = `🔎 Réponse : <b>${semTarget.word}</b> — Indices : ${semTarget.hints.join(' · ')}`; });
-    semNew.addEventListener('click', ()=>{ newSemTarget(); });
-
-    // init
-    updateMeta();
-  </script>
+// init
+initData(); updateMeta();
+</script>
 </body>
 </html>
