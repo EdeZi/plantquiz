@@ -3,54 +3,78 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Plant’Quiz — niveaux & Elo</title>
+  <title>Plant’Quiz — 3 modes, 10 niveaux, Elo</title>
   <style>
     :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
-    header{position:sticky;top:0;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
-    nav{display:flex;gap:12px;align-items:center;max-width:960px;margin:0 auto;padding:12px 24px}
-    .brand{font-size:20px;font-weight:700}
+    *{box-sizing:border-box}
+    :focus-visible{outline:3px solid #11133b;outline-offset:2px}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+    header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
+    nav{display:flex;gap:12px;align-items:center;max-width:1080px;margin:0 auto;padding:12px 24px}
+    .brand{font-size:20px;font-weight:800;cursor:pointer}
     .meta{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
     .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
-    .container{max-width:960px;margin:0 auto;padding:24px}
+    .container{max-width:1080px;margin:0 auto;padding:24px}
+    .grid{display:grid;gap:14px}
+    .grid3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
     .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
+    .btn{appearance:none;border:0;border-radius:999px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+    .btn[disabled]{background:#9ca3af;cursor:not-allowed}
+    .btn.outline{background:#fff;color:#111;border:1px solid #e5e7eb}
+    .muted{color:var(--muted)}
     .progress{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden}
     .progress>div{height:100%;background:var(--brand)}
     .choices{display:grid;gap:10px;margin-top:12px}
-    .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;cursor:pointer}
+    .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer}
     .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
     .choice.selected{outline:3px solid var(--brand);border-color:var(--brand)}
     .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
-    button{appearance:none;border:0;border-radius:999px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
-    button[disabled]{background:#9ca3af;cursor:not-allowed}
-    .muted{color:var(--muted)}
     ol.results{display:grid;gap:12px;padding-left:0;list-style:none}
     .result-item{display:flex;gap:12px}
-    .num{width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    .num{min-width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
     .num.ok{background:var(--ok)} .num.ko{background:var(--ko)}
     img{max-height:260px;width:100%;object-fit:cover;border-radius:12px}
+    .modeCard{display:flex;flex-direction:column;height:100%}
+    .modeCard h3{margin:0 0 6px}
+    .modeCard p{margin:0 0 14px}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#f1f5f9;border:1px solid #e2e8f0;border-bottom-width:3px;padding:.1rem .4rem;border-radius:.4rem}
   </style>
 </head>
 <body>
   <header>
     <nav>
-      <div class="brand">🌿 Plant’Quiz</div>
+      <div id="logo" class="brand">🌿 Plant’Quiz</div>
       <div class="meta">
+        <div class="pill">Mode : <b id="modePill">Accueil</b></div>
         <div class="pill">Niveau : <b id="levelPill">1</b></div>
         <div class="pill">Elo : <b id="eloPill">1000</b></div>
         <div class="pill">Points : <b id="pointsPill">0</b></div>
-        <div class="pill">Q: <b id="qposPill">0</b></div>
+        <div class="pill">Q : <b id="qposPill">0</b></div>
       </div>
     </nav>
   </header>
 
   <main class="container">
-    <section id="intro" class="card">
-      <h1 style="margin:0 0 8px">Quiz plantes — simple & progressif</h1>
-      <p class="muted">Fonctionne dans un seul fichier. Elo et niveaux automatiques, sans comptes.</p>
-      <div class="row" style="justify-content:flex-start"><button id="startBtn">Commencer</button></div>
+    <!-- ACCUEIL -->
+    <section id="home" class="grid grid3">
+      <div class="card modeCard">
+        <h3>Quiz normal</h3>
+        <p class="muted">Flux infini. Difficulté adaptative (Elo) sur 10 niveaux.</p>
+        <div style="margin-top:auto" class="row" justify="start"><button id="startNormal" class="btn">Commencer</button></div>
+      </div>
+      <div class="card modeCard">
+        <h3>Quiz révision</h3>
+        <p class="muted">S’entraîner uniquement sur les questions ratées. Pas d’impact sur l’Elo.</p>
+        <div style="margin-top:auto" class="row" justify="start"><button id="startRevision" class="btn">Réviser</button></div>
+      </div>
+      <div class="card modeCard">
+        <h3>Texte à trous</h3>
+        <p class="muted">Réponds au clavier. Tolérant à la casse/accents. Appuie sur <span class="kbd">Entrée</span>.</p>
+        <div style="margin-top:auto" class="row" justify="start"><button id="startFill" class="btn">S’entraîner</button></div>
+      </div>
     </section>
 
+    <!-- QUIZ CHOIX -->
     <section id="quiz" class="card" hidden>
       <div class="progress"><div id="bar" style="width:0%"></div></div>
       <p class="muted" id="qCounter" style="margin:8px 0 0"></p>
@@ -58,203 +82,363 @@
         <h2 id="qPrompt" style="margin:0 0 12px"></h2>
         <img id="qImage" alt="illustration" style="display:none"/>
         <div class="choices" id="choices"></div>
-        <div class="row"><button id="nextBtn" disabled>Suivant</button></div>
+        <div class="row">
+          <button id="finishBtn" class="btn outline">Terminer</button>
+          <button id="nextBtn" class="btn" disabled>Suivant</button>
+        </div>
       </article>
     </section>
 
+    <!-- QUIZ TEXTE A TROUS -->
+    <section id="fill" class="card" hidden>
+      <div class="progress"><div id="barFill" style="width:0%"></div></div>
+      <p class="muted" id="qCounterFill" style="margin:8px 0 0"></p>
+      <article style="margin-top:12px">
+        <h2 id="qPromptFill" style="margin:0 0 12px"></h2>
+        <input id="answerInput" class="choice" placeholder="Écris ta réponse puis Entrée" />
+        <div class="row">
+          <button id="finishBtnFill" class="btn outline">Terminer</button>
+          <button id="nextBtnFill" class="btn" disabled>Suivant</button>
+        </div>
+      </article>
+    </section>
+
+    <!-- RÉSULTATS -->
     <section id="results" class="card" hidden>
       <h2 style="margin:0">Résultats</h2>
       <p id="scoreLine" style="font-size:18px;margin-top:6px"></p>
-      <div class="row" style="justify-content:flex-start"><button id="retryBtn">Rejouer</button></div>
+      <div class="row" style="justify-content:flex-start">
+        <button id="homeBtn" class="btn outline">Retour à l’accueil</button>
+        <button id="retryBtn" class="btn">Rejouer</button>
+      </div>
       <hr style="margin:16px 0"/>
       <ol id="resultsList" class="results"></ol>
     </section>
   </main>
 
+  <footer class="container" style="text-align:center;color:#777">
+    1 seul fichier. Déployable tel quel sur GitHub Pages.
+  </footer>
+
   <script>
-    // ————————————————————————————
-    // 1) QUESTIONS (ajoutez ici). difficulty: 'facile' | 'moyen' | 'difficile'
-    // ————————————————————————————
+    // ————————————————————————————————————————
+    // 0) OUTILS
+    // ————————————————————————————————————————
+    const $ = (id) => document.getElementById(id);
+    const sleep = (ms) => new Promise(r=>setTimeout(r,ms));
+
+    function stripAccents(s){
+      return (s||'').toString().normalize('NFD').replace(/\p{Diacritic}/gu,'');
+    }
+
+    // ————————————————————————————————————————
+    // 1) BANQUE DE QUESTIONS (10 niveaux, 2 Q / niveau)
+    //  - QCM ET Réponse libre (textAnswer / synonyms)
+    // ————————————————————————————————————————
+    /**
+     * Question: {
+     *  id, level:1..10, prompt, explanation?, imageUrl?,
+     *  choices?: [{id,text,correct?}],
+     *  textAnswer?: 'string', synonyms?: ['str','str']
+     * }
+     */
     const QUESTIONS = [
-      { id:'q1', difficulty:'facile', prompt:'Quelle partie fait la photosynthèse ?', choices:[
-        {id:'a', text:'Racines'}, {id:'b', text:'Feuilles', correct:true}, {id:'c', text:'Fleurs'}, {id:'d', text:'Graines'}
-      ], explanation:"Les feuilles via les chloroplastes." },
-      { id:'q2', difficulty:'moyen', prompt:'Quel tissu transporte la sève élaborée ?', choices:[
-        {id:'a', text:'Xylème'}, {id:'b', text:'Phloème', correct:true}, {id:'c', text:'Périderme'}, {id:'d', text:'Cambium'}
-      ], explanation:"Le phloème distribue les sucres." },
-      { id:'q3', difficulty:'facile', prompt:'Lequel est un macroélément essentiel ?', choices:[
-        {id:'a', text:'Bore'}, {id:'b', text:'Molybdène'}, {id:'c', text:'Azote', correct:true}, {id:'d', text:'Zinc'}
-      ], explanation:"L'azote est requis en grande quantité." },
-      { id:'q4', difficulty:'difficile', prompt:"Où se situe le méristème apical racinaire ?", choices:[
-        {id:'a', text:"Sous la coiffe", correct:true}, {id:'b', text:"Au-dessus de l'endoderme"}, {id:'c', text:"Dans l'épiderme"}, {id:'d', text:"Dans le phloème"}
-      ], explanation:"Protégé par la coiffe." },
+      // — Niveau 1 —
+      {id:'L1Q1', level:1, prompt:'Quelle partie réalise principalement la photosynthèse ?', choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}], textAnswer:'feuilles', synonyms:['feuille'], explanation:'Les feuilles contiennent des chloroplastes riches en chlorophylle.'},
+      {id:'L1Q2', level:1, prompt:'La graine germe mieux avec…', choices:[{id:'a',text:'De l’eau',correct:true},{id:'b',text:'Du sel'},{id:'c',text:'Aucune eau'},{id:'d',text:'Uniquement de la lumière'}], textAnswer:'eau', synonyms:['de l eau','l eau'], explanation:"L'eau déclenche l'imbibition et la reprise du métabolisme."},
+
+      // — Niveau 2 —
+      {id:'L2Q1', level:2, prompt:'Quel pigment vert capte la lumière ?', choices:[{id:'a',text:'Carotène'},{id:'b',text:'Chlorophylle',correct:true},{id:'c',text:'Anthocyane'},{id:'d',text:'Xanthophylle'}], textAnswer:'chlorophylle', synonyms:[], explanation:'La chlorophylle a/b capte surtout le rouge et le bleu.'},
+      {id:'L2Q2', level:2, prompt:'Nom du tissu qui transporte la sève brute ?', choices:[{id:'a',text:'Phloème'},{id:'b',text:'Xylème',correct:true},{id:'c',text:'Épiderme'},{id:'d',text:'Périderme'}], textAnswer:'xyleme', synonyms:['xylème'], explanation:'Le xylème transporte l’eau et minéraux des racines vers les feuilles.'},
+
+      // — Niveau 3 —
+      {id:'L3Q1', level:3, prompt:'Quel élément est un macroélément essentiel ?', choices:[{id:'a',text:'Zinc'},{id:'b',text:'Azote',correct:true},{id:'c',text:'Bore'},{id:'d',text:'Cuivre'}], textAnswer:'azote', synonyms:['n'], explanation:"Entrant majeur des acides aminés et chlorophylle."},
+      {id:'L3Q2', level:3, prompt:'Organe qui ancre la plante et absorbe l’eau ?', choices:[{id:'a',text:'Racine',correct:true},{id:'b',text:'Feuille'},{id:'c',text:'Fruit'},{id:'d',text:'Tige'}], textAnswer:'racine', synonyms:['racines'], explanation:'Système racinaire = ancrage + absorption.'},
+
+      // — Niveau 4 —
+      {id:'L4Q1', level:4, prompt:'Le phloème transporte principalement…', choices:[{id:'a',text:'Eau et sels minéraux'},{id:'b',text:'Sucres élaborés',correct:true},{id:'c',text:'Oxygène'},{id:'d',text:'CO₂'}], textAnswer:'sucres', synonyms:['sucre','seve elaboree','sève élaborée'], explanation:'Des produits de la photosynthèse vers organes puits.'},
+      {id:'L4Q2', level:4, prompt:'Organe reproducteur mâle chez les fleurs ?', choices:[{id:'a',text:'Pistil'},{id:'b',text:'Étamine',correct:true},{id:'c',text:'Sépale'},{id:'d',text:'Pétale'}], textAnswer:'etamine', synonyms:['étamine','etamines','étamines'], explanation:'Étamine = filet + anthère (pollen).'},
+
+      // — Niveau 5 —
+      {id:'L5Q1', level:5, prompt:'Où se situe le méristème apical racinaire ?', choices:[{id:'a',text:'Sous la coiffe',correct:true},{id:'b',text:"Dans l'épiderme"},{id:'c',text:'Dans le phloème'},{id:'d',text:"Au-dessus de l'endoderme"}], textAnswer:'sous la coiffe', synonyms:['coiffe'], explanation:'Protégé mécaniquement par la coiffe.'},
+      {id:'L5Q2', level:5, prompt:'Quel gaz entre par les stomates ?', choices:[{id:'a',text:'CO₂',correct:true},{id:'b',text:'O₂ uniquement'},{id:'c',text:'N₂ uniquement'},{id:'d',text:'CH₄'}], textAnswer:'co2', synonyms:['dioxyde de carbone','carbone'], explanation:'CO₂ fixé par le cycle de Calvin.'},
+
+      // — Niveau 6 —
+      {id:'L6Q1', level:6, prompt:'Nom du faisceau conducteur bois + liber ?', choices:[{id:'a',text:'Faisceau vasculaire',correct:true},{id:'b',text:'Faisceau cortical'},{id:'c',text:'Péricycle'},{id:'d',text:'Parenchyme'}], textAnswer:'faisceau vasculaire', synonyms:['faisceaux vasculaires'], explanation:'Xylème (bois) + phloème (liber).'},
+      {id:'L6Q2', level:6, prompt:'Le phototropisme est une croissance…', choices:[{id:'a',text:'Vers la lumière',correct:true},{id:'b',text:'Vers la gravité'},{id:'c',text:'Contre le vent'},{id:'d',text:'Au hasard'}], textAnswer:'vers la lumiere', synonyms:['lumiere','lumière'], explanation:"Contrôlé par l'auxine et gradients lumineux."},
+
+      // — Niveau 7 —
+      {id:'L7Q1', level:7, prompt:'La double fécondation produit zygote et…', choices:[{id:'a',text:'Albumen (endosperme)',correct:true},{id:'b',text:'Sépales'},{id:'c',text:'Péricarpe'},{id:'d',text:'Rachis'}], textAnswer:'endosperme', synonyms:['albumen'], explanation:'Caractéristique des Angiospermes.'},
+      {id:'L7Q2', level:7, prompt:'La cuticule foliaire limite surtout…', choices:[{id:'a',text:'La transpiration',correct:true},{id:'b',text:'La photosynthèse'},{id:'c',text:'La respiration'},{id:'d',text:'La floraison'}], textAnswer:'transpiration', synonyms:['perte en eau','pertes en eau'], explanation:'Barrière hydrophobe (cutine + cire).'},
+
+      // — Niveau 8 —
+      {id:'L8Q1', level:8, prompt:'Transport actif des sucres dans le phloème utilise surtout…', choices:[{id:'a',text:'Pompes H⁺-saccharose (symport)',correct:true},{id:'b',text:'Diffusion simple'},{id:'c',text:'Canaux K⁺'},{id:'d',text:'Aquaporines'}], textAnswer:'symport h+', synonyms:['pompe proton','pompe a protons','h+ saccharose'], explanation:'Chargement apoplasmique couplé au gradient de protons.'},
+      {id:'L8Q2', level:8, prompt:'La zone de Caspary se trouve dans…', choices:[{id:'a',text:'L’endoderme',correct:true},{id:'b',text:'Le péricycle'},{id:'c',text:'Le collenchyme'},{id:'d',text:'Le xylème'}], textAnswer:'endoderme', synonyms:[], explanation:'Bande subérisée imperméable de l’endoderme racinaire.'},
+
+      // — Niveau 9 —
+      {id:'L9Q1', level:9, prompt:'Hormone clé de la fermeture stomatique en stress hydrique ?', choices:[{id:'a',text:'IAA'},{id:'b',text:'GA'},{id:'c',text:'ABA',correct:true},{id:'d',text:'CK'}], textAnswer:'aba', synonyms:['acide abscissique'], explanation:"ABA induit la sortie d'ions → fermeture."},
+      {id:'L9Q2', level:9, prompt:'La photorespiration implique principalement…', choices:[{id:'a',text:'Chloroplaste, peroxysome, mitochondrie',correct:true},{id:'b',text:'Noyau et vacuole'},{id:'c',text:'Golgi'},{id:'d',text:'Réticulum lisse'}], textAnswer:'chloroplaste peroxysome mitochondrie', synonyms:['chloroplastes peroxysomes mitochondries'], explanation:'Voie métabolique quand Rubisco fixe O₂.'},
+
+      // — Niveau 10 —
+      {id:'L10Q1', level:10, prompt:'Voie de biosynthèse des isoprénoïdes plastidiques ?', choices:[{id:'a',text:'MVA cytosolique'},{id:'b',text:'MEP plastidiale',correct:true},{id:'c',text:'Shikimate'},{id:'d',text:'Glyoxylate'}], textAnswer:'mep', synonyms:['voie mep','dopexylulose','2-c-methyl-d-erythritol'], explanation:'MEP (DOXP) dans les plastes; MVA dans le cytosol.'},
+      {id:'L10Q2', level:10, prompt:'En C4, l’enzyme primaire de fixation du CO₂ est…', choices:[{id:'a',text:'Rubisco'},{id:'b',text:'PEPC',correct:true},{id:'c',text:'Nitrate réductase'},{id:'d',text:'Malate déshydrogénase'}], textAnswer:'pepc', synonyms:['phosphoenolpyruvate carboxylase','pep carboxylase'], explanation:'La Rubisco agit ensuite dans les cellules de gaine périvasculaire.'},
     ];
 
-    // Map difficulté -> rating pour le calcul Elo (réglages simples)
-    const DIFF_RATING = { facile: 900, moyen: 1000, difficile: 1100 };
+    // ————————————————————————————————————————
+    // 2) PERSISTANCE & CONSTANTES
+    // ————————————————————————————————————————
+    const LS = {
+      elo:'pq_elo', level:'pq_level', missed:'pq_missed' // missed: string[] question ids
+    };
 
-    // ————————————————————————————
-    // 2) ÉTAT
-    // ————————————————————————————
-    const $ = id => document.getElementById(id);
-    const intro = $('intro');
-    const quiz = $('quiz');
-    const results = $('results');
-    const startBtn = $('startBtn');
-    const nextBtn = $('nextBtn');
-    const retryBtn = $('retryBtn');
+    const DEFAULT_ELO = 1000;
+    const DEFAULT_LEVEL = 1;
+    const MAX_LEVEL = 10;
+    const K = 24; // facteur Elo
 
-    const qPrompt = $('qPrompt');
-    const qCounter = $('qCounter');
-    const qImage = $('qImage');
-    const choicesBox = $('choices');
-    const bar = $('bar');
+    // mapping niveau -> rating cible approximatif
+    function levelToRating(lvl){ return 800 + (lvl-1)*70; } // 1:800 … 10:1430
 
+    function loadNumber(key, def){
+      const v = Number(localStorage.getItem(key));
+      return Number.isFinite(v) && v>0 ? v : def;
+    }
+    function saveNumber(key,v){ localStorage.setItem(key,String(Math.round(v))); }
+
+    function loadMissed(){ try{ return JSON.parse(localStorage.getItem(LS.missed)||'[]'); }catch{ return []; } }
+    function saveMissed(arr){ localStorage.setItem(LS.missed, JSON.stringify([...new Set(arr)])); }
+
+    // ————————————————————————————————————————
+    // 3) ÉTAT GLOBAL
+    // ————————————————————————————————————————
+    let mode = 'Accueil'; // 'Normal' | 'Révision' | 'Texte'
+    let elo = loadNumber(LS.elo, DEFAULT_ELO);
+    let level = Math.min(Math.max(loadNumber(LS.level, DEFAULT_LEVEL),1), MAX_LEVEL);
+    let points = 0; // points de la session
+    let qpos = 0;   // compteur libre (infini)
+
+    // session courante
+    let currentQ = null; // question en cours
+    let history = [];    // {id, ok, level, prompt, picked, correctText}
+
+    // DOM elems
+    const logo = $('logo');
+    const modePill = $('modePill');
     const levelPill = $('levelPill');
     const eloPill = $('eloPill');
     const pointsPill = $('pointsPill');
     const qposPill = $('qposPill');
 
-    const scoreLine = $('scoreLine');
+    const homeSec = $('home');
+    const quizSec = $('quiz');
+    const fillSec = $('fill');
+    const resultsSec = $('results');
+
+    const startNormalBtn = $('startNormal');
+    const startRevisionBtn = $('startRevision');
+    const startFillBtn = $('startFill');
+
+    const bar = $('bar');
+    const qCounter = $('qCounter');
+    const qPrompt = $('qPrompt');
+    const qImage = $('qImage');
+    const choicesBox = $('choices');
+    const nextBtn = $('nextBtn');
+    const finishBtn = $('finishBtn');
+
+    const barFill = $('barFill');
+    const qCounterFill = $('qCounterFill');
+    const qPromptFill = $('qPromptFill');
+    const answerInput = $('answerInput');
+    const nextBtnFill = $('nextBtnFill');
+    const finishBtnFill = $('finishBtnFill');
+
     const resultsList = $('resultsList');
+    const scoreLine = $('scoreLine');
+    const retryBtn = $('retryBtn');
+    const homeBtn = $('homeBtn');
 
-    let level = 1;  // 1=facile, 2=moyen, 3=difficile
-    let elo = 1000;
-    let points = 0; // nb de bonnes réponses
-    let idx = 0;    // position dans la série
-    let run = [];   // série construite dynamiquement selon le niveau
-    let answers = {};
-
-    // paramètres progression
-    const K = 32;              // facteur d'ajustement Elo
-    const WIN_FOR_NEXT = 3;    // bonnes réponses avant montée de niveau
-
-    function buildRun(){
-      // Crée une série de 12 questions en piochant selon le niveau
-      const pool = {
-        1: QUESTIONS.filter(q=>q.difficulty==='facile'),
-        2: QUESTIONS.filter(q=>q.difficulty!=='difficile'), // facile + moyen
-        3: QUESTIONS,                                       // toutes
-      }[level];
-      // Shuffle simple
-      const arr = [...pool].sort(()=>Math.random()-0.5);
-      run = arr.slice(0, Math.min(12, arr.length));
-      idx = 0; answers = {}; points = 0; updateMeta();
-    }
-
+    // ————————————————————————————————————————
+    // 4) UTILITAIRES DE QUIZ
+    // ————————————————————————————————————————
     function updateMeta(){
+      modePill.textContent = mode;
       levelPill.textContent = level;
       eloPill.textContent = Math.round(elo);
       pointsPill.textContent = points;
-      qposPill.textContent = `${idx}/${run.length}`;
+      qposPill.textContent = qpos;
+      saveNumber(LS.elo, elo);
+      saveNumber(LS.level, level);
     }
 
-    function renderQuestion(){
-      const q = run[idx];
-      if (!q) return;
-      qPrompt.textContent = q.prompt;
-      qCounter.textContent = `Question ${idx + 1} / ${run.length}`;
-      bar.style.width = `${Math.round(idx / run.length * 100)}%`;
+    function pickQuestionForLevel(lvl){
+      // tolérance ±1 niveau
+      const pool = QUESTIONS.filter(q => Math.abs(q.level - lvl) <= 1);
+      if (pool.length === 0) return QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+      return pool[Math.floor(Math.random()*pool.length)];
+    }
 
-      if (q.imageUrl){ qImage.src = q.imageUrl; qImage.style.display='block'; }
-      else { qImage.style.display='none'; }
+    function pickMissedQuestion(){
+      const missed = loadMissed();
+      const pool = QUESTIONS.filter(q=> missed.includes(q.id));
+      if (pool.length === 0) return null;
+      return pool[Math.floor(Math.random()*pool.length)];
+    }
+
+    function recordMiss(id){ const arr = loadMissed(); arr.push(id); saveMissed(arr); }
+    function clearMissIfOk(id){ const arr = loadMissed().filter(x=>x!==id); saveMissed(arr); }
+
+    function expectedScore(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
+    function applyElo(isWin, qLevel){
+      const opp = levelToRating(qLevel);
+      const exp = expectedScore(elo, opp);
+      elo = elo + K * ((isWin?1:0) - exp);
+      // conversion Elo->niveau avec hystérésis léger
+      const newLevel = Math.min(MAX_LEVEL, Math.max(1, Math.round((elo-800)/70 + 1)));
+      level = newLevel;
+    }
+
+    function show(section){
+      homeSec.hidden = true; quizSec.hidden = true; fillSec.hidden = true; resultsSec.hidden = true;
+      section.hidden = false;
+    }
+
+    function resetSession(){ points=0; qpos=0; history=[]; updateMeta(); }
+
+    // ————————————————————————————————————————
+    // 5) MODE CHOIX (NORMAL / RÉVISION)
+    // ————————————————————————————————————————
+    function renderChoiceQuestion(){
+      qpos++; updateMeta();
+      bar.style.width = `${Math.min(100, (qpos%10)*10)}%`; // juste un mouvement visuel
+      qCounter.textContent = `Question ${qpos}`;
+
+      if (mode==='Révision'){
+        currentQ = pickMissedQuestion();
+        if (!currentQ){
+          // plus rien à réviser → retour résultats
+          showResults();
+          return;
+        }
+      } else {
+        currentQ = pickQuestionForLevel(level);
+      }
+
+      qPrompt.textContent = currentQ.prompt;
+      if (currentQ.imageUrl){ qImage.src = currentQ.imageUrl; qImage.style.display='block'; } else { qImage.style.display='none'; }
 
       choicesBox.innerHTML = '';
-      q.choices.forEach(c=>{
+      (currentQ.choices||[]).forEach(c=>{
         const btn = document.createElement('button');
         btn.className = 'choice';
-        btn.textContent = c.text;
-        btn.addEventListener('click', ()=>selectAnswer(q.id, c.id, btn));
+        btn.textContent = c.text; // noir sur blanc (CSS)
+        btn.addEventListener('click', ()=>{
+          Array.from(choicesBox.children).forEach(el=>el.classList.remove('selected'));
+          btn.classList.add('selected');
+          nextBtn.disabled = false;
+          nextBtn.dataset.picked = c.id;
+        });
         choicesBox.appendChild(btn);
       });
-      nextBtn.disabled = !answers[q.id];
-      nextBtn.textContent = idx < run.length - 1 ? 'Suivant' : 'Terminer';
-      updateMeta();
+      nextBtn.disabled = true;
     }
 
-    function selectAnswer(qid, cid, btnEl){
-      answers[qid] = cid;
-      Array.from(choicesBox.children).forEach(el=>el.classList.remove('selected'));
-      btnEl.classList.add('selected');
-      nextBtn.disabled = false;
+    function handleNextChoice(){
+      if (!currentQ) return;
+      const pickedId = nextBtn.dataset.picked;
+      const correctChoice = (currentQ.choices||[]).find(c=>c.correct);
+      const isOk = pickedId && correctChoice && pickedId===correctChoice.id;
+
+      // maj stats
+      if (isOk){ points++; clearMissIfOk(currentQ.id); }
+      else { recordMiss(currentQ.id); }
+      if (mode==='Normal') applyElo(!!isOk, currentQ.level);
+
+      history.push({id:currentQ.id, ok:isOk, level:currentQ.level, prompt:currentQ.prompt, picked:(currentQ.choices||[]).find(c=>c.id===pickedId)?.text||'—', correctText:correctChoice?.text||'' , explanation: currentQ.explanation||''});
+
+      renderChoiceQuestion();
     }
 
-    function applyElo(isWin, difficulty){
-      const opp = DIFF_RATING[difficulty] || 1000;
-      const expected = 1 / (1 + Math.pow(10, (opp - elo) / 400));
-      const score = isWin ? 1 : 0;
-      elo = elo + K * (score - expected);
+    // ————————————————————————————————————————
+    // 6) MODE TEXTE À TROUS
+    // ————————————————————————————————————————
+    function renderFillQuestion(){
+      qpos++; updateMeta();
+      barFill.style.width = `${Math.min(100, (qpos%10)*10)}%`;
+      qCounterFill.textContent = `Question ${qpos}`;
+      currentQ = pickQuestionForLevel(level);
+      qPromptFill.textContent = currentQ.prompt;
+      answerInput.value = '';
+      nextBtnFill.disabled = true;
+      answerInput.focus();
     }
 
-    let streak = 0; // série de bonnes réponses
-
-    function next(){
-      const q = run[idx];
-      const correct = q.choices.find(c=>c.correct)?.id;
-      const isOk = answers[q.id] === correct;
-
-      // maj points & Elo
-      if (isOk){ points++; streak++; } else { streak = 0; }
-      applyElo(isOk, q.difficulty);
-
-      // progression de niveau : tous les WIN_FOR_NEXT succès consécutifs
-      if (streak >= WIN_FOR_NEXT && level < 3){
-        level++; streak = 0; // on remonte d'un niveau et on recrée une série
-        buildRun();
-        renderQuestion();
-        return;
-      }
-
-      if (idx < run.length - 1){
-        idx++; renderQuestion();
-      } else {
-        showResults();
-      }
+    function checkFillAnswer(){
+      const raw = stripAccents(answerInput.value.trim().toLowerCase());
+      const ans = stripAccents((currentQ.textAnswer||'').toLowerCase());
+      const syns = (currentQ.synonyms||[]).map(s=>stripAccents(s.toLowerCase()));
+      const isOk = raw && (raw===ans || syns.includes(raw));
+      if (isOk){ points++; clearMissIfOk(currentQ.id); } else { recordMiss(currentQ.id); }
+      applyElo(isOk, currentQ.level);
+      history.push({id:currentQ.id, ok:isOk, level:currentQ.level, prompt:currentQ.prompt, picked:answerInput.value, correctText:currentQ.textAnswer||'', explanation: currentQ.explanation||''});
+      renderFillQuestion();
     }
 
+    // ————————————————————————————————————————
+    // 7) RÉSULTATS
+    // ————————————————————————————————————————
     function showResults(){
-      const total = run.length;
-      const pct = Math.round(points / Math.max(1,total) * 100);
-      scoreLine.textContent = `Score : ${points} / ${total} (${pct}%) — Elo final : ${Math.round(elo)}`;
+      const total = history.length;
+      const ok = history.filter(h=>h.ok).length;
+      const pct = Math.round(ok/Math.max(1,total)*100);
+      scoreLine.textContent = `Session : ${ok}/${total} (${pct}%) — Elo : ${Math.round(elo)} — Niveau : ${level}`;
       resultsList.innerHTML = '';
-
-      run.forEach((q,i)=>{
-        const picked = answers[q.id];
-        const correct = q.choices.find(c=>c.correct)?.id;
-        const isOk = picked === correct;
+      history.forEach((h,i)=>{
         const li = document.createElement('li');
         li.className = 'result-item';
         li.innerHTML = `
-          <div class="num ${isOk ? 'ok' : 'ko'}">${i+1}</div>
+          <div class="num ${h.ok?'ok':'ko'}">${i+1}</div>
           <div>
-            <div style="font-weight:600">[${q.difficulty}] ${q.prompt}</div>
-            <div class="muted" style="margin-top:4px">Votre réponse : <b>${(q.choices.find(c=>c.id===picked)||{}).text || '—'}</b></div>
-            <div class="muted">Bonne réponse : <b>${(q.choices.find(c=>c.correct)||{}).text || ''}</b></div>
-            ${q.explanation ? `<div style="margin-top:6px">💡 ${q.explanation}</div>` : ''}
+            <div style="font-weight:700">[Niv ${h.level}] ${h.prompt}</div>
+            <div class="muted">Votre réponse : <b>${h.picked}</b></div>
+            <div class="muted">Bonne réponse : <b>${h.correctText}</b></div>
+            ${h.explanation?`<div style="margin-top:6px">💡 ${h.explanation}</div>`:''}
           </div>`;
         resultsList.appendChild(li);
       });
-
-      quiz.hidden = true; intro.hidden = true; results.hidden = false; bar.style.width='100%';
+      show(resultsSec);
       updateMeta();
     }
 
-    // ————————————————————————————
-    // 3) NAV
-    // ————————————————————————————
-    startBtn.addEventListener('click', ()=>{
-      level = 1; elo = 1000; points = 0; streak = 0; answers = {};
-      buildRun();
-      intro.hidden = true; results.hidden = true; quiz.hidden = false;
-      renderQuestion();
+    // ————————————————————————————————————————
+    // 8) NAVIGATION
+    // ————————————————————————————————————————
+    function goHome(){
+      mode='Accueil'; updateMeta(); show(homeSec);
+    }
+
+    logo.addEventListener('click', goHome);
+    homeBtn.addEventListener('click', goHome);
+
+    startNormalBtn.addEventListener('click', ()=>{ resetSession(); mode='Normal'; updateMeta(); show(quizSec); renderChoiceQuestion(); });
+    startRevisionBtn.addEventListener('click', ()=>{ resetSession(); mode='Révision'; updateMeta(); show(quizSec); renderChoiceQuestion(); });
+    startFillBtn.addEventListener('click', ()=>{ resetSession(); mode='Texte'; updateMeta(); show(fillSec); renderFillQuestion(); });
+
+    nextBtn.addEventListener('click', handleNextChoice);
+    finishBtn.addEventListener('click', showResults);
+
+    answerInput.addEventListener('input', ()=>{ nextBtnFill.disabled = !answerInput.value.trim(); });
+    answerInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !nextBtnFill.disabled){ checkFillAnswer(); } });
+    nextBtnFill.addEventListener('click', checkFillAnswer);
+    finishBtnFill.addEventListener('click', showResults);
+
+    retryBtn.addEventListener('click', ()=>{
+      if (mode==='Texte'){ resetSession(); show(fillSec); renderFillQuestion(); }
+      else { resetSession(); show(quizSec); renderChoiceQuestion(); }
     });
 
-    nextBtn.addEventListener('click', next);
-    retryBtn.addEventListener('click', ()=>{
-      level = 1; elo = 1000; points = 0; streak = 0; answers = {};
-      buildRun(); renderQuestion();
-      results.hidden = true; quiz.hidden = false; intro.hidden = true;
-    });
+    // init
+    updateMeta();
   </script>
 </body>
 </html>
