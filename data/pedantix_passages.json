@@ -1,70 +1,68 @@
-<script type="application/json" id="pedantix_passages.json">
 [
-{
-"id": "P001",
-"title": "Photosynthèse — organite clé",
-"target": "chloroplaste",
-"sentences": [
-"Le CHAMP est un organite des cellules végétales où se déroule la photosynthèse.",
-"Les thylakoïdes du CHAMP sont empilés en grana et contiennent des pigments.",
-"La chlorophylle, située dans le CHAMP, capte l'énergie lumineuse.",
-"Le stroma du CHAMP abrite les réactions du cycle de Calvin."
+  {
+    "id": "P001",
+    "title": "Photosynthèse — organite clé",
+    "target": "chloroplaste",
+    "sentences": [
+      "Le CHAMP est un organite des cellules végétales où se déroule la photosynthèse.",
+      "Les thylakoïdes du CHAMP sont empilés en grana et contiennent des pigments.",
+      "La chlorophylle, située dans le CHAMP, capte l'énergie lumineuse.",
+      "Le stroma du CHAMP abrite les réactions du cycle de Calvin."
+    ]
+  },
+  {
+    "id": "P002",
+    "title": "Transport de la sève brute",
+    "target": "xylème",
+    "sentences": [
+      "Le CHAMP conduit l'eau et les minéraux des racines vers les feuilles.",
+      "Dans le CHAMP, on trouve des trachéides et des vaisseaux lignifiés.",
+      "La montée de sève dans le CHAMP dépend notamment de la transpiration.",
+      "Le CHAMP et le phloème constituent les tissus conducteurs."
+    ]
+  },
+  {
+    "id": "P003",
+    "title": "Distribution des produits de la photosynthèse",
+    "target": "phloème",
+    "sentences": [
+      "Le CHAMP transporte les sucres des sources vers les puits.",
+      "Les tubes criblés du CHAMP sont associés aux cellules compagnes.",
+      "Le chargement en saccharose du CHAMP peut être apoplasmique ou symplasmique.",
+      "Le xylème et le CHAMP forment un faisceau vasculaire."
+    ]
+  },
+  {
+    "id": "P004",
+    "title": "Échanges gazeux de la feuille",
+    "target": "stomate",
+    "sentences": [
+      "Chaque CHAMP est bordé par deux cellules de garde contrôlant l'ouverture.",
+      "Le CHAMP permet les échanges de CO2 et d'eau avec l'atmosphère.",
+      "La fermeture du CHAMP est favorisée par l'ABA en cas de stress hydrique.",
+      "La densité de CHAMP varie selon l'espèce et l'environnement."
+    ]
+  },
+  {
+    "id": "P005",
+    "title": "Hormone de croissance végétale",
+    "target": "auxine",
+    "sentences": [
+      "L'CHAMP favorise l'élongation cellulaire et le phototropisme.",
+      "La distribution polarisée de l'CHAMP oriente la croissance.",
+      "L'CHAMP intervient aussi dans l'initiation racinaire.",
+      "Des transporteurs PIN assurent l'efflux de l'CHAMP."
+    ]
+  },
+  {
+    "id": "P006",
+    "title": "Enzyme clé du cycle de Calvin",
+    "target": "rubisco",
+    "sentences": [
+      "La CHAMP fixe le CO2 mais peut aussi oxygéner le RuBP.",
+      "La CHAMP est l'enzyme la plus abondante dans le monde végétal.",
+      "La photorespiration résulte de l'activité oxygénase de la CHAMP.",
+      "La CHAMP se situe dans le stroma des chloroplastes."
+    ]
+  }
 ]
-},
-{
-"id": "P002",
-"title": "Transport de la sève brute",
-"target": "xylème",
-"sentences": [
-"Le CHAMP conduit l'eau et les minéraux des racines vers les feuilles.",
-"Dans le CHAMP, on trouve des trachéides et des vaisseaux lignifiés.",
-"La montée de sève dans le CHAMP dépend notamment de la transpiration.",
-"Le CHAMP et le phloème constituent les tissus conducteurs."
-]
-},
-{
-"id": "P003",
-"title": "Distribution des produits de la photosynthèse",
-"target": "phloème",
-"sentences": [
-"Le CHAMP transporte les sucres des sources vers les puits.",
-"Les tubes criblés du CHAMP sont associés aux cellules compagnes.",
-"Le chargement en saccharose du CHAMP peut être apoplasmique ou symplasmique.",
-"Le xylème et le CHAMP forment un faisceau vasculaire."
-]
-},
-{
-"id": "P004",
-"title": "Échanges gazeux de la feuille",
-"target": "stomate",
-"sentences": [
-"Chaque CHAMP est bordé par deux cellules de garde contrôlant l'ouverture.",
-"Le CHAMP permet les échanges de CO2 et d'eau avec l'atmosphère.",
-"La fermeture du CHAMP est favorisée par l'ABA en cas de stress hydrique.",
-"La densité de CHAMP varie selon l'espèce et l'environnement."
-]
-},
-{
-"id": "P005",
-"title": "Hormone de croissance végétale",
-"target": "auxine",
-"sentences": [
-"L'CHAMP favorise l'élongation cellulaire et le phototropisme.",
-"La distribution polarisée de l'CHAMP oriente la croissance.",
-"L'CHAMP intervient aussi dans l'initiation racinaire.",
-"Des transporteurs PIN assurent l'efflux de l'CHAMP."
-]
-},
-{
-"id": "P006",
-"title": "Enzyme clé du cycle de Calvin",
-"target": "rubisco",
-"sentences": [
-"La CHAMP fixe le CO2 mais peut aussi oxygéner le RuBP.",
-"La CHAMP est l'enzyme la plus abondante dans le monde végétal.",
-"La photorespiration résulte de l'activité oxygénase de la CHAMP.",
-"La CHAMP se situe dans le stroma des chloroplastes."
-]
-}
-]
-</script>
