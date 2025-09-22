@@ -1,79 +1,102 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Plant’Quiz — Normal / Révision / Pédantix</title>
-  <style>
-    :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
-    *{box-sizing:border-box} :focus-visible{outline:3px solid #11133b;outline-offset:2px}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
-    header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
-    nav{display:flex;gap:12px;align-items:center;max-width:1120px;margin:0 auto;padding:12px 24px}
-    .brand{font-size:20px;font-weight:800;cursor:pointer}
-    .meta{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
-    .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
-    .container{max-width:1120px;margin:0 auto;padding:24px}
-    .grid{display:grid;gap:14px} .grid3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
-    .btn{appearance:none;border:0;border-radius:999px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
-    .btn[disabled]{background:#9ca3af;cursor:not-allowed} .btn.outline{background:#fff;color:#111;border:1px solid #e5e7eb}
-    .muted{color:var(--muted)} .progress{height:8px;background:#e5e7eb;border-radius:999px;overflow:hidden} .progress>div{height:100%;background:var(--brand)}
-    .choices{display:grid;gap:10px;margin-top:12px}
-    .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer}
-    .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)} .choice.selected{outline:3px solid var(--brand);border-color:var(--brand)}
-    .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
-    ol.results{display:grid;gap:12px;padding-left:0;list-style:none} .result-item{display:flex;gap:12px}
-    .num{min-width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
-    .num.ok{background:var(--ok)} .num.ko{background:var(--ko)}
-    .rowL{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .field{display:grid;gap:6px}
-    select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
-    .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
-    .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
-    /* Pédantix */
-    .pedantix-text{line-height:1.6}
-    .mask{background:#111;color:#111;border-radius:4px;padding:2px 6px;}
-    .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plant’Quiz — Accueil / Normal / Révision / Pédantix</title>
+<style>
+  :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
+  *{box-sizing:border-box} :focus-visible{outline:3px solid #11133b;outline-offset:2px}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
+  nav{display:flex;gap:12px;align-items:center;max-width:1120px;margin:0 auto;padding:12px 24px}
+  .brand{font-size:20px;font-weight:800;cursor:pointer}
+  .back{appearance:none;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
+  .metaRow{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
+  .container{max-width:1120px;margin:0 auto;padding:24px}
+  .grid{display:grid;gap:14px} .grid3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
+  .btn{appearance:none;border:0;border-radius:999px;padding:10px 16px;background:var(--brand);color:#fff;font-weight:600;cursor:pointer}
+  .btn[disabled]{background:#9ca3af;cursor:not-allowed} .btn.outline{background:#fff;color:#111;border:1px solid #e5e7eb}
+  .muted{color:var(--muted)}
+  .choices{display:grid;gap:10px;margin-top:12px}
+  .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer}
+  .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+  .choice.selected{outline:3px solid var(--brand);border-color:var(--brand)}
+  .answer.ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.2)}
+  .answer.ko{border-color:var(--ko);box-shadow:0 0 0 3px rgba(239,68,68,.2)}
+  .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+  .rowL{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .field{display:grid;gap:6px}
+  select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
+  .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
+  .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
+  /* pédantix */
+  .pedantix-text{line-height:1.6}
+  .mask{background:#111;color:#111;border-radius:4px;padding:2px 6px;}
+  .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
+  .exp{margin-top:10px;padding:12px;border:1px dashed #e5e7eb;border-radius:12px;background:#fafafa}
+</style>
 </head>
 <body>
-  <header>
-    <nav>
-      <div id="logo" class="brand">🌿 Plant’Quiz</div>
-      <div class="meta">
-        <div class="pill">Mode : <b id="modePill">Accueil</b></div>
-        <div class="pill">Niveau : <b id="levelPill">1</b></div>
-        <div class="pill">Elo : <b id="eloPill">1000</b></div>
-        <div class="pill">Points : <b id="pointsPill">0</b></div>
-        <div class="pill">Q : <b id="qposPill">0</b></div>
-      </div>
-    </nav>
-  </header>
+<header>
+  <nav>
+    <button id="backBtn" class="back" hidden>← Retour</button>
+    <div id="brand" class="brand">🌿 Plant’Quiz</div>
+    <div id="metaRow" class="metaRow" hidden>
+      <div class="pill">Elo: <b id="eloPill">1000</b></div>
+      <div class="pill">Q: <b id="qPill">0</b></div>
+      <div class="pill">Bonnes: <b id="goodPill">0</b></div>
+      <div class="pill">Streak: <b id="streakPill">0</b> <span id="streakNote" class="muted"></span></div>
+    </div>
+  </nav>
+</header>
 
-  <main class="container">
-    <!-- ACCUEIL -->
-    <section id="home" class="grid grid3">
-      <div class="card modeCard">
+<main class="container">
+  <!-- ACCUEIL -->
+  <section id="home">
+    <div class="grid grid3">
+      <div class="card">
         <h3>Quiz normal</h3>
-        <p class="muted">Flux infini. Difficulté adaptative (Elo) sur 10 niveaux.</p>
-        <div class="row"><button id="startNormal" class="btn">Commencer</button></div>
+        <p class="muted">Difficulté adaptative (Elo). Affiche la bonne réponse + explication après chaque question.</p>
+        <div class="row"><button data-go="normal" class="btn">Commencer</button></div>
       </div>
-      <div class="card modeCard">
+      <div class="card">
         <h3>Quiz révision (par UE)</h3>
-        <p class="muted">Choisis Master → Semestre → Tronc commun / Options.</p>
-        <div class="row"><button id="startRevision" class="btn">Sélectionner des UE</button></div>
+        <p class="muted">Master → Semestre → coche les UE. Placeholders (à remplacer plus tard).</p>
+        <div class="row"><button data-go="revision" class="btn">Sélectionner des UE</button></div>
       </div>
-      <div class="card modeCard">
+      <div class="card">
         <h3>Pédantix végétal</h3>
-        <p class="muted">Devine le mot principal d’un passage.</p>
-        <div class="row"><button id="startPedantix" class="btn">Jouer</button></div>
+        <p class="muted">Devine le mot principal d’un passage (type pédantix).</p>
+        <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
-    </section>
+    </div>
+    <p class="muted" style="text-align:center;margin-top:22px">Compatible GitHub Pages — utilise /data/*.json</p>
+  </section>
 
-    <!-- RÉVISION -->
-    <section id="revSelect" class="card" hidden>
-      <h3>Révision — Choix des UE</h3>
+  <!-- NORMAL -->
+  <section id="normal" hidden>
+    <div class="card">
+      <h2 style="margin:0 0 6px">Quiz normal</h2>
+      <p class="muted">Choisis une réponse. On révèle si c’est bon + l’explication. Ton Elo s’ajuste, et on enchaîne.</p>
+      <hr style="margin:12px 0"/>
+      <article>
+        <h3 id="qPrompt"></h3>
+        <div class="choices" id="choices"></div>
+        <div id="explain" class="exp" hidden></div>
+        <div class="row">
+          <button id="nextBtn" class="btn" disabled>Question suivante</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- RÉVISION -->
+  <section id="revision" hidden>
+    <div class="card">
+      <h2 style="margin:0 0 8px">Révision — Choix des UE</h2>
       <div class="rowL">
         <label class="field"><span class="muted">Master</span><select id="selMaster"></select></label>
         <label class="field"><span class="muted">Semestre</span><select id="selSem"></select></label>
@@ -86,29 +109,16 @@
       <div class="group"><b>Tronc commun</b><div id="ueCore"></div></div>
       <div class="group"><b>Options</b><div id="ueOpt"></div></div>
       <div class="row" style="justify-content:flex-start">
-        <button id="revBack" class="btn outline">Retour</button>
         <button id="revLaunch" class="btn" disabled>Lancer</button>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- QUIZ (Normal / Révision) -->
-    <section id="quiz" class="card" hidden>
-      <div class="progress"><div id="bar" style="width:0%"></div></div>
-      <p class="muted" id="qCounter"></p>
-      <article>
-        <h2 id="qPrompt"></h2>
-        <div class="choices" id="choices"></div>
-        <div class="row">
-          <button id="finishBtn" class="btn outline">Terminer</button>
-          <button id="nextBtn" class="btn" disabled>Suivant</button>
-        </div>
-      </article>
-    </section>
-
-    <!-- PÉDANTIX -->
-    <section id="pedantix" class="card" hidden>
+  <!-- PÉDANTIX -->
+  <section id="pedantix" hidden>
+    <div class="card">
       <div class="rowL" style="justify-content:space-between">
-        <h2>Pédantix <span id="pedScore" class="pillScore" hidden></span></h2>
+        <h2 style="margin:0">Pédantix <span id="pedScore" class="pillScore" hidden></span></h2>
         <div class="rowL">
           <button id="pedNew" class="btn">Nouveau</button>
           <button id="pedReveal" class="btn outline">Indice</button>
@@ -120,177 +130,165 @@
         <input id="pedInput" class="choice" placeholder="Propose un mot puis Entrée" />
       </div>
       <ol id="pedGuesses" class="results"></ol>
-    </section>
+    </div>
+  </section>
+</main>
 
-    <!-- RÉSULTATS -->
-    <section id="results" class="card" hidden>
-      <h2>Résultats</h2>
-      <p id="scoreLine"></p>
-      <div class="row">
-        <button id="homeBtn" class="btn outline">Accueil</button>
-        <button id="retryBtn" class="btn">Rejouer</button>
-      </div>
-      <ol id="resultsList" class="results"></ol>
-    </section>
-  </main>
+<script>
+/* ===== utilitaires & état ===== */
+const $ = id => document.getElementById(id);
+const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
+const LS={elo:'pq_elo', lvl:'pq_level'};
+let elo = Number(localStorage.getItem(LS.elo)) || 1000;
+let level = Number(localStorage.getItem(LS.lvl)) || 1;
+let QUESTIONS=[], REV_INDEX=null, PED_PASSAGES=[];
+let qCount=0, goodCount=0, streak=0;
+const K=24, MAX_LEVEL=10;
+const levelToRating = l => 800 + (l-1)*70;
+function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
+function applyElo(win, qLevel){
+  const opp = levelToRating(qLevel||Math.max(1,Math.min(10,level)));
+  elo = Math.round(elo + K*((win?1:0)-expected(elo,opp)));
+  level = Math.min(MAX_LEVEL, Math.max(1, Math.round((elo-800)/70 + 1)));
+  localStorage.setItem(LS.elo, elo); localStorage.setItem(LS.lvl, level);
+}
+function setMetaVisible(v){ $("metaRow").hidden=!v; $("backBtn").hidden=!v; }
 
-  <footer class="container" style="text-align:center;color:#777">Compatible GitHub Pages — utilise /data/*.json</footer>
+/* ===== navigation (SPA avec query) ===== */
+function go(mode){
+  const sections=['home','normal','revision','pedantix'];
+  sections.forEach(id=>$(id).hidden=true);
+  $(mode).hidden=false;
+  if(mode==='home'){ setMetaVisible(false); history.replaceState({},'',location.pathname); }
+  else { setMetaVisible(true); history.replaceState({},'',`?mode=${mode}`); }
+  // reset compteur visible
+  $("eloPill").textContent=elo; $("qPill").textContent=qCount; $("goodPill").textContent=goodCount; $("streakPill").textContent=streak; $("streakNote").textContent=streakNote(streak);
+}
+$("brand").onclick=()=>go('home');
+$("backBtn").onclick=()=>go('home');
+document.querySelectorAll('[data-go]').forEach(b=> b.onclick=()=>go(b.dataset.go));
+const urlMode = new URLSearchParams(location.search).get('mode') || 'home';
 
-  <script>
-    // ===== utilitaires & état =====
-    const $ = id => document.getElementById(id);
-    const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
-    let mode='Accueil', elo=1000, level=1, points=0, qpos=0, currentQ=null, history=[];
-    let QUESTIONS=[], REV_INDEX=null, PED_PASSAGES=[];
+/* ===== fetch + fallbacks ===== */
+async function tryFetch(path){ try{const r=await fetch(path,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json();}catch{return null;} }
+const DEMO_QUESTIONS=[{id:'L1Q1',level:1,prompt:'Quelle partie réalise la photosynthèse ?',choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}],explanation:'Les feuilles contiennent des chloroplastes.'},{id:'L1Q2',level:1,prompt:'Quel pigment donne la couleur verte ?',choices:[{id:'a',text:'Carotène'},{id:'b',text:'Chlorophylle',correct:true},{id:'c',text:'Anthocyane'},{id:'d',text:'Bétalaïne'}],explanation:'La chlorophylle.'}];
+const DEMO_REV={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'M1-S7',core:[{id:'biostat_R',label:'Biostatistiques avec R'}],options:[{id:'opt',label:'Option démo'}]}]}]};
+const DEMO_PED=[{id:'P1',title:'Photosynthèse (démo)',target:'chloroplaste',sentences:["Le CHAMP est un organite où se déroule la photosynthèse.","Les thylakoïdes du CHAMP portent les pigments.","Le stroma du CHAMP héberge le cycle de Calvin."]}];
 
-    function show(sec){ ['home','revSelect','quiz','pedantix','results'].forEach(id=>$(id).hidden=true); sec.hidden=false; }
-    function reset(){ points=0; qpos=0; history=[]; $("pointsPill").textContent=points; $("qposPill").textContent=qpos; $("modePill").textContent=mode; $("levelPill").textContent=level; $("eloPill").textContent=elo; }
+/* ===== NORMAL (nouvelle UX) ===== */
+let currentQ=null, locked=false;
+function pickQuestion(){
+  const near = QUESTIONS.filter(q=> Math.abs((q.level||1)-level)<=1);
+  const list = near.length? near : QUESTIONS;
+  return list[Math.floor(Math.random()*list.length)];
+}
+function renderQuestion(){
+  if(!QUESTIONS.length){ $("qPrompt").textContent="Pas de questions (data/questions_normal.json)"; $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true; return; }
+  currentQ = pickQuestion(); locked=false;
+  $("qPrompt").textContent=currentQ.prompt;
+  $("choices").innerHTML="";
+  (currentQ.choices||[]).forEach(c=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.textContent=c.text;
+    b.onclick=()=>choose(c,b);
+    $("choices").appendChild(b);
+  });
+  $("explain").hidden=true;
+  $("nextBtn").disabled=true;
+}
+function streakNote(n){
+  if(n>=7) return "🥵 bouillant";
+  if(n>=4) return "🔥 en feu";
+  if(n>=2) return "😎 ça progresse";
+  if(n===1) return "🙂 bien joué";
+  if(n===0) return "";
+  return "🧊 va réviser";
+}
+function choose(choice, btn){
+  if(locked) return;
+  locked=true;
+  qCount++; $("qPill").textContent=qCount;
+  const correct = (currentQ.choices||[]).find(c=>c.correct);
+  const win = !!(correct && correct.id===choice.id);
+  if(win){ goodCount++; streak++; btn.classList.add('answer','ok'); }
+  else { streak=0; btn.classList.add('answer','ko'); }
+  // marquer la bonne réponse
+  [...$("choices").children].forEach(b=>{
+    const t=b.textContent;
+    if(t===correct.text){ b.classList.add('answer','ok'); }
+    b.disabled=true;
+  });
+  // elo
+  applyElo(win, currentQ.level);
+  // afficher explication
+  $("explain").hidden=false;
+  $("explain").innerHTML = (win? "✅ Correct." : "❌ Incorrect.") + (currentQ.explanation? `<br>💡 ${currentQ.explanation}`:"");
+  // meta pills
+  $("eloPill").textContent=elo; $("goodPill").textContent=goodCount; $("streakPill").textContent=streak; $("streakNote").textContent=streakNote(streak);
+  // activer suivant
+  $("nextBtn").disabled=false;
+}
+$("nextBtn").onclick=renderQuestion;
 
-    async function tryFetch(path){
-      try { const r=await fetch(path,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); }
-      catch(e){ console.warn('fallback →', path); return null; }
-    }
+/* ===== RÉVISION ===== */
+const selMaster=$("selMaster"), selSem=$("selSem"), ueCore=$("ueCore"), ueOpt=$("ueOpt");
+function fillMasters(){ selMaster.innerHTML=''; (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.key; o.textContent=m.label; selMaster.appendChild(o); }); fillSems(); }
+function fillSems(){ selSem.innerHTML=''; const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value); (m?.semesters||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.sem; o.textContent=s.sem; selSem.appendChild(o); }); fillUEs(); }
+function label(id,lbl){ return `<label class="pillMini"><input type="checkbox" data-id="${id}">${lbl}</label>`; }
+function fillUEs(){ const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value); const s=m?.semesters?.find(x=>x.sem===selSem.value);
+  ueCore.innerHTML=(s?.core||[]).map(u=>label(u.id,u.label)).join(""); ueOpt.innerHTML=(s?.options||[]).map(u=>label(u.id,u.label)).join("");
+  $("revLaunch").disabled=true; document.querySelectorAll("#revision input[type=checkbox]").forEach(i=> i.onchange=()=>{ $("revLaunch").disabled=!document.querySelector("#revision input:checked"); });
+  $("btnAllCore").onclick=()=>{ ueCore.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
+  $("btnAllOpt").onclick=()=>{ ueOpt.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
+  $("btnClear").onclick=()=>{ document.querySelectorAll("#revision input[type=checkbox]").forEach(i=>i.checked=false); $("revLaunch").disabled=true; };
+}
+$("revLaunch").onclick=()=>{
+  const picked=[...document.querySelectorAll("#revision input:checked")].map(i=>i.parentElement.textContent.trim());
+  if(!picked.length) return;
+  // transforme en mini-banque le temps de la session
+  QUESTIONS = picked.map((lbl,ix)=>({id:'UE'+ix,level:5,prompt:`UE: ${lbl} — question démo`,choices:[{id:'a',text:'A'},{id:'b',text:'B',correct:true},{id:'c',text:'C'},{id:'d',text:'D'}],explanation:'Remplace ce placeholder plus tard.'}));
+  qCount=0; goodCount=0; streak=0;
+  $("eloPill").textContent=elo; $("qPill").textContent=qCount; $("goodPill").textContent=goodCount; $("streakPill").textContent=streak; $("streakNote").textContent="";
+  go('normal'); // on réutilise l’UI propre du normal
+  renderQuestion();
+};
+selMaster.onchange=fillSems; selSem.onchange=fillUEs;
 
-    // ===== DEMO fallbacks (utilisés si /data absent) =====
-    const DEMO_QUESTIONS=[
-      {id:'L1Q1',level:1,prompt:'Quelle partie réalise la photosynthèse ?',choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}]},
-      {id:'L1Q2',level:1,prompt:'Quel pigment donne la couleur verte ?',choices:[{id:'a',text:'Carotène'},{id:'b',text:'Chlorophylle',correct:true},{id:'c',text:'Anthocyane'},{id:'d',text:'Bétalaïne'}]}
-    ];
-    const DEMO_REV_INDEX={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'M1-S7',core:[{id:'biostat_R',label:'Biostatistiques avec R'}],options:[{id:'opt_demo',label:'Option démo'}]}]}]};
-    const DEMO_PED=[{id:'P1',title:'Photosynthèse (démo)',target:'chloroplaste',sentences:[
-      "Le CHAMP est un organite où se déroule la photosynthèse.",
-      "Les thylakoïdes du CHAMP portent les pigments.",
-      "Le stroma du CHAMP héberge le cycle de Calvin."
-    ]}];
+/* ===== PÉDANTIX ===== */
+let pedCurrent=null, pedShown=1;
+function maskAll(s,t){ const esc=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); const re=new RegExp(esc,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
+function pickPed(){ pedCurrent = (PED_PASSAGES||[])[Math.floor(Math.random()*PED_PASSAGES.length)]; pedShown=1; renderPed(); }
+function renderPed(){
+  if(!PED_PASSAGES.length){ $("pedTitle").textContent="Pas de passages (data/pedantix_passages.json)"; $("pedText").innerHTML=""; $("pedGuesses").innerHTML=""; return; }
+  $("pedTitle").textContent=pedCurrent.title||''; $("pedGuesses").innerHTML=''; $("pedScore").hidden=true;
+  $("pedText").innerHTML = pedCurrent.sentences.slice(0,pedShown).map(s=>`<p>${maskAll(s,pedCurrent.target)}</p>`).join("");
+  $("pedInput").value="";
+}
+$("pedInput").addEventListener('keydown',e=>{
+  if(e.key!=='Enter') return;
+  const g=strip($("pedInput").value); if(!g) return;
+  const ok = g===strip(pedCurrent.target);
+  const li=document.createElement('li'); li.className='result-item';
+  li.innerHTML=`<div class="num ${ok?'ok':'ko'}">${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`;
+  $("pedGuesses").prepend(li); if(ok){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Mot : "+pedCurrent.target; }
+  $("pedInput").value="";
+});
+$("pedNew").onclick=pickPed;
+$("pedReveal").onclick=()=>{ if(pedShown<(pedCurrent.sentences||[]).length){ pedShown++; renderPed(); } };
 
-    // ===== init données (avec fallback automatique) =====
-    (async function init(){
-      QUESTIONS = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
-      REV_INDEX = await tryFetch("./data/revision_index.json") || DEMO_REV_INDEX;
-      PED_PASSAGES = await tryFetch("./data/pedantix_passages.json") || DEMO_PED;
-      // attache les handlers une fois que tout est prêt
-      attachHandlers();
-    })();
+/* ===== initialisation ===== */
+(async function init(){
+  QUESTIONS = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
+  REV_INDEX = await tryFetch("./data/revision_index.json") || DEMO_REV;
+  PED_PASSAGES = await tryFetch("./data/pedantix_passages.json") || DEMO_PED;
 
-    // ===== Quiz normal =====
-    function pickQ(){
-      // choix proche du niveau courant si possible
-      const near = QUESTIONS.filter(q => Math.abs((q.level||1)-level)<=1);
-      const src = near.length? near : QUESTIONS;
-      return src[Math.floor(Math.random()*src.length)];
-    }
-    function renderQ(){
-      if(!QUESTIONS.length){ alert("Pas de questions (questions_normal.json)."); show($("home")); return; }
-      qpos++; $("qposPill").textContent=qpos; $("bar").style.width = `${(qpos%10)*10}%`;
-      currentQ=pickQ(); $("qPrompt").textContent=currentQ.prompt; $("choices").innerHTML="";
-      (currentQ.choices||[]).forEach(c=>{
-        const b=document.createElement("button"); b.className="choice"; b.textContent=c.text;
-        b.onclick=()=>{ [...$("choices").children].forEach(x=>x.classList.remove("selected")); b.classList.add("selected"); $("nextBtn").disabled=false; $("nextBtn").dataset.pick=c.id; };
-        $("choices").appendChild(b);
-      });
-      $("nextBtn").disabled=true; $("qCounter").textContent = `Question ${qpos}`;
-    }
-    function nextQ(){
-      const pick=$("nextBtn").dataset.pick;
-      const ok=(currentQ.choices||[]).find(c=>c.correct)?.id===pick;
-      if(ok) points++;
-      $("pointsPill").textContent=points;
-      history.push({prompt:currentQ.prompt, ok, picked: (currentQ.choices||[]).find(c=>c.id===pick)?.text||"—",
-                    correctText: (currentQ.choices||[]).find(c=>c.correct)?.text||""});
-      renderQ();
-    }
-
-    // ===== Révision (UE placeholders) =====
-    function fillMasters(){
-      const mSel=$("selMaster"); mSel.innerHTML="";
-      (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m.key; o.textContent=m.label; mSel.appendChild(o); });
-      fillSems();
-    }
-    function fillSems(){
-      const m=(REV_INDEX.masters||[]).find(x=>x.key===$("selMaster").value);
-      const sSel=$("selSem"); sSel.innerHTML="";
-      (m?.semesters||[]).forEach(s=>{ const o=document.createElement("option"); o.value=s.sem; o.textContent=s.sem; sSel.appendChild(o); });
-      fillUEs();
-    }
-    function fillUEs(){
-      const m=(REV_INDEX.masters||[]).find(x=>x.key===$("selMaster").value);
-      const s=m?.semesters?.find(x=>x.sem===$("selSem").value);
-      $("ueCore").innerHTML=(s?.core||[]).map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join("");
-      $("ueOpt").innerHTML=(s?.options||[]).map(u=>`<label class='pillMini'><input type='checkbox' data-id='${u.id}'>${u.label}</label>`).join("");
-      $("revLaunch").disabled=true;
-      document.querySelectorAll("#revSelect input[type=checkbox]").forEach(i=> i.onchange=()=>{ $("revLaunch").disabled = !document.querySelector("#revSelect input:checked"); });
-      $("btnAllCore").onclick=()=>{ document.querySelectorAll("#ueCore input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
-      $("btnAllOpt").onclick=()=>{ document.querySelectorAll("#ueOpt input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
-      $("btnClear").onclick=()=>{ document.querySelectorAll("#revSelect input[type=checkbox]").forEach(i=>i.checked=false); $("revLaunch").disabled=true; };
-    }
-    function buildUEset(){
-      const picked=[...document.querySelectorAll("#revSelect input:checked")].map(i=>i.parentElement.textContent.trim());
-      if(!picked.length) return [];
-      return picked.map((label,ix)=>({
-        id:"UE_"+ix, level:5,
-        prompt:`UE: ${label} — question démo`,
-        choices:[{id:'a',text:'Réponse A'},{id:'b',text:'Réponse B',correct:true},{id:'c',text:'Réponse C'},{id:'d',text:'Réponse D'}],
-        explanation:"Remplace ce placeholder par une vraie question si tu veux."
-      }));
-    }
-
-    // ===== Pédantix =====
-    let pedCurrent=null, pedShown=1;
-    function pickPed(){
-      if(!PED_PASSAGES.length){ alert("Pas de passages (pedantix_passages.json)."); show($("home")); return; }
-      pedCurrent = PED_PASSAGES[Math.floor(Math.random()*PED_PASSAGES.length)];
-      pedShown=1; renderPed();
-    }
-    function maskAll(s,t){ const esc=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); const re=new RegExp(esc,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
-    function renderPed(){
-      $("pedTitle").textContent = pedCurrent.title||"";
-      $("pedGuesses").innerHTML=""; $("pedScore").hidden=true; $("pedInput").value="";
-      const shown = pedCurrent.sentences.slice(0,pedShown).map(x=>`<p>${maskAll(x, pedCurrent.target)}</p>`).join("");
-      $("pedText").innerHTML = shown; $("pedInput").focus();
-    }
-    function guessPed(){
-      const g=strip($("pedInput").value); if(!g) return;
-      const ok = g===strip(pedCurrent.target);
-      const li=document.createElement("li");
-      li.className="result-item";
-      li.innerHTML=`<div class='num ${ok?'ok':'ko'}'>${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`;
-      $("pedGuesses").prepend(li);
-      if(ok){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Mot : "+pedCurrent.target; }
-      $("pedInput").value="";
-    }
-    function revealPed(){ if(pedShown < pedCurrent.sentences.length){ pedShown++; renderPed(); } }
-
-    // ===== Handlers & nav =====
-    function attachHandlers(){
-      $("logo").onclick=()=>{ mode='Accueil'; reset(); show($("home")); };
-      $("homeBtn").onclick=()=>{ mode='Accueil'; reset(); show($("home")); };
-
-      $("startNormal").onclick=()=>{ mode='Normal'; reset(); show($("quiz")); renderQ(); };
-      $("nextBtn").onclick=nextQ;
-      $("finishBtn").onclick=()=>{ // résumé très simple
-        $("resultsList").innerHTML = history.map((h,i)=>`<li class="result-item"><div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">${h.prompt}</div><div class="muted">Votre: ${h.picked||'—'} — Bonne: ${h.correctText||''}</div></div></li>`).join("");
-        $("scoreLine").textContent = `Questions: ${history.length} — Points: ${points}`;
-        show($("results"));
-      };
-      $("retryBtn").onclick=()=>{ mode='Normal'; reset(); show($("quiz")); renderQ(); };
-
-      $("startRevision").onclick=()=>{ mode='Révision'; reset(); fillMasters(); show($("revSelect")); };
-      $("selMaster").onchange=fillSems; $("selSem").onchange=fillUEs;
-      $("revBack").onclick=()=>{ mode='Accueil'; reset(); show($("home")); };
-      $("revLaunch").onclick=()=>{
-        const set=buildUEset();
-        if(!set.length){ alert("Coche au moins une UE."); return; }
-        const saved=QUESTIONS.slice();
-        QUESTIONS = set; mode='Révision'; reset(); show($("quiz")); renderQ();
-        // quand on termine, on remet la banque normale
-        const finishOnce = ()=>{ $("finishBtn").removeEventListener('click', finishOnce); QUESTIONS = saved; $("resultsList").innerHTML = history.map((h,i)=>`<li class="result-item"><div class="num ${h.ok?'ok':'ko'}">${i+1}</div><div><div style="font-weight:700">${h.prompt}</div><div class="muted">Votre: ${h.picked||'—'} — Bonne: ${h.correctText||''}</div></div></li>`).join(""); $("scoreLine").textContent = `Questions: ${history.length} — Points: ${points}`; show($("results")); };
-        $("finishBtn").addEventListener('click', finishOnce);
-      };
-
-      $("startPedantix").onclick=()=>{ mode='Pédantix'; reset(); pickPed(); show($("pedantix")); };
-      $("pedInput").onkeydown=e=>{ if(e.key==='Enter') guessPed(); };
-      $("pedNew").onclick=pickPed; $("pedReveal").onclick=revealPed;
-    }
-  </script>
+  // page d’arrivée
+  go(urlMode);
+  if(urlMode==='normal'){ qCount=0; goodCount=0; streak=0; renderQuestion(); }
+  if(urlMode==='revision'){ fillMasters(); }
+  if(urlMode==='pedantix'){ pickPed(); }
+})();
+</script>
 </body>
 </html>
