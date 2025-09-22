@@ -7,7 +7,7 @@
 <style>
   :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
   *{box-sizing:border-box} :focus-visible{outline:3px solid #11133b;outline-offset:2px}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:#fg}
   header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
   nav{display:flex;gap:12px;align-items:center;max-width:1120px;margin:0 auto;padding:12px 24px}
   .brand{font-size:20px;font-weight:800;cursor:pointer}
@@ -32,7 +32,6 @@
   select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
   .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
   .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
-  /* pédantix */
   .pedantix-text{line-height:1.6}
   .mask{background:#111;color:#111;border-radius:4px;padding:2px 6px;}
   .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
@@ -156,8 +155,8 @@ function setMetaVisible(v){ $("metaRow").hidden=!v; $("backBtn").hidden=!v; }
 
 /* ===== navigation ===== */
 function go(mode){
-  const sections=['home','normal','revision','pedantix'];
-  sections.forEach(id=>$(id).hidden=true);
+  const secs=['home','normal','revision','pedantix'];
+  secs.forEach(id=>$(id).hidden=true);
   $(mode).hidden=false;
   if(mode==='home'){ setMetaVisible(false); history.replaceState({},'',location.pathname); }
   else { setMetaVisible(true); history.replaceState({},'',`?mode=${mode}`); }
@@ -165,7 +164,6 @@ function go(mode){
 }
 $("brand").onclick=()=>go('home');
 $("backBtn").onclick=()=>go('home');
-const urlMode = new URLSearchParams(location.search).get('mode') || 'home';
 
 /* ===== fetch + fallbacks ===== */
 async function tryFetch(path){ try{const r=await fetch(path,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json();}catch{return null;} }
@@ -174,13 +172,13 @@ const DEMO_REV={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'M1-S7
 const DEMO_PED=[{id:'P1',title:'Photosynthèse (démo)',target:'chloroplaste',sentences:["Le CHAMP est un organite où se déroule la photosynthèse.","Les thylakoïdes du CHAMP portent les pigments.","Le stroma du CHAMP héberge le cycle de Calvin."]}];
 
 /* ===== chargement garanti ===== */
-let loaded = false;
+let loaded=false;
 async function loadData(){
   if(loaded) return;
   QUESTIONS    = await tryFetch("./data/questions_normal.json")   || DEMO_QUESTIONS;
   REV_INDEX    = await tryFetch("./data/revision_index.json")     || DEMO_REV;
   PED_PASSAGES = await tryFetch("./data/pedantix_passages.json")  || DEMO_PED;
-  loaded = true;
+  loaded=true;
 }
 
 /* ===== NORMAL ===== */
@@ -242,4 +240,62 @@ function fillUEs(){ const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.va
   $("revLaunch").disabled=true; document.querySelectorAll("#revision input[type=checkbox]").forEach(i=> i.onchange=()=>{ $("revLaunch").disabled=!document.querySelector("#revision input:checked"); });
   $("btnAllCore").onclick=()=>{ ueCore.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
   $("btnAllOpt").onclick=()=>{ ueOpt.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
-  $("btnClear").onclick=()=>{ document.querySelectorAll("#revision input[type=checkbox]").forEach(i
+  $("btnClear").onclick=()=>{ document.querySelectorAll("#revision input[type=checkbox]").forEach(i=>i.checked=false); $("revLaunch").disabled=true; };
+}
+$("revLaunch").onclick=()=>{
+  const picked=[...document.querySelectorAll("#revision input:checked")].map(i=>i.parentElement.textContent.trim());
+  if(!picked.length) return;
+  QUESTIONS = picked.map((lbl,ix)=>({id:'UE'+ix,level:5,prompt:`UE: ${lbl} — question démo`,choices:[{id:'a',text:'A'},{id:'b',text:'B',correct:true},{id:'c',text:'C'},{id:'d',text:'D'}],explanation:'Remplace ce placeholder plus tard.'}));
+  qCount=0; goodCount=0; streak=0;
+  $("eloPill").textContent=elo; $("qPill").textContent=qCount; $("goodPill").textContent=goodCount; $("streakPill").textContent=streak; $("streakNote").textContent="";
+  go('normal'); renderQuestion();
+};
+
+/* ===== PÉDANTIX ===== */
+let pedCurrent=null, pedShown=1;
+function maskAll(s,t){ const esc=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); const re=new RegExp(esc,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
+function pickPed(){ pedCurrent = (PED_PASSAGES||[])[Math.floor(Math.random()*PED_PASSAGES.length)]; pedShown=1; renderPed(); }
+function renderPed(){
+  if(!PED_PASSAGES.length){ $("pedTitle").textContent="Pas de passages (data/pedantix_passages.json)"; $("pedText").innerHTML=""; $("pedGuesses").innerHTML=""; return; }
+  $("pedTitle").textContent=pedCurrent.title||''; $("pedGuesses").innerHTML=''; $("pedScore").hidden=true;
+  $("pedText").innerHTML = pedCurrent.sentences.slice(0,pedShown).map(s=>`<p>${maskAll(s,pedCurrent.target)}</p>`).join("");
+  $("pedInput").value="";
+}
+
+/* ===== handlers d’UI ===== */
+document.querySelectorAll('[data-go]').forEach((b) => {
+  b.addEventListener('click', async () => {
+    await loadData();
+    const m = b.dataset.go;
+    go(m);
+    if (m === 'normal')  { qCount=0; goodCount=0; streak=0; renderQuestion(); }
+    if (m === 'revision'){ fillMasters(); }
+    if (m === 'pedantix'){ pickPed(); }
+  });
+});
+$("brand").onclick=()=>go('home');
+$("backBtn").onclick=()=>go('home');
+$("pedInput").addEventListener('keydown',e=>{
+  if(e.key!=='Enter') return;
+  const g=strip($("pedInput").value); if(!g) return;
+  const ok = g===strip(pedCurrent.target);
+  const li=document.createElement('li'); li.className='result-item';
+  li.innerHTML=`<div class="num ${ok?'ok':'ko'}">${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`;
+  $("pedGuesses").prepend(li); if(ok){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Mot : "+pedCurrent.target; }
+  $("pedInput").value="";
+});
+$("pedNew").onclick=pickPed;
+$("pedReveal").onclick=()=>{ if(pedShown<(pedCurrent.sentences||[]).length){ pedShown++; renderPed(); } };
+
+/* ===== boot ===== */
+const urlMode = new URLSearchParams(location.search).get('mode') || 'home';
+(async function boot(){
+  await loadData();
+  go(urlMode);
+  if (urlMode === 'normal')  { qCount=0; goodCount=0; streak=0; renderQuestion(); }
+  if (urlMode === 'revision'){ fillMasters(); }
+  if (urlMode === 'pedantix'){ pickPed(); }
+})();
+</script>
+</body>
+</html>
