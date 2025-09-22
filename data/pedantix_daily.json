@@ -1,0 +1,17 @@
+[
+  {
+    "date": "2025-09-22",
+    "target": "Photosynthèse",
+    "text": "La photosynthèse est un ensemble de réactions biochimiques qui permettent aux organismes photoautotrophes de convertir l'énergie lumineuse en énergie chimique. Chez les plantes, elle se déroule principalement dans les feuilles, au sein des chloroplastes. Les thylakoïdes portent les pigments, dont la chlorophylle, et hébergent la phase photochimique, tandis que le stroma accueille le cycle de Calvin. Le dioxyde de carbone est fixé et réduit pour former des sucres, avec libération d'oxygène."
+  },
+  {
+    "date": "2025-09-23",
+    "target": "Xylème",
+    "text": "Le xylème est un tissu conducteur végétal spécialisé dans le transport ascendant de la sève brute, constituée d'eau et d'ions minéraux, depuis les racines jusqu'aux organes aériens. Il comprend notamment des trachéides et des vaisseaux, lignifiés, qui assurent une conduction efficace et un soutien mécanique. Le xylème fonctionne de concert avec le phloème, responsable du transport des assimilats carbonés."
+  },
+  {
+    "date": "2025-09-24",
+    "target": "Stomate",
+    "text": "Le stomate est une structure épidermique composée d'un ostiole encadré par deux cellules de garde, régulant les échanges gazeux et la transpiration des feuilles. L'ouverture stomatique dépend de l'état hydrique, de la lumière et de signaux hormonaux tels que l'acide abscissique. Les stomates jouent un rôle central dans la photosynthèse en contrôlant l'entrée du dioxyde de carbone."
+  }
+]
