@@ -32,7 +32,7 @@
   .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   /* Pédantix */
   .pedantix-text{line-height:1.7; font-size:1.05rem}
-  .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px;}
+  .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px}
   .token{display:inline}
   .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   .exp{margin-top:10px;padding:12px;border:1px dashed #e5e7eb;border-radius:12px;background:#fafafa}
@@ -62,7 +62,7 @@
       </div>
       <div class="card">
         <h3>Pédantix végétal (du jour)</h3>
-        <p class="muted">Texte masqué. Tape des mots pour dévoiler le texte. Objectif : le titre Wikipédia (mot du jour).</p>
+        <p class="muted">Texte à trous. Tape des mots pour dévoiler le texte. Objectif : trouver le titre Wikipédia caché.</p>
         <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
     </div>
@@ -121,13 +121,13 @@
         <h2 style="margin:0">Pédantix du jour <span id="pedScore" class="pillScore" hidden></span></h2>
         <div class="rowL">
           <button id="pedReset" class="btn outline">Réinitialiser du jour</button>
-          <button id="pedHint" class="btn outline">Indice (dévoile 1 mot)</button>
+          <button id="pedHint" class="btn outline">Indice (révèle un mot)</button>
         </div>
       </div>
-      <p class="muted" id="pedTitle"></p>
+      <p class="muted" id="pedTitleMask"></p>
       <div id="pedText" class="pedantix-text"></div>
       <div class="row" style="justify-content:flex-start;margin-top:12px">
-        <input id="pedInput" class="choice" placeholder="Propose un mot puis Entrée (objectif : titre Wikipédia)" />
+        <input id="pedInput" class="choice" placeholder="Tape un mot (objectif : le titre caché)" />
       </div>
       <ol id="pedGuesses" class="results"></ol>
     </div>
@@ -140,9 +140,8 @@ const $ = id => document.getElementById(id);
 const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
 
-// État de départ : toujours niveau 1 et Elo 1000 (pas de persistance)
-let elo = 1000;
-let level = 1;
+// État de départ : toujours niveau 1 et Elo 1000
+let elo = 1000, level = 1;
 let QUESTIONS=[], REV_INDEX=null, PED_DAILY=null;
 let qCount=0, goodCount=0, streak=0;
 
@@ -164,17 +163,14 @@ function streakNote(n){
   if(n===0) return "";
   return "🧊 va réviser";
 }
-function updateLevelHint(){
-  $("levelHint").textContent = "niveau estimé ≈ " + eloToLevel(elo);
-}
+function updateLevelHint(){ $("levelHint").textContent = "niveau estimé ≈ " + eloToLevel(elo); }
 
-/* ========= Navigation (pages via ?mode=) ========= */
+/* ========= Navigation ========= */
 function go(mode){
   ["home","normal","revision","pedantix"].forEach(id=>$(id).hidden=true);
   $(mode).hidden=false;
   $("backBtn").hidden = (mode==="home");
   history.replaceState({}, "", mode==="home" ? location.pathname : `?mode=${mode}`);
-  // mettre à jour les mini-pills du mode Normal
   $("eloPill2").textContent=elo; $("qPill2").textContent=qCount; $("goodPill2").textContent=goodCount;
   $("streakPill2").textContent=streak; $("streakNote2").textContent=streakNote(streak);
   updateLevelHint();
@@ -182,29 +178,22 @@ function go(mode){
 $("brand").onclick=()=>go("home");
 $("backBtn").onclick=()=>go("home");
 
-/* ========= Chargement data (avec fallbacks) ========= */
+/* ========= Chargement data ========= */
 async function tryFetch(path){
   try{ const r=await fetch(path,{cache:"no-store"}); if(!r.ok) throw 0; return await r.json(); }
   catch{ return null; }
 }
 const DEMO_QUESTIONS=[{id:"demo1",level:1,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
 const DEMO_REV={masters:[{key:"BIPA",label:"BIPA (démo)",semesters:[{sem:"M1-S7",core:[{id:"biostat_R",label:"Biostatistiques avec R"}],options:[{id:"opt",label:"Option démo"}]}]}]};
-const todayISO = (()=>{
-  // on force un format YYYY-MM-DD côté navigateur
-  const d=new Date(); const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,'0');
-  const dd=String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${dd}`;
-})();
-const DEMO_DAILY=[{date:todayISO,target:"Chloroplaste",text:"Le chloroplaste est un organite des cellules végétales où se déroule la photosynthèse. Les thylakoïdes portent les pigments et le stroma abrite le cycle de Calvin. On le trouve surtout dans les feuilles."}];
+const todayISO = (()=>{ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; })();
+const DEMO_DAILY=[{date:todayISO,target:"Chloroplaste",text:"Le chloroplaste se rencontre chez de nombreuses plantes. Il capte la lumière et participe à la fabrication de sucres. Dans la vie courante, on l’associe souvent aux feuilles bien vertes des végétaux."}];
 
 let loaded=false;
 async function loadData(){
   if(loaded) return;
-  QUESTIONS    = await tryFetch("./data/questions_normal.json")   || DEMO_QUESTIONS;
-  REV_INDEX    = await tryFetch("./data/revision_index.json")     || DEMO_REV;
-  const daily  = await tryFetch("./data/pedantix_daily.json")     || DEMO_DAILY;
-  // sélectionner l’entrée du jour
+  QUESTIONS = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
+  REV_INDEX = await tryFetch("./data/revision_index.json")   || DEMO_REV;
+  const daily = await tryFetch("./data/pedantix_daily.json") || DEMO_DAILY;
   PED_DAILY = daily.find(x=>x.date===todayISO) || daily[0];
   loaded=true;
 }
@@ -276,15 +265,10 @@ $("revLaunch").onclick=()=>{
   go("normal"); renderQuestion();
 };
 
-/* ========= Pédantix (daily — texte intégral masqué) ========= */
-let pedState = {
-  date: null,
-  target: null,
-  text: "",
-  tokens: [],          // [{raw, norm, isWord}]
-  revealed: new Set(), // words révélés (norm)
-  guessed: []          // [{word, hits}]
-};
+/* ========= Pédantix (daily — titre masqué + texte à trous) ========= */
+const STOPWORDS = new Set(["le","la","les","un","une","des","du","de","d","et","en","dans","au","aux","auxquels","auxquelles","à","ou","où","que","qui","se","s","sur","pour","par","avec","sans","plus","moins","comme","est","sont","faut","chez","on","il","elle","elles","ils","ce","cet","cette","ces","dont","leur","leurs","l"]);
+let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[] };
+
 function tokenize(text){
   const parts = text.match(wordRe) || [];
   return parts.map(p=>{
@@ -292,8 +276,19 @@ function tokenize(text){
     return { raw:p, norm: isWord ? strip(p) : p, isWord };
   });
 }
+function titleMask(){
+  if(!pedState.target) return "";
+  const letters = [...pedState.target];
+  const masked = letters.map(ch=>{
+    // on affiche espaces/ponctuation, on masque lettres
+    if(/\s/.test(ch)) return " ";
+    if(/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch)) return "█";
+    return ch;
+  }).join("");
+  return `Titre : ${masked} (${letters.filter(c=>/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(c)).length} lettres)`;
+}
 function renderPed(){
-  $("pedTitle").textContent = pedState.date ? `Mot du jour (${pedState.date})` : "Mot du jour";
+  $("pedTitleMask").textContent = titleMask();
   // reconstruire le texte en masquant les tokens non révélés
   const frag = document.createDocumentFragment();
   pedState.tokens.forEach(t=>{
@@ -301,7 +296,7 @@ function renderPed(){
     span.className = "token";
     if(!t.isWord){ span.textContent = t.raw; }
     else {
-      const show = pedState.revealed.has(t.norm) || t.norm === strip(pedState.target);
+      const show = pedState.revealed.has(t.norm);
       span.innerHTML = show ? t.raw : `<span class="mask">${"█".repeat(Math.max(1, t.raw.length))}</span>`;
     }
     frag.appendChild(span);
@@ -314,7 +309,7 @@ function pickDaily(){
   pedState.target = entry?.target || "Chloroplaste";
   pedState.text = entry?.text || DEMO_DAILY[0].text;
   pedState.tokens = tokenize(pedState.text);
-  pedState.revealed = new Set();
+  pedState.revealed = new Set([...STOPWORDS]); // on révèle d’office les petits mots
   pedState.guessed = [];
   $("pedGuesses").innerHTML="";
   $("pedScore").hidden=true;
@@ -322,22 +317,23 @@ function pickDaily(){
 }
 function guessWord(w){
   const g = strip(w||"").trim(); if(!g) return {hits:0,win:false};
-  const targetOK = g === strip(pedState.target);
+  const win = g === strip(pedState.target);
   let hits = 0;
-  if(!targetOK){
-    // si le mot tapé existe dans le texte → on révèle toutes ses occurrences
+  if(!win){
     const found = pedState.tokens.some(t=>t.isWord && t.norm===g);
-    if(found){ pedState.revealed.add(g); hits = pedState.tokens.filter(t=>t.isWord && t.norm===g).length; }
+    if(found){
+      pedState.revealed.add(g);
+      hits = pedState.tokens.filter(t=>t.isWord && t.norm===g).length;
+    }
   }
   renderPed();
-  return {hits,win:targetOK};
+  return {hits,win};
 }
-// Indice = dévoile un mot non révélé (différent du target), pas de ponctuation
 function pedHint(){
-  const candidates = [...new Set(pedState.tokens.filter(t=>t.isWord).map(t=>t.norm))]
-    .filter(w=> w!==strip(pedState.target) && !pedState.revealed.has(w) && w.length>2);
-  if(!candidates.length) return;
-  const w = candidates[Math.floor(Math.random()*candidates.length)];
+  const vocab = [...new Set(pedState.tokens.filter(t=>t.isWord).map(t=>t.norm))]
+    .filter(w=> !STOPWORDS.has(w) && !pedState.revealed.has(w));
+  if(!vocab.length) return;
+  const w = vocab[Math.floor(Math.random()*vocab.length)];
   pedState.revealed.add(w);
   renderPed();
 }
@@ -347,9 +343,9 @@ $("pedInput").addEventListener("keydown",e=>{
   const val = $("pedInput").value.trim(); if(!val) return;
   const {hits,win} = guessWord(val);
   const li=document.createElement("li"); li.className="result-item";
-  li.innerHTML=`<div class="num ${win?'ok':(hits>0?'ok':'ko')}">${$("pedGuesses").children.length+1}</div><div><b>${val}</b> — ${win?'🎯 trouvé !':(hits>0?`${hits} occurrence(s) dévoilée(s)`:'0')}</div>`;
+  li.innerHTML=`<div class="num ${win?'ok':(hits>0?'ok':'ko')}">${$("pedGuesses").children.length+1}</div><div><b>${val}</b> — ${win?'🎯 Titre trouvé !':(hits>0?`${hits} occurrence(s)`:'0')}</div>`;
   $("pedGuesses").prepend(li);
-  if(win){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Titre : "+pedState.target; }
+  if(win){ $("pedScore").hidden=false; $("pedScore").textContent="BRAVO !"; }
   $("pedInput").value="";
 });
 $("pedReset").onclick=pickDaily;
