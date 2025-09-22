@@ -309,7 +309,7 @@ function pickDaily(){
   pedState.target = entry?.target || "Chloroplaste";
   pedState.text = entry?.text || DEMO_DAILY[0].text;
   pedState.tokens = tokenize(pedState.text);
-  pedState.revealed = new Set([...STOPWORDS]); // on révèle d’office les petits mots
+  pedState.revealed = new Set(); // démarre à zéro mot
   pedState.guessed = [];
   $("pedGuesses").innerHTML="";
   $("pedScore").hidden=true;
