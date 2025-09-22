@@ -2,16 +2,16 @@
   {
     "date": "2025-09-22",
     "target": "Photosynthèse",
-    "text": "La photosynthèse est un ensemble de réactions biochimiques qui permettent aux organismes photoautotrophes de convertir l'énergie lumineuse en énergie chimique. Chez les plantes, elle se déroule principalement dans les feuilles, au sein des chloroplastes. Les thylakoïdes portent les pigments, dont la chlorophylle, et hébergent la phase photochimique, tandis que le stroma accueille le cycle de Calvin. Le dioxyde de carbone est fixé et réduit pour former des sucres, avec libération d'oxygène."
+    "text": "On parle ici d'un phénomène naturel très répandu chez les plantes : grâce à la lumière, elles fabriquent de la matière à partir d'air et d'eau. C'est ce qui permet aux feuilles de rester bien vertes et aux végétaux de croître. Le processus se déroule dans de petites structures à l'intérieur des cellules et libère un gaz essentiel pour la respiration des êtres vivants."
   },
   {
     "date": "2025-09-23",
     "target": "Xylème",
-    "text": "Le xylème est un tissu conducteur végétal spécialisé dans le transport ascendant de la sève brute, constituée d'eau et d'ions minéraux, depuis les racines jusqu'aux organes aériens. Il comprend notamment des trachéides et des vaisseaux, lignifiés, qui assurent une conduction efficace et un soutien mécanique. Le xylème fonctionne de concert avec le phloème, responsable du transport des assimilats carbonés."
+    "text": "Dans le corps d'une plante, il existe un réseau qui sert de conduites montantes. Par ces chemins, l'eau puisée par les racines voyage vers les parties aériennes. Ces conduites sont solides, un peu comme de minuscules tubes rigides, et contribuent à tenir la plante droite, tandis qu'un autre réseau s'occupe surtout de faire circuler les sucres."
   },
   {
     "date": "2025-09-24",
     "target": "Stomate",
-    "text": "Le stomate est une structure épidermique composée d'un ostiole encadré par deux cellules de garde, régulant les échanges gazeux et la transpiration des feuilles. L'ouverture stomatique dépend de l'état hydrique, de la lumière et de signaux hormonaux tels que l'acide abscissique. Les stomates jouent un rôle central dans la photosynthèse en contrôlant l'entrée du dioxyde de carbone."
+    "text": "À la surface des feuilles, on trouve de petites ouvertures qui peuvent s'ouvrir et se fermer. Elles laissent entrer l'air utile à la fabrication de sucres et régulent la perte d'eau. Leur comportement change avec la lumière, la disponibilité en eau et certains signaux internes, un peu comme des petites portes automatiques qui équilibrent les échanges."
   }
 ]
