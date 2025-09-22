@@ -7,7 +7,7 @@
 <style>
   :root{--bg:#f7f7f8;--fg:#111;--muted:#666;--brand:#111;--ok:#16a34a;--ko:#ef4444}
   *{box-sizing:border-box} :focus-visible{outline:3px solid #11133b;outline-offset:2px}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:#fg}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;background:var(--bg);color:var(--fg)}
   header{position:sticky;top:0;z-index:10;backdrop-filter:saturate(1.5) blur(6px);background:rgba(255,255,255,.7);border-bottom:1px solid #e5e7eb}
   nav{display:flex;gap:12px;align-items:center;max-width:1120px;margin:0 auto;padding:12px 24px}
   .brand{font-size:20px;font-weight:800;cursor:pointer}
@@ -23,7 +23,6 @@
   .choices{display:grid;gap:10px;margin-top:12px}
   .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer}
   .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
-  .choice.selected{outline:3px solid var(--brand);border-color:var(--brand)}
   .answer.ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.2)}
   .answer.ko{border-color:var(--ko);box-shadow:0 0 0 3px rgba(239,68,68,.2)}
   .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
@@ -32,6 +31,7 @@
   select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
   .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
   .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
+  /* Pédantix */
   .pedantix-text{line-height:1.6}
   .mask{background:#111;color:#111;border-radius:4px;padding:2px 6px;}
   .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
@@ -43,6 +43,7 @@
   <nav>
     <button id="backBtn" class="back" hidden>← Retour</button>
     <div id="brand" class="brand">🌿 Plant’Quiz</div>
+    <!-- meta cachée par défaut pour éviter l'effet "visible si JS plante" -->
     <div id="metaRow" class="metaRow" hidden>
       <div class="pill">Elo: <b id="eloPill">1000</b></div>
       <div class="pill">Q: <b id="qPill">0</b></div>
@@ -58,30 +59,36 @@
     <div class="grid grid3">
       <div class="card">
         <h3>Quiz normal</h3>
-        <p class="muted">Difficulté adaptative (Elo). Affiche la bonne réponse + explication après chaque question.</p>
+        <p class="muted">Elo adaptatif. On révèle la bonne réponse + l’explication après chaque question.</p>
         <div class="row"><button data-go="normal" class="btn">Commencer</button></div>
       </div>
       <div class="card">
         <h3>Quiz révision (par UE)</h3>
-        <p class="muted">Master → Semestre → coche les UE. Placeholders (à remplacer plus tard).</p>
+        <p class="muted">Master → Semestre → coche les UE à inclure (placeholders pour l’instant).</p>
         <div class="row"><button data-go="revision" class="btn">Sélectionner des UE</button></div>
       </div>
       <div class="card">
         <h3>Pédantix végétal</h3>
-        <p class="muted">Devine le mot principal d’un passage (type pédantix).</p>
+        <p class="muted">Devine le mot principal d’un passage (type Pédantix).</p>
         <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
     </div>
-    <p class="muted" style="text-align:center;margin-top:22px">Compatible GitHub Pages — utilise /data/*.json</p>
+    <p class="muted" style="text-align:center;margin-top:22px">Compatible GitHub Pages — place tes données dans <code>/data/</code>.</p>
   </section>
 
   <!-- NORMAL -->
   <section id="normal" hidden>
     <div class="card">
       <h2 style="margin:0 0 6px">Quiz normal</h2>
-      <p class="muted">Choisis une réponse. On révèle si c’est bon + l’explication. Ton Elo s’ajuste, et on enchaîne.</p>
+      <p class="muted">Réponds → on t’indique si c’est bon + l’explication. Elo et streak mis à jour.</p>
       <hr style="margin:12px 0"/>
       <article>
+        <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:10px">
+          <span class="pill">Elo: <b id="eloPill2">1000</b></span>
+          <span class="pill">Q: <b id="qPill2">0</b></span>
+          <span class="pill">Bonnes: <b id="goodPill2">0</b></span>
+          <span class="pill">Streak: <b id="streakPill2">0</b> <span id="streakNote2" class="muted"></span></span>
+        </div>
         <h3 id="qPrompt"></h3>
         <div class="choices" id="choices"></div>
         <div id="explain" class="exp" hidden></div>
@@ -134,7 +141,7 @@
 </main>
 
 <script>
-/* ===== utilitaires & état ===== */
+/* ========= Helpers & state ========= */
 const $ = id => document.getElementById(id);
 const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
 const LS={elo:'pq_elo', lvl:'pq_level'};
@@ -142,6 +149,7 @@ let elo = Number(localStorage.getItem(LS.elo)) || 1000;
 let level = Number(localStorage.getItem(LS.lvl)) || 1;
 let QUESTIONS=[], REV_INDEX=null, PED_PASSAGES=[];
 let qCount=0, goodCount=0, streak=0;
+
 const K=24, MAX_LEVEL=10;
 const levelToRating = l => 800 + (l-1)*70;
 function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
@@ -151,27 +159,38 @@ function applyElo(win, qLevel){
   level = Math.min(MAX_LEVEL, Math.max(1, Math.round((elo-800)/70 + 1)));
   localStorage.setItem(LS.elo, elo); localStorage.setItem(LS.lvl, level);
 }
-function setMetaVisible(v){ $("metaRow").hidden=!v; $("backBtn").hidden=!v; }
-
-/* ===== navigation ===== */
-function go(mode){
-  const secs=['home','normal','revision','pedantix'];
-  secs.forEach(id=>$(id).hidden=true);
-  $(mode).hidden=false;
-  if(mode==='home'){ setMetaVisible(false); history.replaceState({},'',location.pathname); }
-  else { setMetaVisible(true); history.replaceState({},'',`?mode=${mode}`); }
-  $("eloPill").textContent=elo; $("qPill").textContent=qCount; $("goodPill").textContent=goodCount; $("streakPill").textContent=streak; $("streakNote").textContent=streakNote(streak);
+function streakNote(n){
+  if(n>=7) return "🥵 bouillant";
+  if(n>=4) return "🔥 en feu";
+  if(n>=2) return "😎 ça progresse";
+  if(n===1) return "🙂 bien joué";
+  if(n===0) return "";
+  return "🧊 va réviser";
 }
-$("brand").onclick=()=>go('home');
-$("backBtn").onclick=()=>go('home');
 
-/* ===== fetch + fallbacks ===== */
-async function tryFetch(path){ try{const r=await fetch(path,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json();}catch{return null;} }
-const DEMO_QUESTIONS=[{id:'L1Q1',level:1,prompt:'Quelle partie réalise la photosynthèse ?',choices:[{id:'a',text:'Racines'},{id:'b',text:'Feuilles',correct:true},{id:'c',text:'Fleurs'},{id:'d',text:'Graines'}],explanation:'Les feuilles contiennent des chloroplastes.'}];
-const DEMO_REV={masters:[{key:'BIPA',label:'BIPA (démo)',semesters:[{sem:'M1-S7',core:[{id:'biostat_R',label:'Biostatistiques avec R'}],options:[{id:'opt',label:'Option démo'}]}]}]};
-const DEMO_PED=[{id:'P1',title:'Photosynthèse (démo)',target:'chloroplaste',sentences:["Le CHAMP est un organite où se déroule la photosynthèse.","Les thylakoïdes du CHAMP portent les pigments.","Le stroma du CHAMP héberge le cycle de Calvin."]}];
+/* ========= Navigation (pages via ?mode=) ========= */
+function setMetaVisible(v){ $("metaRow").hidden=!v; $("backBtn").hidden=!v; }
+function go(mode){
+  ["home","normal","revision","pedantix"].forEach(id=>$(id).hidden=true);
+  $(mode).hidden=false;
+  if(mode==="home"){ setMetaVisible(false); history.replaceState({}, "", location.pathname); }
+  else { setMetaVisible(true); history.replaceState({}, "", `?mode=${mode}`); }
+  // mettre à jour les mini-pills du mode Normal
+  $("eloPill2").textContent=elo; $("qPill2").textContent=qCount; $("goodPill2").textContent=goodCount;
+  $("streakPill2").textContent=streak; $("streakNote2").textContent=streakNote(streak);
+}
+$("brand").onclick=()=>go("home");
+$("backBtn").onclick=()=>go("home");
 
-/* ===== chargement garanti ===== */
+/* ========= Chargement data (avec fallbacks) ========= */
+async function tryFetch(path){
+  try{ const r=await fetch(path,{cache:"no-store"}); if(!r.ok) throw 0; return await r.json(); }
+  catch{ return null; }
+}
+const DEMO_QUESTIONS=[{id:"demo1",level:1,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
+const DEMO_REV={masters:[{key:"BIPA",label:"BIPA (démo)",semesters:[{sem:"M1-S7",core:[{id:"biostat_R",label:"Biostatistiques avec R"}],options:[{id:"opt",label:"Option démo"}]}]}]};
+const DEMO_PED=[{id:"P1",title:"Photosynthèse (démo)",target:"chloroplaste",sentences:["Le CHAMP est un organite où se déroule la photosynthèse.","Les thylakoïdes du CHAMP portent les pigments.","Le stroma du CHAMP héberge le cycle de Calvin."]}];
+
 let loaded=false;
 async function loadData(){
   if(loaded) return;
@@ -181,7 +200,7 @@ async function loadData(){
   loaded=true;
 }
 
-/* ===== NORMAL ===== */
+/* ========= Mode Normal ========= */
 let currentQ=null, locked=false;
 function pickQuestion(){
   const near = QUESTIONS.filter(q=> Math.abs((q.level||1)-level)<=1);
@@ -189,55 +208,53 @@ function pickQuestion(){
   return list[Math.floor(Math.random()*list.length)];
 }
 function renderQuestion(){
-  if(!QUESTIONS.length){ $("qPrompt").textContent="Pas de questions (data/questions_normal.json)"; $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true; return; }
+  if(!QUESTIONS.length){
+    $("qPrompt").textContent="Pas de questions (data/questions_normal.json)";
+    $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true; return;
+  }
   currentQ = pickQuestion(); locked=false;
   $("qPrompt").textContent=currentQ.prompt;
   $("choices").innerHTML="";
   (currentQ.choices||[]).forEach(c=>{
-    const b=document.createElement('button');
-    b.className='choice'; b.textContent=c.text;
+    const b=document.createElement("button");
+    b.className="choice"; b.textContent=c.text;
     b.onclick=()=>choose(c,b);
     $("choices").appendChild(b);
   });
-  $("explain").hidden=true;
-  $("nextBtn").disabled=true;
-}
-function streakNote(n){
-  if(n>=7) return "🥵 bouillant";
-  if(n>=4) return "🔥 en feu";
-  if(n>=2) return "😎 ça progresse";
-  if(n===1) return "🙂 bien joué";
-  if(n===0) return "";
-  return "🧊 va réviser";
+  $("explain").hidden=true; $("nextBtn").disabled=true;
 }
 function choose(choice, btn){
-  if(locked) return;
-  locked=true;
-  qCount++; $("qPill").textContent=qCount;
+  if(locked) return; locked=true;
+  qCount++; $("qPill2").textContent=qCount;
   const correct = (currentQ.choices||[]).find(c=>c.correct);
   const win = !!(correct && correct.id===choice.id);
-  if(win){ goodCount++; streak++; btn.classList.add('answer','ok'); }
-  else { streak=0; btn.classList.add('answer','ko'); }
+  if(win){ goodCount++; streak++; btn.classList.add("answer","ok"); }
+  else { streak=0; btn.classList.add("answer","ko"); }
   [...$("choices").children].forEach(b=>{
-    if(b.textContent===correct.text){ b.classList.add('answer','ok'); }
+    if(b.textContent===correct.text) b.classList.add("answer","ok");
     b.disabled=true;
   });
   applyElo(win, currentQ.level);
   $("explain").hidden=false;
-  $("explain").innerHTML=(win?"✅ Correct.":"❌ Incorrect.")+(currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"");
-  $("eloPill").textContent=elo; $("goodPill").textContent=goodCount; $("streakPill").textContent=streak; $("streakNote").textContent=streakNote(streak);
+  $("explain").innerHTML = (win?"✅ Correct.":"❌ Incorrect.") + (currentQ.explanation? `<br>💡 ${currentQ.explanation}`:"");
+  $("eloPill2").textContent=elo; $("goodPill2").textContent=goodCount;
+  $("streakPill2").textContent=streak; $("streakNote2").textContent=streakNote(streak);
   $("nextBtn").disabled=false;
 }
 $("nextBtn").onclick=renderQuestion;
 
-/* ===== RÉVISION ===== */
+/* ========= Révision ========= */
 const selMaster=$("selMaster"), selSem=$("selSem"), ueCore=$("ueCore"), ueOpt=$("ueOpt");
-function fillMasters(){ selMaster.innerHTML=''; (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.key; o.textContent=m.label; selMaster.appendChild(o); }); fillSems(); }
-function fillSems(){ selSem.innerHTML=''; const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value); (m?.semesters||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.sem; o.textContent=s.sem; selSem.appendChild(o); }); fillUEs(); }
+function fillMasters(){ selMaster.innerHTML=""; (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m.key; o.textContent=m.label; selMaster.appendChild(o); }); fillSems(); }
+function fillSems(){ selSem.innerHTML=""; const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value); (m?.semesters||[]).forEach(s=>{ const o=document.createElement("option"); o.value=s.sem; o.textContent=s.sem; selSem.appendChild(o); }); fillUEs(); }
 function label(id,lbl){ return `<label class="pillMini"><input type="checkbox" data-id="${id}">${lbl}</label>`; }
-function fillUEs(){ const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value); const s=m?.semesters?.find(x=>x.sem===selSem.value);
-  ueCore.innerHTML=(s?.core||[]).map(u=>label(u.id,u.label)).join(""); ueOpt.innerHTML=(s?.options||[]).map(u=>label(u.id,u.label)).join("");
-  $("revLaunch").disabled=true; document.querySelectorAll("#revision input[type=checkbox]").forEach(i=> i.onchange=()=>{ $("revLaunch").disabled=!document.querySelector("#revision input:checked"); });
+function fillUEs(){
+  const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value);
+  const s=m?.semesters?.find(x=>x.sem===selSem.value);
+  ueCore.innerHTML=(s?.core||[]).map(u=>label(u.id,u.label)).join("");
+  ueOpt.innerHTML=(s?.options||[]).map(u=>label(u.id,u.label)).join("");
+  $("revLaunch").disabled=true;
+  document.querySelectorAll("#revision input[type=checkbox]").forEach(i=> i.onchange=()=>{ $("revLaunch").disabled=!document.querySelector("#revision input:checked"); });
   $("btnAllCore").onclick=()=>{ ueCore.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
   $("btnAllOpt").onclick=()=>{ ueOpt.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
   $("btnClear").onclick=()=>{ document.querySelectorAll("#revision input[type=checkbox]").forEach(i=>i.checked=false); $("revLaunch").disabled=true; };
@@ -245,41 +262,26 @@ function fillUEs(){ const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.va
 $("revLaunch").onclick=()=>{
   const picked=[...document.querySelectorAll("#revision input:checked")].map(i=>i.parentElement.textContent.trim());
   if(!picked.length) return;
-  QUESTIONS = picked.map((lbl,ix)=>({id:'UE'+ix,level:5,prompt:`UE: ${lbl} — question démo`,choices:[{id:'a',text:'A'},{id:'b',text:'B',correct:true},{id:'c',text:'C'},{id:'d',text:'D'}],explanation:'Remplace ce placeholder plus tard.'}));
+  QUESTIONS = picked.map((lbl,ix)=>({id:`UE${ix}`,level:5,prompt:`UE: ${lbl} — question démo`,choices:[{id:"a",text:"A"},{id:"b",text:"B",correct:true},{id:"c",text:"C"},{id:"d",text:"D"}],explanation:"Placeholder à remplacer."}));
   qCount=0; goodCount=0; streak=0;
-  $("eloPill").textContent=elo; $("qPill").textContent=qCount; $("goodPill").textContent=goodCount; $("streakPill").textContent=streak; $("streakNote").textContent="";
-  go('normal'); renderQuestion();
+  go("normal"); renderQuestion();
 };
 
-/* ===== PÉDANTIX ===== */
+/* ========= Pédantix ========= */
 let pedCurrent=null, pedShown=1;
 function maskAll(s,t){ const esc=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); const re=new RegExp(esc,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
-function pickPed(){ pedCurrent = (PED_PASSAGES||[])[Math.floor(Math.random()*PED_PASSAGES.length)]; pedShown=1; renderPed(); }
+function pickPed(){ pedCurrent = PED_PASSAGES[Math.floor(Math.random()*PED_PASSAGES.length)]; pedShown=1; renderPed(); }
 function renderPed(){
   if(!PED_PASSAGES.length){ $("pedTitle").textContent="Pas de passages (data/pedantix_passages.json)"; $("pedText").innerHTML=""; $("pedGuesses").innerHTML=""; return; }
-  $("pedTitle").textContent=pedCurrent.title||''; $("pedGuesses").innerHTML=''; $("pedScore").hidden=true;
+  $("pedTitle").textContent=pedCurrent.title||""; $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
   $("pedText").innerHTML = pedCurrent.sentences.slice(0,pedShown).map(s=>`<p>${maskAll(s,pedCurrent.target)}</p>`).join("");
   $("pedInput").value="";
 }
-
-/* ===== handlers d’UI ===== */
-document.querySelectorAll('[data-go]').forEach((b) => {
-  b.addEventListener('click', async () => {
-    await loadData();
-    const m = b.dataset.go;
-    go(m);
-    if (m === 'normal')  { qCount=0; goodCount=0; streak=0; renderQuestion(); }
-    if (m === 'revision'){ fillMasters(); }
-    if (m === 'pedantix'){ pickPed(); }
-  });
-});
-$("brand").onclick=()=>go('home');
-$("backBtn").onclick=()=>go('home');
-$("pedInput").addEventListener('keydown',e=>{
-  if(e.key!=='Enter') return;
+$("pedInput").addEventListener("keydown",e=>{
+  if(e.key!=="Enter") return;
   const g=strip($("pedInput").value); if(!g) return;
   const ok = g===strip(pedCurrent.target);
-  const li=document.createElement('li'); li.className='result-item';
+  const li=document.createElement("li"); li.className="result-item";
   li.innerHTML=`<div class="num ${ok?'ok':'ko'}">${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`;
   $("pedGuesses").prepend(li); if(ok){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Mot : "+pedCurrent.target; }
   $("pedInput").value="";
@@ -287,14 +289,26 @@ $("pedInput").addEventListener('keydown',e=>{
 $("pedNew").onclick=pickPed;
 $("pedReveal").onclick=()=>{ if(pedShown<(pedCurrent.sentences||[]).length){ pedShown++; renderPed(); } };
 
-/* ===== boot ===== */
-const urlMode = new URLSearchParams(location.search).get('mode') || 'home';
+/* ========= Handlers d’accueil ========= */
+document.querySelectorAll("[data-go]").forEach(b=>{
+  b.addEventListener("click", async () => {
+    await loadData();
+    const m=b.dataset.go;
+    if(m==="normal"){ qCount=0; goodCount=0; streak=0; go("normal"); renderQuestion(); }
+    else if(m==="revision"){ go("revision"); fillMasters(); }
+    else if(m==="pedantix"){ go("pedantix"); pickPed(); }
+  });
+});
+
+/* ========= Boot ========= */
+const urlMode = new URLSearchParams(location.search).get("mode") || "home";
 (async function boot(){
+  if(urlMode==="home"){ go("home"); return; }
   await loadData();
-  go(urlMode);
-  if (urlMode === 'normal')  { qCount=0; goodCount=0; streak=0; renderQuestion(); }
-  if (urlMode === 'revision'){ fillMasters(); }
-  if (urlMode === 'pedantix'){ pickPed(); }
+  if(urlMode==="normal"){ qCount=0; goodCount=0; streak=0; go("normal"); renderQuestion(); }
+  else if(urlMode==="revision"){ go("revision"); fillMasters(); }
+  else if(urlMode==="pedantix"){ go("pedantix"); pickPed(); }
+  else { go("home"); }
 })();
 </script>
 </body>
