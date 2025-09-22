@@ -31,8 +31,9 @@
   .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
   .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   /* Pédantix */
-  .pedantix-text{line-height:1.6}
-  .mask{background:#111;color:#111;border-radius:4px;padding:2px 6px;}
+  .pedantix-text{line-height:1.7; font-size:1.05rem}
+  .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px;}
+  .token{display:inline}
   .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   .exp{margin-top:10px;padding:12px;border:1px dashed #e5e7eb;border-radius:12px;background:#fafafa}
 </style>
@@ -60,12 +61,12 @@
         <div class="row"><button data-go="revision" class="btn">Sélectionner des UE</button></div>
       </div>
       <div class="card">
-        <h3>Pédantix végétal</h3>
-        <p class="muted">Devine le mot principal d’un passage (type Pédantix).</p>
+        <h3>Pédantix végétal (du jour)</h3>
+        <p class="muted">Texte masqué. Tape des mots pour dévoiler le texte. Objectif : le titre Wikipédia (mot du jour).</p>
         <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
     </div>
-    <p class="muted" style="text-align:center;margin-top:22px">Place tes données dans <code>/data/</code> : <code>questions_normal.json</code>, <code>revision_index.json</code>, <code>pedantix_passages.json</code>.</p>
+    <p class="muted" style="text-align:center;margin-top:22px">Place tes données dans <code>/data/</code> : <code>questions_normal.json</code>, <code>revision_index.json</code>, <code>pedantix_daily.json</code>.</p>
   </section>
 
   <!-- NORMAL -->
@@ -75,12 +76,13 @@
       <p class="muted">Réponds → on t’indique si c’est bon + l’explication. Elo et streak mis à jour.</p>
       <hr style="margin:12px 0"/>
       <article>
-        <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:10px">
+        <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:6px">
           <span class="pill">Elo: <b id="eloPill2">1000</b></span>
           <span class="pill">Q: <b id="qPill2">0</b></span>
           <span class="pill">Bonnes: <b id="goodPill2">0</b></span>
           <span class="pill">Streak: <b id="streakPill2">0</b> <span id="streakNote2" class="muted"></span></span>
         </div>
+        <div class="muted" id="levelHint" style="margin:0 0 12px">niveau estimé ≈ 1</div>
         <h3 id="qPrompt"></h3>
         <div class="choices" id="choices"></div>
         <div id="explain" class="exp" hidden></div>
@@ -112,20 +114,20 @@
     </div>
   </section>
 
-  <!-- PÉDANTIX -->
+  <!-- PÉDANTIX DAILY -->
   <section id="pedantix" hidden>
     <div class="card">
       <div class="rowL" style="justify-content:space-between">
-        <h2 style="margin:0">Pédantix <span id="pedScore" class="pillScore" hidden></span></h2>
+        <h2 style="margin:0">Pédantix du jour <span id="pedScore" class="pillScore" hidden></span></h2>
         <div class="rowL">
-          <button id="pedNew" class="btn">Nouveau</button>
-          <button id="pedReveal" class="btn outline">Indice</button>
+          <button id="pedReset" class="btn outline">Réinitialiser du jour</button>
+          <button id="pedHint" class="btn outline">Indice (dévoile 1 mot)</button>
         </div>
       </div>
       <p class="muted" id="pedTitle"></p>
       <div id="pedText" class="pedantix-text"></div>
       <div class="row" style="justify-content:flex-start;margin-top:12px">
-        <input id="pedInput" class="choice" placeholder="Propose un mot puis Entrée" />
+        <input id="pedInput" class="choice" placeholder="Propose un mot puis Entrée (objectif : titre Wikipédia)" />
       </div>
       <ol id="pedGuesses" class="results"></ol>
     </div>
@@ -136,20 +138,23 @@
 /* ========= Helpers & state ========= */
 const $ = id => document.getElementById(id);
 const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
+const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
 
-// État de départ : toujours niveau 1 et Elo 1000
+// État de départ : toujours niveau 1 et Elo 1000 (pas de persistance)
 let elo = 1000;
 let level = 1;
-let QUESTIONS=[], REV_INDEX=null, PED_PASSAGES=[];
+let QUESTIONS=[], REV_INDEX=null, PED_DAILY=null;
 let qCount=0, goodCount=0, streak=0;
 
 const K=24, MAX_LEVEL=10;
 const levelToRating = l => 800 + (l-1)*70;
+const eloToLevel = e => Math.min(MAX_LEVEL, Math.max(1, Math.round((e-800)/70 + 1)));
 function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
 function applyElo(win, qLevel){
   const opp = levelToRating(qLevel||Math.max(1,Math.min(10,level)));
   elo = Math.round(elo + K*((win?1:0)-expected(elo,opp)));
-  level = Math.min(MAX_LEVEL, Math.max(1, Math.round((elo-800)/70 + 1)));
+  level = eloToLevel(elo);
+  updateLevelHint();
 }
 function streakNote(n){
   if(n>=7) return "🥵 bouillant";
@@ -159,17 +164,20 @@ function streakNote(n){
   if(n===0) return "";
   return "🧊 va réviser";
 }
+function updateLevelHint(){
+  $("levelHint").textContent = "niveau estimé ≈ " + eloToLevel(elo);
+}
 
 /* ========= Navigation (pages via ?mode=) ========= */
 function go(mode){
   ["home","normal","revision","pedantix"].forEach(id=>$(id).hidden=true);
   $(mode).hidden=false;
-  // back visible sauf à l'accueil
   $("backBtn").hidden = (mode==="home");
   history.replaceState({}, "", mode==="home" ? location.pathname : `?mode=${mode}`);
   // mettre à jour les mini-pills du mode Normal
   $("eloPill2").textContent=elo; $("qPill2").textContent=qCount; $("goodPill2").textContent=goodCount;
   $("streakPill2").textContent=streak; $("streakNote2").textContent=streakNote(streak);
+  updateLevelHint();
 }
 $("brand").onclick=()=>go("home");
 $("backBtn").onclick=()=>go("home");
@@ -181,14 +189,23 @@ async function tryFetch(path){
 }
 const DEMO_QUESTIONS=[{id:"demo1",level:1,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
 const DEMO_REV={masters:[{key:"BIPA",label:"BIPA (démo)",semesters:[{sem:"M1-S7",core:[{id:"biostat_R",label:"Biostatistiques avec R"}],options:[{id:"opt",label:"Option démo"}]}]}]};
-const DEMO_PED=[{id:"P1",title:"Photosynthèse (démo)",target:"chloroplaste",sentences:["Le CHAMP est un organite où se déroule la photosynthèse.","Les thylakoïdes du CHAMP portent les pigments.","Le stroma du CHAMP héberge le cycle de Calvin."]}];
+const todayISO = (()=>{
+  // on force un format YYYY-MM-DD côté navigateur
+  const d=new Date(); const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const dd=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+})();
+const DEMO_DAILY=[{date:todayISO,target:"Chloroplaste",text:"Le chloroplaste est un organite des cellules végétales où se déroule la photosynthèse. Les thylakoïdes portent les pigments et le stroma abrite le cycle de Calvin. On le trouve surtout dans les feuilles."}];
 
 let loaded=false;
 async function loadData(){
   if(loaded) return;
   QUESTIONS    = await tryFetch("./data/questions_normal.json")   || DEMO_QUESTIONS;
   REV_INDEX    = await tryFetch("./data/revision_index.json")     || DEMO_REV;
-  PED_PASSAGES = await tryFetch("./data/pedantix_passages.json")  || DEMO_PED;
+  const daily  = await tryFetch("./data/pedantix_daily.json")     || DEMO_DAILY;
+  // sélectionner l’entrée du jour
+  PED_DAILY = daily.find(x=>x.date===todayISO) || daily[0];
   loaded=true;
 }
 
@@ -239,7 +256,7 @@ $("nextBtn").onclick=renderQuestion;
 const selMaster=$("selMaster"), selSem=$("selSem"), ueCore=$("ueCore"), ueOpt=$("ueOpt");
 function fillMasters(){ selMaster.innerHTML=""; (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m.key; o.textContent=m.label; selMaster.appendChild(o); }); fillSems(); }
 function fillSems(){ selSem.innerHTML=""; const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value); (m?.semesters||[]).forEach(s=>{ const o=document.createElement("option"); o.value=s.sem; o.textContent=s.sem; selSem.appendChild(o); }); fillUEs(); }
-function label(id,lbl){ return `<label class="pillMini"><input type="checkbox" data-id="${id}">${lbl}</label>`; }
+function label(id,lbl){ return `<label class="pill"><input type="checkbox" data-id="${id}"> ${lbl}</label>`; }
 function fillUEs(){
   const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value);
   const s=m?.semesters?.find(x=>x.sem===selSem.value);
@@ -255,31 +272,88 @@ $("revLaunch").onclick=()=>{
   const picked=[...document.querySelectorAll("#revision input:checked")].map(i=>i.parentElement.textContent.trim());
   if(!picked.length) return;
   QUESTIONS = picked.map((lbl,ix)=>({id:`UE${ix}`,level:5,prompt:`UE: ${lbl} — question démo`,choices:[{id:"a",text:"A"},{id:"b",text:"B",correct:true},{id:"c",text:"C"},{id:"d",text:"D"}],explanation:"Placeholder à remplacer."}));
-  qCount=0; goodCount=0; streak=0;
+  qCount=0; goodCount=0; streak=0; elo=1000; level=1;
   go("normal"); renderQuestion();
 };
 
-/* ========= Pédantix ========= */
-let pedCurrent=null, pedShown=1;
-function maskAll(s,t){ const esc=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); const re=new RegExp(esc,'gi'); return s.replace(re,"<span class='mask'>████</span>"); }
-function pickPed(){ pedCurrent = PED_PASSAGES[Math.floor(Math.random()*PED_PASSAGES.length)]; pedShown=1; renderPed(); }
-function renderPed(){
-  if(!PED_PASSAGES.length){ $("pedTitle").textContent="Pas de passages (data/pedantix_passages.json)"; $("pedText").innerHTML=""; $("pedGuesses").innerHTML=""; return; }
-  $("pedTitle").textContent=pedCurrent.title||""; $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
-  $("pedText").innerHTML = pedCurrent.sentences.slice(0,pedShown).map(s=>`<p>${maskAll(s,pedCurrent.target)}</p>`).join("");
-  $("pedInput").value="";
+/* ========= Pédantix (daily — texte intégral masqué) ========= */
+let pedState = {
+  date: null,
+  target: null,
+  text: "",
+  tokens: [],          // [{raw, norm, isWord}]
+  revealed: new Set(), // words révélés (norm)
+  guessed: []          // [{word, hits}]
+};
+function tokenize(text){
+  const parts = text.match(wordRe) || [];
+  return parts.map(p=>{
+    const isWord = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+/.test(p);
+    return { raw:p, norm: isWord ? strip(p) : p, isWord };
+  });
 }
+function renderPed(){
+  $("pedTitle").textContent = pedState.date ? `Mot du jour (${pedState.date})` : "Mot du jour";
+  // reconstruire le texte en masquant les tokens non révélés
+  const frag = document.createDocumentFragment();
+  pedState.tokens.forEach(t=>{
+    const span = document.createElement("span");
+    span.className = "token";
+    if(!t.isWord){ span.textContent = t.raw; }
+    else {
+      const show = pedState.revealed.has(t.norm) || t.norm === strip(pedState.target);
+      span.innerHTML = show ? t.raw : `<span class="mask">${"█".repeat(Math.max(1, t.raw.length))}</span>`;
+    }
+    frag.appendChild(span);
+  });
+  const host=$("pedText"); host.innerHTML=""; host.appendChild(frag);
+}
+function pickDaily(){
+  const entry = PED_DAILY;
+  pedState.date = entry?.date || todayISO;
+  pedState.target = entry?.target || "Chloroplaste";
+  pedState.text = entry?.text || DEMO_DAILY[0].text;
+  pedState.tokens = tokenize(pedState.text);
+  pedState.revealed = new Set();
+  pedState.guessed = [];
+  $("pedGuesses").innerHTML="";
+  $("pedScore").hidden=true;
+  renderPed();
+}
+function guessWord(w){
+  const g = strip(w||"").trim(); if(!g) return {hits:0,win:false};
+  const targetOK = g === strip(pedState.target);
+  let hits = 0;
+  if(!targetOK){
+    // si le mot tapé existe dans le texte → on révèle toutes ses occurrences
+    const found = pedState.tokens.some(t=>t.isWord && t.norm===g);
+    if(found){ pedState.revealed.add(g); hits = pedState.tokens.filter(t=>t.isWord && t.norm===g).length; }
+  }
+  renderPed();
+  return {hits,win:targetOK};
+}
+// Indice = dévoile un mot non révélé (différent du target), pas de ponctuation
+function pedHint(){
+  const candidates = [...new Set(pedState.tokens.filter(t=>t.isWord).map(t=>t.norm))]
+    .filter(w=> w!==strip(pedState.target) && !pedState.revealed.has(w) && w.length>2);
+  if(!candidates.length) return;
+  const w = candidates[Math.floor(Math.random()*candidates.length)];
+  pedState.revealed.add(w);
+  renderPed();
+}
+
 $("pedInput").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
-  const g=strip($("pedInput").value); if(!g) return;
-  const ok = g===strip(pedCurrent.target);
+  const val = $("pedInput").value.trim(); if(!val) return;
+  const {hits,win} = guessWord(val);
   const li=document.createElement("li"); li.className="result-item";
-  li.innerHTML=`<div class="num ${ok?'ok':'ko'}">${$("pedGuesses").children.length+1}</div><div><b>${$("pedInput").value}</b> ${ok?'✅':'❌'}</div>`;
-  $("pedGuesses").prepend(li); if(ok){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Mot : "+pedCurrent.target; }
+  li.innerHTML=`<div class="num ${win?'ok':(hits>0?'ok':'ko')}">${$("pedGuesses").children.length+1}</div><div><b>${val}</b> — ${win?'🎯 trouvé !':(hits>0?`${hits} occurrence(s) dévoilée(s)`:'0')}</div>`;
+  $("pedGuesses").prepend(li);
+  if(win){ $("pedScore").hidden=false; $("pedScore").textContent="Bravo ! Titre : "+pedState.target; }
   $("pedInput").value="";
 });
-$("pedNew").onclick=pickPed;
-$("pedReveal").onclick=()=>{ if(pedShown<(pedCurrent.sentences||[]).length){ pedShown++; renderPed(); } };
+$("pedReset").onclick=pickDaily;
+$("pedHint").onclick=pedHint;
 
 /* ========= Handlers d’accueil ========= */
 document.querySelectorAll("[data-go]").forEach(b=>{
@@ -288,7 +362,7 @@ document.querySelectorAll("[data-go]").forEach(b=>{
     const m=b.dataset.go;
     if(m==="normal"){ qCount=0; goodCount=0; streak=0; elo=1000; level=1; go("normal"); renderQuestion(); }
     else if(m==="revision"){ go("revision"); fillMasters(); }
-    else if(m==="pedantix"){ go("pedantix"); pickPed(); }
+    else if(m==="pedantix"){ go("pedantix"); pickDaily(); }
   });
 });
 
@@ -299,7 +373,7 @@ const urlMode = new URLSearchParams(location.search).get("mode") || "home";
   await loadData();
   if(urlMode==="normal"){ qCount=0; goodCount=0; streak=0; elo=1000; level=1; go("normal"); renderQuestion(); }
   else if(urlMode==="revision"){ go("revision"); fillMasters(); }
-  else if(urlMode==="pedantix"){ go("pedantix"); pickPed(); }
+  else if(urlMode==="pedantix"){ go("pedantix"); pickDaily(); }
   else { go("home"); }
 })();
 </script>
