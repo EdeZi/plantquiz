@@ -166,7 +166,20 @@ function go(mode){
 }
 $("brand").onclick=()=>go('home');
 $("backBtn").onclick=()=>go('home');
-document.querySelectorAll('[data-go]').forEach(b=> b.onclick=()=>go(b.dataset.go));
+document.querySelectorAll('[data-go]').forEach(b=> {
+  b.onclick = () => {
+    const m = b.dataset.go;
+    go(m);
+    if (m === 'normal') {
+      qCount = 0; goodCount = 0; streak = 0;
+      renderQuestion();
+    } else if (m === 'revision') {
+      fillMasters();
+    } else if (m === 'pedantix') {
+      pickPed();
+    }
+  };
+});
 const urlMode = new URLSearchParams(location.search).get('mode') || 'home';
 
 /* ===== fetch + fallbacks ===== */
