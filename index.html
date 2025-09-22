@@ -12,8 +12,6 @@
   nav{display:flex;gap:12px;align-items:center;max-width:1120px;margin:0 auto;padding:12px 24px}
   .brand{font-size:20px;font-weight:800;cursor:pointer}
   .back{appearance:none;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
-  .metaRow{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-  .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
   .container{max-width:1120px;margin:0 auto;padding:24px}
   .grid{display:grid;gap:14px} .grid3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
   .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
@@ -30,6 +28,7 @@
   .field{display:grid;gap:6px}
   select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
   .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
+  .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
   .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   /* Pédantix */
   .pedantix-text{line-height:1.6}
@@ -43,13 +42,6 @@
   <nav>
     <button id="backBtn" class="back" hidden>← Retour</button>
     <div id="brand" class="brand">🌿 Plant’Quiz</div>
-    <!-- meta cachée par défaut pour éviter l'effet "visible si JS plante" -->
-    <div id="metaRow" class="metaRow" hidden>
-      <div class="pill">Elo: <b id="eloPill">1000</b></div>
-      <div class="pill">Q: <b id="qPill">0</b></div>
-      <div class="pill">Bonnes: <b id="goodPill">0</b></div>
-      <div class="pill">Streak: <b id="streakPill">0</b> <span id="streakNote" class="muted"></span></div>
-    </div>
   </nav>
 </header>
 
@@ -73,7 +65,7 @@
         <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
     </div>
-    <p class="muted" style="text-align:center;margin-top:22px">Compatible GitHub Pages — place tes données dans <code>/data/</code>.</p>
+    <p class="muted" style="text-align:center;margin-top:22px">Place tes données dans <code>/data/</code> : <code>questions_normal.json</code>, <code>revision_index.json</code>, <code>pedantix_passages.json</code>.</p>
   </section>
 
   <!-- NORMAL -->
@@ -144,9 +136,10 @@
 /* ========= Helpers & state ========= */
 const $ = id => document.getElementById(id);
 const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
-const LS={elo:'pq_elo', lvl:'pq_level'};
-let elo = Number(localStorage.getItem(LS.elo)) || 1000;
-let level = Number(localStorage.getItem(LS.lvl)) || 1;
+
+// État de départ : toujours niveau 1 et Elo 1000
+let elo = 1000;
+let level = 1;
 let QUESTIONS=[], REV_INDEX=null, PED_PASSAGES=[];
 let qCount=0, goodCount=0, streak=0;
 
@@ -157,7 +150,6 @@ function applyElo(win, qLevel){
   const opp = levelToRating(qLevel||Math.max(1,Math.min(10,level)));
   elo = Math.round(elo + K*((win?1:0)-expected(elo,opp)));
   level = Math.min(MAX_LEVEL, Math.max(1, Math.round((elo-800)/70 + 1)));
-  localStorage.setItem(LS.elo, elo); localStorage.setItem(LS.lvl, level);
 }
 function streakNote(n){
   if(n>=7) return "🥵 bouillant";
@@ -169,12 +161,12 @@ function streakNote(n){
 }
 
 /* ========= Navigation (pages via ?mode=) ========= */
-function setMetaVisible(v){ $("metaRow").hidden=!v; $("backBtn").hidden=!v; }
 function go(mode){
   ["home","normal","revision","pedantix"].forEach(id=>$(id).hidden=true);
   $(mode).hidden=false;
-  if(mode==="home"){ setMetaVisible(false); history.replaceState({}, "", location.pathname); }
-  else { setMetaVisible(true); history.replaceState({}, "", `?mode=${mode}`); }
+  // back visible sauf à l'accueil
+  $("backBtn").hidden = (mode==="home");
+  history.replaceState({}, "", mode==="home" ? location.pathname : `?mode=${mode}`);
   // mettre à jour les mini-pills du mode Normal
   $("eloPill2").textContent=elo; $("qPill2").textContent=qCount; $("goodPill2").textContent=goodCount;
   $("streakPill2").textContent=streak; $("streakNote2").textContent=streakNote(streak);
@@ -294,7 +286,7 @@ document.querySelectorAll("[data-go]").forEach(b=>{
   b.addEventListener("click", async () => {
     await loadData();
     const m=b.dataset.go;
-    if(m==="normal"){ qCount=0; goodCount=0; streak=0; go("normal"); renderQuestion(); }
+    if(m==="normal"){ qCount=0; goodCount=0; streak=0; elo=1000; level=1; go("normal"); renderQuestion(); }
     else if(m==="revision"){ go("revision"); fillMasters(); }
     else if(m==="pedantix"){ go("pedantix"); pickPed(); }
   });
@@ -305,7 +297,7 @@ const urlMode = new URLSearchParams(location.search).get("mode") || "home";
 (async function boot(){
   if(urlMode==="home"){ go("home"); return; }
   await loadData();
-  if(urlMode==="normal"){ qCount=0; goodCount=0; streak=0; go("normal"); renderQuestion(); }
+  if(urlMode==="normal"){ qCount=0; goodCount=0; streak=0; elo=1000; level=1; go("normal"); renderQuestion(); }
   else if(urlMode==="revision"){ go("revision"); fillMasters(); }
   else if(urlMode==="pedantix"){ go("pedantix"); pickPed(); }
   else { go("home"); }
