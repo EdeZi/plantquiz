@@ -51,17 +51,17 @@
     <div class="grid grid3">
       <div class="card">
         <h3>Quiz normal</h3>
-        <p class="muted">Elo adaptatif (12 niveaux). On révèle la bonne réponse + l’explication après chaque question.</p>
+        <p class="muted">Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.</p>
         <div class="row"><button data-go="normal" class="btn">Commencer</button></div>
       </div>
       <div class="card">
         <h3>Quiz révision (par UE)</h3>
-        <p class="muted">Master → Semestre → coche les UE à inclure (placeholders pour l’instant).</p>
+        <p class="muted">Choisis Master & Semestre, coche des UE et révise avec un quiz ciblé.</p>
         <div class="row"><button data-go="revision" class="btn">Sélectionner des UE</button></div>
       </div>
       <div class="card">
         <h3>Pédantix végétal (du jour)</h3>
-        <p class="muted">Texte à trous. Tape des mots pour dévoiler. Objectif : trouver le titre caché.</p>
+        <p class="muted">Texte à trous : tape des mots pour dévoiler et devine le titre caché.</p>
         <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
     </div>
@@ -72,7 +72,7 @@
   <section id="normal" hidden>
     <div class="card">
       <h2 style="margin:0 0 6px">Quiz normal</h2>
-      <p class="muted">Réponds → on t’indique si c’est bon + l’explication. Elo et streak mis à jour. (12 niveaux, blagues ≤ N7)</p>
+      <p class="muted">Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.</p>
       <hr style="margin:12px 0"/>
       <article>
         <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:6px">
@@ -81,8 +81,6 @@
           <span class="pill">Bonnes: <b id="goodPill2">0</b></span>
           <span class="pill">Streak: <b id="streakPill2">0</b> <span id="streakNote2" class="muted"></span></span>
         </div>
-        <div class="muted" id="levelHint" style="margin:0 0 12px">niveau estimé ≈ 4</div>
-        <div class="muted" id="qMeta" style="margin:0 0 12px"></div>
         <h3 id="qPrompt"></h3>
         <div class="choices" id="choices"></div>
         <div id="explain" class="exp" hidden></div>
@@ -167,18 +165,15 @@ async function loadData(){
   loaded=true;
 }
 
-/* ========= MODE NORMAL — Option B ========= */
-/* ——— Niveaux & Elo ——— */
+/* ========= MODE NORMAL — moteur Elo (niveaux masqués) ========= */
 const MAX_LEVEL=12;
 const levelToRating = l => 700 + (l-1)*100;                 // 1→700 … 12→1800
 const eloToLevel    = e => Math.min(MAX_LEVEL, Math.max(1, Math.round((e-700)/100 + 1)));
 
 let elo=1000, level=eloToLevel(elo);
-let qCount=0, goodCount=0, streak=0;
-let wrongStreak=0;
-let answeredTotal=0; // pour la calibration
-const BASE_K=28, CALIB_K=40;
+let qCount=0, goodCount=0, streak=0, wrongStreak=0, answeredTotal=0;
 
+const BASE_K=28, CALIB_K=40;
 function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
 function kFactor(){
   let K = (answeredTotal<8) ? CALIB_K : BASE_K; // calibration sur 8 premières réponses
@@ -191,38 +186,33 @@ function applyElo(win, qLevel){
   const ex = expected(elo, rq);
   const K = kFactor();
   elo = Math.round(elo + K * ((win?1:0) - ex));
-  level = eloToLevel(elo);
+  level = eloToLevel(elo); // interne uniquement
 }
 
-/* ——— Sélection des questions ——— */
+/* ——— Sélection des questions 45/35/20 autour du niveau estimé (caché) ——— */
 const recentIds=[]; const RECENT_MAX=20;
 function remember(id){ recentIds.push(id); if(recentIds.length>RECENT_MAX) recentIds.shift(); }
 function notRecentlyAsked(q){ return !recentIds.includes(q.id); }
-
 function sampleLevelAround(lstar){
   const r = Math.random();
   if(r<0.45) return lstar;
   if(r<0.80) return Math.min(MAX_LEVEL, lstar+1);
   return Math.max(1, lstar-1);
 }
+/* ——— Filtrage des blagues : ≤7 = max 1 blague, ≥8 = aucune ——— */
 function filteredChoicesForLevel(choices, lvl){
   if(!Array.isArray(choices)) return [];
-  // Copie + mélange
   const arr = [...choices].sort(()=>Math.random()-0.5);
-  // blagues : on respecte Option B
   if(lvl>=8){
-    // aucune blague au-delà de N7
-    const keep = arr.filter(c=>!c.joke || c.correct); // on garde toujours la bonne même si elle était marquée (au cas où)
-    return keep.length? keep : arr; // fallback si données sans flag
+    const keep = arr.filter(c=>!c.joke || c.correct);
+    return keep.length? keep : arr;
   }else{
-    // N≤7 : max 1 blague (non correcte)
     let seenJoke=false;
     const keep=[];
     for(const c of arr){
       if(c.correct){ keep.push(c); continue; }
       if(c.joke===true){
         if(!seenJoke){ keep.push(c); seenJoke=true; }
-        // sinon on skip les blagues en trop
       }else{
         keep.push(c);
       }
@@ -230,16 +220,14 @@ function filteredChoicesForLevel(choices, lvl){
     return keep;
   }
 }
-
 function pickQuestion(){
   if(!QUESTIONS.length) return null;
   const lstar = eloToLevel(elo);
   const desired = sampleLevelAround(lstar);
-  // on prend au bon niveau si possible, sinon on élargit
   let pool = QUESTIONS.filter(q => (q.level||1)===desired).filter(notRecentlyAsked);
   if(!pool.length) pool = QUESTIONS.filter(q => Math.abs((q.level||1)-desired)<=1).filter(notRecentlyAsked);
   if(!pool.length) pool = QUESTIONS.filter(notRecentlyAsked);
-  if(!pool.length) pool = QUESTIONS; // si vraiment on a tout épuisé
+  if(!pool.length) pool = QUESTIONS;
   const q = pool[Math.floor(Math.random()*pool.length)];
   return q;
 }
@@ -252,23 +240,18 @@ function updateMeta(){
   $("goodPill2").textContent=goodCount;
   $("streakPill2").textContent=streak;
   $("streakNote2").textContent = (streak>=7?"🥵 bouillant":streak>=4?"🔥 en feu":streak>=2?"😎 ça progresse":streak===1?"🙂 bien joué":streak===0?"":"🧊 va réviser");
-  $("levelHint").textContent = "niveau estimé ≈ " + eloToLevel(elo);
 }
 function renderQuestion(){
   if(!QUESTIONS.length){
     $("qPrompt").textContent="Pas de questions (data/questions_normal.json)";
-    $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true; $("qMeta").textContent="";
+    $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true;
     return;
   }
   currentQ = pickQuestion(); locked=false;
+
+  // Prépare les choix (respect blagues)
   const lvl = currentQ.level || 1;
-  const rq  = levelToRating(lvl);
-  $("qMeta").textContent = `Niveau de la question ≈ ${lvl} (rating ${rq})`;
-
-  // Prépare les choix en respectant la règle des blagues Option B
   let choices = filteredChoicesForLevel(currentQ.choices||[], lvl);
-
-  // S'assure qu'on a bien la bonne réponse présente
   if(!choices.some(c=>c.correct) && (currentQ.choices||[]).some(c=>c.correct)){
     const correct = currentQ.choices.find(c=>c.correct);
     choices = [correct, ...choices.filter(c=>c.id!==correct.id)];
@@ -421,7 +404,6 @@ document.querySelectorAll("[data-go]").forEach(b=>{
     await loadData();
     const m=b.dataset.go;
     if(m==="normal"){
-      // reset session normal
       elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
       go("normal"); updateMeta(); renderQuestion();
     } else if(m==="revision"){
