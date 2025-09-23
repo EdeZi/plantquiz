@@ -29,7 +29,6 @@
   select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
   .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
   .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
-  .pillMini{display:inline-block;margin:6px 8px 0 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   /* Pédantix */
   .pedantix-text{line-height:1.7; font-size:1.05rem}
   .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px}
@@ -52,7 +51,7 @@
     <div class="grid grid3">
       <div class="card">
         <h3>Quiz normal</h3>
-        <p class="muted">Elo adaptatif. On révèle la bonne réponse + l’explication après chaque question.</p>
+        <p class="muted">Elo adaptatif (12 niveaux). On révèle la bonne réponse + l’explication après chaque question.</p>
         <div class="row"><button data-go="normal" class="btn">Commencer</button></div>
       </div>
       <div class="card">
@@ -62,18 +61,18 @@
       </div>
       <div class="card">
         <h3>Pédantix végétal (du jour)</h3>
-        <p class="muted">Texte à trous. Tape des mots pour dévoiler le texte. Objectif : trouver le titre Wikipédia caché.</p>
+        <p class="muted">Texte à trous. Tape des mots pour dévoiler. Objectif : trouver le titre caché.</p>
         <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
     </div>
-    <p class="muted" style="text-align:center;margin-top:22px">Place tes données dans <code>/data/</code> : <code>questions_normal.json</code>, <code>revision_index.json</code>, <code>pedantix_daily.json</code>.</p>
+    <p class="muted" style="text-align:center;margin-top:22px">Données dans <code>/data/</code> : <code>questions_normal.json</code>, <code>revision_index.json</code>, <code>pedantix_daily.json</code>.</p>
   </section>
 
   <!-- NORMAL -->
   <section id="normal" hidden>
     <div class="card">
       <h2 style="margin:0 0 6px">Quiz normal</h2>
-      <p class="muted">Réponds → on t’indique si c’est bon + l’explication. Elo et streak mis à jour.</p>
+      <p class="muted">Réponds → on t’indique si c’est bon + l’explication. Elo et streak mis à jour. (12 niveaux, blagues ≤ N7)</p>
       <hr style="margin:12px 0"/>
       <article>
         <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:6px">
@@ -82,7 +81,8 @@
           <span class="pill">Bonnes: <b id="goodPill2">0</b></span>
           <span class="pill">Streak: <b id="streakPill2">0</b> <span id="streakNote2" class="muted"></span></span>
         </div>
-        <div class="muted" id="levelHint" style="margin:0 0 12px">niveau estimé ≈ 1</div>
+        <div class="muted" id="levelHint" style="margin:0 0 12px">niveau estimé ≈ 4</div>
+        <div class="muted" id="qMeta" style="margin:0 0 12px"></div>
         <h3 id="qPrompt"></h3>
         <div class="choices" id="choices"></div>
         <div id="explain" class="exp" hidden></div>
@@ -135,35 +135,9 @@
 </main>
 
 <script>
-/* ========= Helpers & state ========= */
+/* ========= Helpers & état commun ========= */
 const $ = id => document.getElementById(id);
 const strip = s => (s||'').normalize("NFD").replace(/\p{Diacritic}/gu,'').toLowerCase();
-const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
-
-// État de départ : toujours niveau 1 et Elo 1000
-let elo = 1000, level = 1;
-let QUESTIONS=[], REV_INDEX=null, PED_DAILY=null;
-let qCount=0, goodCount=0, streak=0;
-
-const K=24, MAX_LEVEL=10;
-const levelToRating = l => 800 + (l-1)*70;
-const eloToLevel = e => Math.min(MAX_LEVEL, Math.max(1, Math.round((e-800)/70 + 1)));
-function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
-function applyElo(win, qLevel){
-  const opp = levelToRating(qLevel||Math.max(1,Math.min(10,level)));
-  elo = Math.round(elo + K*((win?1:0)-expected(elo,opp)));
-  level = eloToLevel(elo);
-  updateLevelHint();
-}
-function streakNote(n){
-  if(n>=7) return "🥵 bouillant";
-  if(n>=4) return "🔥 en feu";
-  if(n>=2) return "😎 ça progresse";
-  if(n===1) return "🙂 bien joué";
-  if(n===0) return "";
-  return "🧊 va réviser";
-}
-function updateLevelHint(){ $("levelHint").textContent = "niveau estimé ≈ " + eloToLevel(elo); }
 
 /* ========= Navigation ========= */
 function go(mode){
@@ -171,24 +145,19 @@ function go(mode){
   $(mode).hidden=false;
   $("backBtn").hidden = (mode==="home");
   history.replaceState({}, "", mode==="home" ? location.pathname : `?mode=${mode}`);
-  $("eloPill2").textContent=elo; $("qPill2").textContent=qCount; $("goodPill2").textContent=goodCount;
-  $("streakPill2").textContent=streak; $("streakNote2").textContent=streakNote(streak);
-  updateLevelHint();
 }
 $("brand").onclick=()=>go("home");
 $("backBtn").onclick=()=>go("home");
 
 /* ========= Chargement data ========= */
-async function tryFetch(path){
-  try{ const r=await fetch(path,{cache:"no-store"}); if(!r.ok) throw 0; return await r.json(); }
-  catch{ return null; }
-}
-const DEMO_QUESTIONS=[{id:"demo1",level:1,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
-const DEMO_REV={masters:[{key:"BIPA",label:"BIPA (démo)",semesters:[{sem:"M1-S7",core:[{id:"biostat_R",label:"Biostatistiques avec R"}],options:[{id:"opt",label:"Option démo"}]}]}]};
+async function tryFetch(path){ try{ const r=await fetch(path,{cache:"no-store"}); if(!r.ok) throw 0; return await r.json(); } catch{ return null; } }
 const todayISO = (()=>{ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; })();
-const DEMO_DAILY=[{date:todayISO,target:"Chloroplaste",text:"Le chloroplaste se rencontre chez de nombreuses plantes. Il capte la lumière et participe à la fabrication de sucres. Dans la vie courante, on l’associe souvent aux feuilles bien vertes des végétaux."}];
+const DEMO_QUESTIONS=[{id:"demo1",level:4,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
+const DEMO_REV={masters:[{key:"BIPA",label:"BIPA (démo)",semesters:[{sem:"M1-S7",core:[{id:"biostat_R",label:"Biostatistiques avec R"}],options:[{id:"opt",label:"Option démo"}]}]}]};
+const DEMO_DAILY=[{date:todayISO,target:"Chloroplaste",text:"On parle d'une petite structure présente dans bien des plantes. Elle capte la lumière et aide la plante à fabriquer des sucres, ce qui explique la couleur bien verte de nombreuses feuilles."}];
 
 let loaded=false;
+let QUESTIONS=[], REV_INDEX=null, PED_DAILY=null;
 async function loadData(){
   if(loaded) return;
   QUESTIONS = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
@@ -198,50 +167,148 @@ async function loadData(){
   loaded=true;
 }
 
-/* ========= Mode Normal ========= */
-let currentQ=null, locked=false;
+/* ========= MODE NORMAL — Option B ========= */
+/* ——— Niveaux & Elo ——— */
+const MAX_LEVEL=12;
+const levelToRating = l => 700 + (l-1)*100;                 // 1→700 … 12→1800
+const eloToLevel    = e => Math.min(MAX_LEVEL, Math.max(1, Math.round((e-700)/100 + 1)));
+
+let elo=1000, level=eloToLevel(elo);
+let qCount=0, goodCount=0, streak=0;
+let wrongStreak=0;
+let answeredTotal=0; // pour la calibration
+const BASE_K=28, CALIB_K=40;
+
+function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
+function kFactor(){
+  let K = (answeredTotal<8) ? CALIB_K : BASE_K; // calibration sur 8 premières réponses
+  if(streak>=3) K = Math.round(K*1.25);         // momentum
+  if(wrongStreak>=2) K = Math.round(K*0.85);    // amortisseur si 2 erreurs d’affilée
+  return K;
+}
+function applyElo(win, qLevel){
+  const rq = levelToRating(qLevel);
+  const ex = expected(elo, rq);
+  const K = kFactor();
+  elo = Math.round(elo + K * ((win?1:0) - ex));
+  level = eloToLevel(elo);
+}
+
+/* ——— Sélection des questions ——— */
+const recentIds=[]; const RECENT_MAX=20;
+function remember(id){ recentIds.push(id); if(recentIds.length>RECENT_MAX) recentIds.shift(); }
+function notRecentlyAsked(q){ return !recentIds.includes(q.id); }
+
+function sampleLevelAround(lstar){
+  const r = Math.random();
+  if(r<0.45) return lstar;
+  if(r<0.80) return Math.min(MAX_LEVEL, lstar+1);
+  return Math.max(1, lstar-1);
+}
+function filteredChoicesForLevel(choices, lvl){
+  if(!Array.isArray(choices)) return [];
+  // Copie + mélange
+  const arr = [...choices].sort(()=>Math.random()-0.5);
+  // blagues : on respecte Option B
+  if(lvl>=8){
+    // aucune blague au-delà de N7
+    const keep = arr.filter(c=>!c.joke || c.correct); // on garde toujours la bonne même si elle était marquée (au cas où)
+    return keep.length? keep : arr; // fallback si données sans flag
+  }else{
+    // N≤7 : max 1 blague (non correcte)
+    let seenJoke=false;
+    const keep=[];
+    for(const c of arr){
+      if(c.correct){ keep.push(c); continue; }
+      if(c.joke===true){
+        if(!seenJoke){ keep.push(c); seenJoke=true; }
+        // sinon on skip les blagues en trop
+      }else{
+        keep.push(c);
+      }
+    }
+    return keep;
+  }
+}
+
 function pickQuestion(){
-  const near = QUESTIONS.filter(q=> Math.abs((q.level||1)-level)<=1);
-  const list = near.length? near : QUESTIONS;
-  return list[Math.floor(Math.random()*list.length)];
+  if(!QUESTIONS.length) return null;
+  const lstar = eloToLevel(elo);
+  const desired = sampleLevelAround(lstar);
+  // on prend au bon niveau si possible, sinon on élargit
+  let pool = QUESTIONS.filter(q => (q.level||1)===desired).filter(notRecentlyAsked);
+  if(!pool.length) pool = QUESTIONS.filter(q => Math.abs((q.level||1)-desired)<=1).filter(notRecentlyAsked);
+  if(!pool.length) pool = QUESTIONS.filter(notRecentlyAsked);
+  if(!pool.length) pool = QUESTIONS; // si vraiment on a tout épuisé
+  const q = pool[Math.floor(Math.random()*pool.length)];
+  return q;
+}
+
+/* ——— UI du mode Normal ——— */
+let currentQ=null, locked=false;
+function updateMeta(){
+  $("eloPill2").textContent=elo;
+  $("qPill2").textContent=qCount;
+  $("goodPill2").textContent=goodCount;
+  $("streakPill2").textContent=streak;
+  $("streakNote2").textContent = (streak>=7?"🥵 bouillant":streak>=4?"🔥 en feu":streak>=2?"😎 ça progresse":streak===1?"🙂 bien joué":streak===0?"":"🧊 va réviser");
+  $("levelHint").textContent = "niveau estimé ≈ " + eloToLevel(elo);
 }
 function renderQuestion(){
   if(!QUESTIONS.length){
     $("qPrompt").textContent="Pas de questions (data/questions_normal.json)";
-    $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true; return;
+    $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true; $("qMeta").textContent="";
+    return;
   }
   currentQ = pickQuestion(); locked=false;
+  const lvl = currentQ.level || 1;
+  const rq  = levelToRating(lvl);
+  $("qMeta").textContent = `Niveau de la question ≈ ${lvl} (rating ${rq})`;
+
+  // Prépare les choix en respectant la règle des blagues Option B
+  let choices = filteredChoicesForLevel(currentQ.choices||[], lvl);
+
+  // S'assure qu'on a bien la bonne réponse présente
+  if(!choices.some(c=>c.correct) && (currentQ.choices||[]).some(c=>c.correct)){
+    const correct = currentQ.choices.find(c=>c.correct);
+    choices = [correct, ...choices.filter(c=>c.id!==correct.id)];
+  }
+
   $("qPrompt").textContent=currentQ.prompt;
   $("choices").innerHTML="";
-  (currentQ.choices||[]).forEach(c=>{
+  choices.forEach(c=>{
     const b=document.createElement("button");
-    b.className="choice"; b.textContent=c.text;
-    b.onclick=()=>choose(c,b);
+    b.className="choice";
+    b.textContent=c.text;
+    b.onclick=()=>choose(c,b,lvl);
     $("choices").appendChild(b);
   });
   $("explain").hidden=true; $("nextBtn").disabled=true;
 }
-function choose(choice, btn){
+function choose(choice, btn, qLevel){
   if(locked) return; locked=true;
-  qCount++; $("qPill2").textContent=qCount;
+  qCount++; answeredTotal++;
   const correct = (currentQ.choices||[]).find(c=>c.correct);
   const win = !!(correct && correct.id===choice.id);
-  if(win){ goodCount++; streak++; btn.classList.add("answer","ok"); }
-  else { streak=0; btn.classList.add("answer","ko"); }
+
+  if(win){ goodCount++; streak++; wrongStreak=0; btn.classList.add("answer","ok"); }
+  else   { streak=0; wrongStreak++; btn.classList.add("answer","ko"); }
+
   [...$("choices").children].forEach(b=>{
     if(b.textContent===correct.text) b.classList.add("answer","ok");
     b.disabled=true;
   });
-  applyElo(win, currentQ.level);
+
+  applyElo(win, qLevel);
   $("explain").hidden=false;
-  $("explain").innerHTML = (win?"✅ Correct.":"❌ Incorrect.") + (currentQ.explanation? `<br>💡 ${currentQ.explanation}`:"");
-  $("eloPill2").textContent=elo; $("goodPill2").textContent=goodCount;
-  $("streakPill2").textContent=streak; $("streakNote2").textContent=streakNote(streak);
+  $("explain").innerHTML = (win?"✅ Correct.":"❌ Incorrect.") + (currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"");
+  updateMeta();
+  remember(currentQ.id);
   $("nextBtn").disabled=false;
 }
 $("nextBtn").onclick=renderQuestion;
 
-/* ========= Révision ========= */
+/* ========= MODE RÉVISION ========= */
 const selMaster=$("selMaster"), selSem=$("selSem"), ueCore=$("ueCore"), ueOpt=$("ueOpt");
 function fillMasters(){ selMaster.innerHTML=""; (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m.key; o.textContent=m.label; selMaster.appendChild(o); }); fillSems(); }
 function fillSems(){ selSem.innerHTML=""; const m=(REV_INDEX.masters||[]).find(x=>x.key===selMaster.value); (m?.semesters||[]).forEach(s=>{ const o=document.createElement("option"); o.value=s.sem; o.textContent=s.sem; selSem.appendChild(o); }); fillUEs(); }
@@ -260,15 +327,16 @@ function fillUEs(){
 $("revLaunch").onclick=()=>{
   const picked=[...document.querySelectorAll("#revision input:checked")].map(i=>i.parentElement.textContent.trim());
   if(!picked.length) return;
+  // mini-banque provisoire
   QUESTIONS = picked.map((lbl,ix)=>({id:`UE${ix}`,level:5,prompt:`UE: ${lbl} — question démo`,choices:[{id:"a",text:"A"},{id:"b",text:"B",correct:true},{id:"c",text:"C"},{id:"d",text:"D"}],explanation:"Placeholder à remplacer."}));
-  qCount=0; goodCount=0; streak=0; elo=1000; level=1;
-  go("normal"); renderQuestion();
+  // reset session
+  elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+  go("normal"); updateMeta(); renderQuestion();
 };
 
-/* ========= Pédantix (daily — titre masqué + texte à trous) ========= */
-const STOPWORDS = new Set(["le","la","les","un","une","des","du","de","d","et","en","dans","au","aux","auxquels","auxquelles","à","ou","où","que","qui","se","s","sur","pour","par","avec","sans","plus","moins","comme","est","sont","faut","chez","on","il","elle","elles","ils","ce","cet","cette","ces","dont","leur","leurs","l"]);
+/* ========= PÉDANTIX (daily) ========= */
+const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
 let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[] };
-
 function tokenize(text){
   const parts = text.match(wordRe) || [];
   return parts.map(p=>{
@@ -280,7 +348,6 @@ function titleMask(){
   if(!pedState.target) return "";
   const letters = [...pedState.target];
   const masked = letters.map(ch=>{
-    // on affiche espaces/ponctuation, on masque lettres
     if(/\s/.test(ch)) return " ";
     if(/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch)) return "█";
     return ch;
@@ -289,14 +356,13 @@ function titleMask(){
 }
 function renderPed(){
   $("pedTitleMask").textContent = titleMask();
-  // reconstruire le texte en masquant les tokens non révélés
   const frag = document.createDocumentFragment();
   pedState.tokens.forEach(t=>{
     const span = document.createElement("span");
     span.className = "token";
     if(!t.isWord){ span.textContent = t.raw; }
     else {
-      const show = pedState.revealed.has(t.norm);
+      const show = pedState.revealed.has(t.norm) || t.norm===strip(pedState.target);
       span.innerHTML = show ? t.raw : `<span class="mask">${"█".repeat(Math.max(1, t.raw.length))}</span>`;
     }
     frag.appendChild(span);
@@ -309,10 +375,9 @@ function pickDaily(){
   pedState.target = entry?.target || "Chloroplaste";
   pedState.text = entry?.text || DEMO_DAILY[0].text;
   pedState.tokens = tokenize(pedState.text);
-  pedState.revealed = new Set(); // démarre à zéro mot
+  pedState.revealed = new Set(); // tout masqué au départ
   pedState.guessed = [];
-  $("pedGuesses").innerHTML="";
-  $("pedScore").hidden=true;
+  $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
   renderPed();
 }
 function guessWord(w){
@@ -331,13 +396,12 @@ function guessWord(w){
 }
 function pedHint(){
   const vocab = [...new Set(pedState.tokens.filter(t=>t.isWord).map(t=>t.norm))]
-    .filter(w=> !STOPWORDS.has(w) && !pedState.revealed.has(w));
+    .filter(w=> !pedState.revealed.has(w) && w!==strip(pedState.target));
   if(!vocab.length) return;
   const w = vocab[Math.floor(Math.random()*vocab.length)];
   pedState.revealed.add(w);
   renderPed();
 }
-
 $("pedInput").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
   const val = $("pedInput").value.trim(); if(!val) return;
@@ -356,9 +420,15 @@ document.querySelectorAll("[data-go]").forEach(b=>{
   b.addEventListener("click", async () => {
     await loadData();
     const m=b.dataset.go;
-    if(m==="normal"){ qCount=0; goodCount=0; streak=0; elo=1000; level=1; go("normal"); renderQuestion(); }
-    else if(m==="revision"){ go("revision"); fillMasters(); }
-    else if(m==="pedantix"){ go("pedantix"); pickDaily(); }
+    if(m==="normal"){
+      // reset session normal
+      elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+      go("normal"); updateMeta(); renderQuestion();
+    } else if(m==="revision"){
+      go("revision"); fillMasters();
+    } else if(m==="pedantix"){
+      go("pedantix"); pickDaily();
+    }
   });
 });
 
@@ -367,10 +437,16 @@ const urlMode = new URLSearchParams(location.search).get("mode") || "home";
 (async function boot(){
   if(urlMode==="home"){ go("home"); return; }
   await loadData();
-  if(urlMode==="normal"){ qCount=0; goodCount=0; streak=0; elo=1000; level=1; go("normal"); renderQuestion(); }
-  else if(urlMode==="revision"){ go("revision"); fillMasters(); }
-  else if(urlMode==="pedantix"){ go("pedantix"); pickDaily(); }
-  else { go("home"); }
+  if(urlMode==="normal"){
+    elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+    go("normal"); updateMeta(); renderQuestion();
+  } else if(urlMode==="revision"){
+    go("revision"); fillMasters();
+  } else if(urlMode==="pedantix"){
+    go("pedantix"); pickDaily();
+  } else {
+    go("home");
+  }
 })();
 </script>
 </body>
