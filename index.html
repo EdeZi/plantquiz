@@ -314,11 +314,11 @@ $("revLaunch").onclick=()=>{
   go("normal"); updateMeta(); renderQuestion();
 };
 
-/* ========= PÉDANTIX (daily) — lemmatisation FR ========= */
+/* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
 let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[] };
 
-/* mini-lemmatiseur : irréguliers + heuristiques suffixes */
+/* irréguliers + participes présents fréquents (sans accents car strip) */
 const IRREG_FORMS = {
   /* AVOIR */
   "ai":"avoir","as":"avoir","a":"avoir","avons":"avoir","avez":"avoir","ont":"avoir",
@@ -338,125 +338,106 @@ const IRREG_FORMS = {
   "allais":"aller","allait":"aller","allions":"aller","alliez":"aller","allaient":"aller",
   "irai":"aller","iras":"aller","ira":"aller","irons":"aller","irez":"aller","iront":"aller",
   "irais":"aller","irait":"aller","irions":"aller","iriez":"aller","iraient":"aller",
-  "alle":"aller","alles":"aller","allee":"aller","allees":"aller","alles":"aller","allant":"aller",
+  "allant":"aller",
   /* FAIRE */
   "fais":"faire","fait":"faire","faisons":"faire","faites":"faire","font":"faire",
   "faisais":"faire","faisait":"faire","faisions":"faire","faisiez":"faire","faisaient":"faire",
   "ferai":"faire","feras":"faire","fera":"faire","ferons":"faire","ferez":"faire","feront":"faire",
   "ferais":"faire","ferait":"faire","ferions":"faire","feriez":"faire","feraient":"faire",
-  "faits":"faire","faite":"faire","faisant":"faire",
+  "faisant":"faire",
   /* POUVOIR */
   "peux":"pouvoir","peut":"pouvoir","pouvons":"pouvoir","pouvez":"pouvoir","peuvent":"pouvoir",
   "pouvais":"pouvoir","pouvait":"pouvoir","pouvions":"pouvoir","pouviez":"pouvoir","pouvaient":"pouvoir",
   "pourrai":"pouvoir","pourras":"pouvoir","pourra":"pouvoir","pourrons":"pouvoir","pourrez":"pouvoir","pourront":"pouvoir",
   "pourrais":"pouvoir","pourrait":"pouvoir","pourrions":"pouvoir","pourriez":"pouvoir","pourraient":"pouvoir",
   "pu":"pouvoir","pue":"pouvoir","pus":"pouvoir","put":"pouvoir","purent":"pouvoir",
+  "pouvant":"pouvoir",
   /* DEVOIR */
   "dois":"devoir","doit":"devoir","devons":"devoir","devez":"devoir","doivent":"devoir",
   "devais":"devoir","devait":"devoir","devions":"devoir","deviez":"devoir","devaient":"devoir",
   "devrai":"devoir","devras":"devoir","devra":"devoir","devrons":"devoir","devrez":"devoir","devront":"devoir",
   "devrais":"devoir","devrait":"devoir","devrions":"devoir","devriez":"devoir","devraient":"devoir",
   "du":"devoir","due":"devoir","dus":"devoir","dut":"devoir","durent":"devoir",
+  "devant":"devoir",
   /* SAVOIR */
   "sais":"savoir","sait":"savoir","savons":"savoir","savez":"savoir","savent":"savoir",
   "savais":"savoir","savait":"savoir","savions":"savoir","saviez":"savoir","savaient":"savoir",
   "saurai":"savoir","sauras":"savoir","saura":"savoir","saurons":"savoir","saurez":"savoir","sauront":"savoir",
   "saurais":"savoir","saurait":"savoir","saurions":"savoir","sauriez":"savoir","sauraient":"savoir",
-  "su":"savoir","su(e)":"savoir",
+  "su":"savoir","sachant":"savoir",
   /* VENIR */
   "viens":"venir","vient":"venir","venons":"venir","venez":"venir","viennent":"venir",
   "venais":"venir","venait":"venir","venions":"venir","veniez":"venir","venaient":"venir",
   "viendrai":"venir","viendras":"venir","viendra":"venir","viendrons":"venir","viendrez":"venir","viendront":"venir",
   "viendrais":"venir","viendrait":"venir","viendrions":"venir","viendriez":"venir","viendraient":"venir",
-  "venu":"venir","venue":"venir","venus":"venir","venues":"venir","venant":"venir",
+  "venu":"venir","venant":"venir",
   /* VOULOIR */
   "veux":"vouloir","veut":"vouloir","voulons":"vouloir","voulez":"vouloir","veulent":"vouloir",
   "voulais":"vouloir","voulait":"vouloir","voulions":"vouloir","vouliez":"vouloir","voulaient":"vouloir",
   "voudrai":"vouloir","voudras":"vouloir","voudra":"vouloir","voudrons":"vouloir","voudrez":"vouloir","voudront":"vouloir",
   "voudrais":"vouloir","voudrait":"vouloir","voudrions":"vouloir","voudriez":"vouloir","voudraient":"vouloir",
-  "voulu":"vouloir","voulue":"vouloir","voulus":"vouloir","voulues":"vouloir",
+  "voulu":"vouloir","voulant":"vouloir",
   /* DIRE */
   "dis":"dire","dit":"dire","disons":"dire","dites":"dire","disent":"dire",
   "disais":"dire","disait":"dire","disions":"dire","disiez":"dire","disaient":"dire",
   "dirai":"dire","diras":"dire","dira":"dire","dirons":"dire","direz":"dire","diront":"dire",
   "dirais":"dire","dirait":"dire","dirions":"dire","diriez":"dire","diraient":"dire",
-  "dits":"dire","dite":"dire","disant":"dire",
+  "disant":"dire",
   /* METTRE */
   "mets":"mettre","met":"mettre","mettons":"mettre","mettez":"mettre","mettent":"mettre",
   "mettais":"mettre","mettait":"mettre","mettions":"mettre","mettiez":"mettre","mettaient":"mettre",
   "mettrai":"mettre","mettras":"mettre","mettra":"mettre","mettrons":"mettre","mettrez":"mettre","mettront":"mettre",
   "mettrais":"mettre","mettrait":"mettre","mettrions":"mettre","mettriez":"mettre","mettraient":"mettre",
-  "mis":"mettre","mise":"mettre","mises":"mettre","mettant":"mettre",
+  "mis":"mettre","mettant":"mettre",
   /* PRENDRE */
   "prends":"prendre","prend":"prendre","prenons":"prendre","prenez":"prendre","prennent":"prendre",
   "prenais":"prendre","prenait":"prendre","prenions":"prendre","preniez":"prendre","prenaient":"prendre",
   "prendrai":"prendre","prendras":"prendre","prendra":"prendre","prendrons":"prendre","prendrez":"prendre","prendront":"prendre",
   "prendrais":"prendre","prendrait":"prendre","prendrions":"prendre","prendriez":"prendre","prendraient":"prendre",
-  "pris":"prendre","prise":"prendre","prises":"prendre","prenant":"prendre",
+  "pris":"prendre","prenant":"prendre",
   /* VOIR */
   "vois":"voir","voit":"voir","voyons":"voir","voyez":"voir","voient":"voir",
   "voyais":"voir","voyait":"voir","voyions":"voir","voyiez":"voir","voyaient":"voir",
   "verrai":"voir","verras":"voir","verra":"voir","verrons":"voir","verrez":"voir","verront":"voir",
   "verrais":"voir","verrait":"voir","verrions":"voir","verriez":"voir","verraient":"voir",
-  "vu":"voir","vue":"voir","vues":"voir","vus":"voir",
+  "vu":"voir","voyant":"voir",
   /* TENIR */
   "tiens":"tenir","tient":"tenir","tenons":"tenir","tenez":"tenir","tiennent":"tenir",
   "tenais":"tenir","tenait":"tenir","tenions":"tenir","teniez":"tenir","tenaient":"tenir",
   "tiendrai":"tenir","tiendras":"tenir","tiendra":"tenir","tiendrons":"tenir","tiendrez":"tenir","tiendront":"tenir",
   "tiendrais":"tenir","tiendrait":"tenir","tiendrions":"tenir","tiendriez":"tenir","tiendraient":"tenir",
-  "tenu":"tenir","tenue":"tenir","tenues":"tenir","tenus":"tenir","tenant":"tenir",
-  /* PARTIR / SORTIR (modèle) */
-  "pars":"partir","part":"partir","partons":"partir","partez":"partir","partent":"partir",
-  "partais":"partir","partait":"partir","partions":"partir","partiez":"partir","partaient":"partir",
-  "sorts":"sortir","sort":"sortir","sortons":"sortir","sortez":"sortir","sortent":"sortir",
+  "tenu":"tenir","tenant":"tenir",
+  /* PARTIR/SORTIR */
+  "pars":"partir","part":"partir","partons":"partir","partez":"partir","partent":"partir","partant":"partir",
+  "sorts":"sortir","sort":"sortir","sortons":"sortir","sortez":"sortir","sortent":"sortir","sortant":"sortir",
   /* BOIRE */
   "bois":"boire","boit":"boire","buvons":"boire","buvez":"boire","boivent":"boire",
   "buvais":"boire","buvait":"boire","buvions":"boire","buviez":"boire","buvaient":"boire",
   "boirai":"boire","boiras":"boire","boira":"boire","boirons":"boire","boirez":"boire","boiront":"boire",
-  "bu":"boire","bus":"boire","but":"boire","burent":"boire",
+  "bu":"boire","bus":"boire","but":"boire","burent":"boire","buvant":"boire",
   /* LIRE */
-  "lis":"lire","lit":"lire","lisons":"lire","lisez":"lire","lisent":"lire",
-  "lisais":"lire","lisait":"lire","lisions":"lire","lisiez":"lire","lisaient":"lire",
-  "lirai":"lire","liras":"lire","lira":"lire","lirons":"lire","lirez":"lire","liront":"lire",
-  "lu":"lire","lus":"lire","lues":"lire","lue":"lire",
+  "lis":"lire","lit":"lire","lisons":"lire","lisez":"lire","lisent":"lire","lisant":"lire",
   /* ECRIRE */
-  "ecris":"ecrire","ecrit":"ecrire","ecrivons":"ecrire","ecrivez":"ecrire","ecrivent":"ecrire",
-  "ecrivais":"ecrire","ecrivait":"ecrire","ecrivions":"ecrire","ecriviez":"ecrire","ecrivaient":"ecrire",
-  "ecrirai":"ecrire","ecriras":"ecrire","ecrira":"ecrire","ecrirons":"ecrire","ecrirez":"ecrire","ecriront":"ecrire",
-  "ecrit(e)":"ecrire","ecrits":"ecrire","ecrites":"ecrire",
+  "ecris":"ecrire","ecrit":"ecrire","ecrivons":"ecrire","ecrivez":"ecrire","ecrivent":"ecrire","ecrivant":"ecrire",
   /* CONNAITRE */
-  "connais":"connaitre","connait":"connaitre","connaissons":"connaitre","connaissez":"connaitre","connaissent":"connaitre",
-  "connaissais":"connaitre","connaissait":"connaitre","connaissions":"connaitre","connaissiez":"connaitre","connaissaient":"connaitre",
-  "connai(tra)i":"connaitre",
+  "connais":"connaitre","connait":"connaitre","connaissons":"connaitre","connaissez":"connaitre","connaissent":"connaitre","connaissant":"connaitre",
   /* CROIRE */
-  "crois":"croire","croit":"croire","croyons":"croire","croyez":"croire","croient":"croire",
-  "croyais":"croire","croyait":"croire","croyions":"croire","croyiez":"croire","croyaient":"croire",
-  "cru":"croire",
+  "crois":"croire","croit":"croire","croyons":"croire","croyez":"croire","croient":"croire","croyant":"croire",
   /* VIVRE */
-  "vis":"vivre","vit":"vivre","vivons":"vivre","vivez":"vivre","vivent":"vivre",
-  "vivais":"vivre","vivait":"vivre","vivions":"vivre","viviez":"vivre","vivaient":"vivre",
-  "vecu":"vivre",
-  /* OUVRIR / OFFRIR (modèle) */
-  "ouvre":"ouvrir","ouvres":"ouvrir","ouvrons":"ouvrir","ouvrez":"ouvrir","ouvrent":"ouvrir",
-  "offre":"offrir","offres":"offrir","offrons":"offrir","offrez":"offrir","offrent":"offrir",
-  "ouvert":"ouvrir","offert":"offrir",
+  "vis":"vivre","vit":"vivre","vivons":"vivre","vivez":"vivre","vivent":"vivre","vivant":"vivre",
+  /* OUVRIR/OFFRIR */
+  "ouvre":"ouvrir","ouvres":"ouvrir","ouvrons":"ouvrir","ouvrez":"ouvrir","ouvrent":"ouvrir","ouvrant":"ouvrir",
+  "offre":"offrir","offres":"offrir","offrons":"offrir","offrez":"offrir","offrent":"offrir","offrant":"offrir",
   /* COURIR */
-  "cours":"courir","court":"courir","courons":"courir","courez":"courir","courent":"courir",
-  "courais":"courir","courait":"courir","courions":"courir","couriez":"courir","couraient":"courir",
-  "couru":"courir",
-  /* NAITRE / MOURIR */
-  "ne":"naitre","nais":"naitre","naissons":"naitre","naissez":"naitre","naissent":"naitre","ne(e)":"naitre","nes":"naitre","nees":"naitre",
-  "meurs":"mourir","meurt":"mourir","mourons":"mourir","mourez":"mourir","meurent":"mourir","mort":"mourir","morte":"mourir","morts":"mourir","mortes":"mourir",
-  /* RECEVOIR / ENVOYER / VALOIR */
-  "recois":"recevoir","recoit":"recevoir","recevons":"recevoir","recevez":"recevoir","recoivent":"recevoir","recu":"recevoir",
-  "envoie":"envoyer","envoies":"envoyer","envoyons":"envoyer","envoyez":"envoyer","envoient":"envoyer","envoye":"envoyer","envoyes":"envoyer",
-  "vaux":"valoir","vaut":"valoir","valons":"valoir","valez":"valoir","valent":"valoir","valu":"valoir",
-  /* FALLOIR / PLEUVOIR (impersonnels) */
-  "faut":"falloir","fallait":"falloir","faudra":"falloir","faudrait":"falloir",
-  "pleut":"pleuvoir","pleuvait":"pleuvoir","pleuvra":"pleuvoir","plu":"pleuvoir",
-  /* RIRE / SOURIRE */
-  "ris":"rire","rit":"rire","rions":"rire","riez":"rire","rient":"rire","ri":"rire",
-  "souris":"sourire","sourit":"sourire","sourions":"sourire","souriez":"sourire","sourient":"sourire","souri":"sourire"
+  "cours":"courir","court":"courir","courons":"courir","courez":"courir","courent":"courir","courant":"courir",
+  /* RIRE/SOURIRE */
+  "ris":"rire","rit":"rire","rions":"rire","riez":"rire","rient":"rire","ri":"rire","riant":"rire",
+  "souris":"sourire","sourit":"sourire","sourions":"sourire","souriez":"sourire","sourient":"sourire","souri":"sourire","souriant":"sourire",
+  /* ENVOYER/RECEVOIR/VALOIR/PLEUVOIR */
+  "envoie":"envoyer","envoies":"envoyer","envoyons":"envoyer","envoyez":"envoyer","envoient":"envoyer","envoyant":"envoyer",
+  "recois":"recevoir","recoit":"recevoir","recevons":"recevoir","recevez":"recevoir","recoivent":"recevoir","recevant":"recevoir",
+  "vaux":"valoir","vaut":"valoir","valons":"valoir","valez":"valoir","valent":"valoir","valu":"valoir","valant":"valoir",
+  "pleut":"pleuvoir","pleuvait":"pleuvoir","pleuvra":"pleuvoir","plu":"pleuvoir","pleuvant":"pleuvoir"
 };
 
 function lemmaFr(rawWord){
@@ -465,13 +446,26 @@ function lemmaFr(rawWord){
   if (!w) return w;
   if (IRREG_FORMS[w]) return IRREG_FORMS[w];
 
-  // heuristiques verbales (génériques) — ordre important
+  // RÈGLES PRIORITAIRES — participes/adjectifs
+  // 1er groupe: montant/montante/montants/montantes -> monter
+  if (/(ant|ante|ants|antes)$/.test(w)) {
+    const stem = w.replace(/(ant|ante|ants|antes)$/, "er");
+    if (stem.length>=3) return stem;
+  }
+  // 2e groupe: finissant/finissante/... -> finir
+  if (/(issant|issante|issants|issantes)$/.test(w)) {
+    const stem = w.replace(/(issant|issante|issants|issantes)$/, "ir");
+    if (stem.length>=3) return stem;
+  }
+
+  // Heuristiques verbales — ordre important
   const rules = [
-    // participes/gérondifs
-    [/(ees|ee|es|e)$/i, "er"],  // aimée/aimés/aimé -> aimer
-    [/ant$/i, "er"],            // mangeant -> manger
-    [/(ies|ie|is|it)$/i, "ir"], // fini/finis/finit -> finir (approx)
-    [/(ues|ue|us|u)$/i, ""],    // voulu/voulue -> voul(oir) (irrégulier couvert plus haut)
+    // participes/gérondifs 1er groupe (é déjà capté par la normalisation, mais fallback)
+    [/(ees|ee|es|e)$/i, "er"],   // aimee/aimés/aimé -> aimer (approx)
+    [/ant$/i, "er"],             // mangeant -> manger (fallback si pas attrapé plus haut)
+    // participes/gérondifs 2e groupe
+    [/(ies|ie|is|it)$/i, "ir"],  // fini/finis/finit -> finir (approx)
+    [/(ues|ue|us|u)$/i, ""],     // voulu/voulue -> voul (irrégulier mappé plus haut)
     // imparfait
     [/(ais|ait|ions|iez|aient)$/i, ""],
     // futur/conditionnel 1er groupe
@@ -569,7 +563,7 @@ function pedHint(){
   for(const t of pedState.tokens){
     if(!t.isWord) continue;
     if(t.norm===strip(pedState.target) || t.lemma===lemmaFr(pedState.target)) continue;
-    if(!pedState.revealed.has(t.norm) && !pedState.revealed.has(t.lemma)){
+    if(!pedState.revealed.has(t.norm) && !pedState.reveled?.has?.(t.lemma) && !pedState.revealed.has(t.lemma)){
       cand.push(t);
     }
   }
