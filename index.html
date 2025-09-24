@@ -155,14 +155,25 @@ const DEMO_REV={masters:[{key:"BIPA",label:"BIPA (démo)",semesters:[{sem:"M1-S7
 const DEMO_DAILY=[{date:todayISO,target:"Chloroplaste",text:"On parle d'une petite structure présente dans bien des plantes. Elle capte la lumière et aide la plante à fabriquer des sucres, ce qui explique la couleur bien verte de nombreuses feuilles."}];
 
 let loaded=false;
-let QUESTIONS=[], REV_INDEX=null, PED_DAILY=null;
+/* IMPORTANT: on distingue les questions normales originales de la liste active. */
+let QUESTIONS_NORMAL=[], QUESTIONS=[], REV_INDEX=null, PED_DAILY=null;
+
 async function loadData(){
   if(loaded) return;
-  QUESTIONS = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
+  const normal = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
+  QUESTIONS_NORMAL = Array.isArray(normal) ? normal : DEMO_QUESTIONS;
+  QUESTIONS = QUESTIONS_NORMAL; // par défaut, la liste active est celle du mode normal
+
   REV_INDEX = await tryFetch("./data/revision_index.json")   || DEMO_REV;
   const daily = await tryFetch("./data/pedantix_daily.json") || DEMO_DAILY;
   PED_DAILY = daily.find(x=>x.date===todayISO) || daily[0];
   loaded=true;
+}
+
+/* Helper pour restaurer proprement le mode Normal */
+function restoreNormalQuestions(){
+  QUESTIONS = QUESTIONS_NORMAL;
+  resetQuizState();
 }
 
 /* ========= MODE NORMAL — Elo avec niveaux internes (non affichés) ========= */
@@ -221,7 +232,7 @@ function filteredChoicesForLevel(choices, lvl){
   }
 }
 function pickQuestion(){
-  if(!QUESTIONS.length) return null;
+  if(!QUESTIONS?.length) return null;
   const lstar = eloToLevel(elo);
   const desired = sampleLevelAround(lstar);
   let pool = QUESTIONS.filter(q => (q.level||1)===desired).filter(notRecentlyAsked);
@@ -242,7 +253,7 @@ function updateMeta(){
   $("streakNote2").textContent = (streak>=7?"🥵 bouillant":streak>=4?"🔥 en feu":streak>=2?"😎 ça progresse":streak===1?"🙂 bien joué":streak===0?"":"🧊 va réviser");
 }
 function renderQuestion(){
-  if(!QUESTIONS.length){
+  if(!QUESTIONS?.length){
     $("qPrompt").textContent="Pas de questions (data/questions_normal.json)";
     $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true;
     return;
@@ -290,6 +301,10 @@ function choose(choice, btn, qLevel){
 }
 $("nextBtn").onclick=renderQuestion;
 
+function resetQuizState(){
+  elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+}
+
 /* ========= MODE RÉVISION ========= */
 const selMaster=$("selMaster"), selSem=$("selSem"), ueCore=$("ueCore"), ueOpt=$("ueOpt");
 function fillMasters(){ selMaster.innerHTML=""; (REV_INDEX.masters||[]).forEach(m=>{ const o=document.createElement("option"); o.value=m.key; o.textContent=m.label; selMaster.appendChild(o); }); fillSems(); }
@@ -309,8 +324,13 @@ function fillUEs(){
 $("revLaunch").onclick=()=>{
   const picked=[...document.querySelectorAll("#revision input:checked")].map(i=>i.parentElement.textContent.trim());
   if(!picked.length) return;
-  QUESTIONS = picked.map((lbl,ix)=>({id:`UE${ix}`,level:5,prompt:`UE: ${lbl} — question démo`,choices:[{id:"a",text:"A"},{id:"b",text:"B",correct:true},{id:"c",text:"C"},{id:"d",text:"D"}],explanation:"Placeholder à remplacer."}));
-  elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+  // Active une liste de questions SPÉCIFIQUE à la révision (sans écraser QUESTIONS_NORMAL)
+  QUESTIONS = picked.map((lbl,ix)=>({
+    id:`UE${ix}`,level:5,prompt:`UE: ${lbl} — question démo`,
+    choices:[{id:"a",text:"A"},{id:"b",text:"B",correct:true},{id:"c",text:"C"},{id:"d",text:"D"}],
+    explanation:"Placeholder à remplacer."
+  }));
+  resetQuizState();
   go("normal"); updateMeta(); renderQuestion();
 };
 
@@ -563,7 +583,8 @@ function pedHint(){
   for(const t of pedState.tokens){
     if(!t.isWord) continue;
     if(t.norm===strip(pedState.target) || t.lemma===lemmaFr(pedState.target)) continue;
-    if(!pedState.revealed.has(t.norm) && !pedState.reveled?.has?.(t.lemma) && !pedState.revealed.has(t.lemma)){
+    // FIX: pedState.reveled -> pedState.revealed
+    if(!pedState.revealed.has(t.norm) && !pedState.revealed.has(t.lemma)){
       cand.push(t);
     }
   }
@@ -592,7 +613,8 @@ document.querySelectorAll("[data-go]").forEach(b=>{
     await loadData();
     const m=b.dataset.go;
     if(m==="normal"){
-      elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+      // Toujours restaurer les questions du mode Normal quand on (re)entre
+      restoreNormalQuestions();
       go("normal"); updateMeta(); renderQuestion();
     } else if(m==="revision"){
       go("revision"); fillMasters();
@@ -608,7 +630,7 @@ const urlMode = new URLSearchParams(location.search).get("mode") || "home";
   if(urlMode==="home"){ go("home"); return; }
   await loadData();
   if(urlMode==="normal"){
-    elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+    restoreNormalQuestions();
     go("normal"); updateMeta(); renderQuestion();
   } else if(urlMode==="revision"){
     go("revision"); fillMasters();
