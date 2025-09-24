@@ -142,15 +142,14 @@
 <script>
 /* ========= Helpers & état commun ========= */
 const $ = id => document.getElementById(id);
-// NOTE compat: Safari/anciens moteurs JS ne supportent pas \\p{Diacritic}. On retire les diacritiques via U+0300–U+036F.
-const strip = s => (s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+// Compat: retire diacritiques via U+0300–U+036F pour éviter les soucis \p{...} sur certains moteurs
+const strip = s => (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 
 /* ========= Navigation ========= */
 function go(mode){
   ['home','normal','revision','pedantix'].forEach(id=>$(id).hidden=true);
   $(mode).hidden=false;
   $('backBtn').hidden = (mode==='home');
-  // try/catch au cas où certaines WebViews n'autorisent pas history API
   try { history.replaceState({}, '', mode==='home' ? location.pathname : `?mode=${mode}`); } catch {}
 }
 $('brand').onclick=()=>go('home');
@@ -197,16 +196,16 @@ const REV_INDEX = {
         {id:'S7_biostat_R',label:'Biostatistiques avec R'},
         {id:'S7_dev_plantes',label:'Développement des plantes'},
         {id:'S7_interactions_PM',label:'Interactions Plantes-Microorganismes'},
-        {id:'S7_bases_ecophysio',label:'Bases d\\'écophysiologie'},
+        {id:'S7_bases_ecophysio',label:'Bases d'écophysiologie'},
         {id:'S7_gen_mol_veg',label:'Génétique moléculaire végétale'},
-        {id:'S7_ing_metabo',label:'Ingénierie métabolique product biomolécules végétales d\\'inté'},
-        {id:'S7_outils_amelio',label:'Outils pour l\\'amélioration des plantes'},
+        {id:'S7_ing_metabo',label:'Ingénierie métabolique product biomolécules végétales d'inté'},
+        {id:'S7_outils_amelio',label:'Outils pour l'amélioration des plantes'},
         {id:'S7_nutrition_plantes',label:'Nutrition des plantes'}
       ],
       options:[
-        {id:'S7_opt_adaptation_signal',label:'Adaptation à l\\'environnement et signalisation'},
-        {id:'S7_opt_ing_metabo',label:'Ingénierie métabolique product biomolécules végétales d\\'inté'},
-        {id:'S7_opt_outils_amelio',label:'Outils pour l\\'amélioration des plantes'},
+        {id:'S7_opt_adaptation_signal',label:'Adaptation à l'environnement et signalisation'},
+        {id:'S7_opt_ing_metabo',label:'Ingénierie métabolique product biomolécules végétales d'inté'},
+        {id:'S7_opt_outils_amelio',label:'Outils pour l'amélioration des plantes'},
         {id:'S7_opt_bio_cell_mol_veg',label:'Biologie Cellulaire et Moléculaire végétale'},
         {id:'S7_opt_patho_veg',label:'Eléments de pathologie végétale'}
       ]
@@ -226,17 +225,17 @@ const REV_INDEX = {
     {
       sem:'S9',
       core:[
-        {id:'S9_approche_integree',label:'Approche intégrée d\\'amélioration des plantes: étude de cas'},
+        {id:'S9_approche_integree',label:'Approche intégrée d'amélioration des plantes: étude de cas'},
         {id:'S9_epigenetique',label:'Epigénétique chez les plantes'},
         {id:'S9_bigomics',label:'BigOmics, génomique comparative'},
-        {id:'S9_ecophysio_ideotype',label:'Ecophysiologie: du phénotype à l\\'idéotype'},
+        {id:'S9_ecophysio_ideotype',label:'Ecophysiologie: du phénotype à l'idéotype'},
         {id:'S9_genetique_quantitative',label:'Génétique quantitative'},
         {id:'S9_traitement_donnees',label:'Traitement de données'},
         {id:'S9_gestion_projets',label:'Gestion de projets'}
       ],
       options:[
         {id:'S9_opt_nutri_minerale',label:'Nutrition minérale adaptation plantes aux contraintes abioti'},
-        {id:'S9_opt_expression_diff',label:'Analyse de l\\'expression différentielle de gènes'},
+        {id:'S9_opt_expression_diff',label:'Analyse de l'expression différentielle de gènes'},
         {id:'S9_opt_ecole_signal_dyna',label:'Ecole signalisation, dyna'},
         {id:'S9_opt_plantes_modeles_modelisation',label:'Plantes modèles, modélisation'},
         {id:'S9_opt_adaptation_grandes_cultures',label:'Adaptation grandes cultures tropicales aux changements clima'},
@@ -245,14 +244,14 @@ const REV_INDEX = {
         {id:'S9_opt_ecole_phytobiome',label:'Ecole phytobiome'},
         {id:'S9_opt_protection_cultures',label:'Protection des cultures'},
         {id:'S9_opt_interactions_signal',label:'Interactions et signalisation'},
-        {id:'S9_opt_projet_integre',label:'Projet Intégré d\\'amélioration des plantes: phénotypes'},
+        {id:'S9_opt_projet_integre',label:'Projet Intégré d'amélioration des plantes: phénotypes'},
         {id:'S9_opt_bioinfo_requetes',label:'BioInformatique: construire des requêtes'}
       ]
     }
   ]
 };
 
-const DEMO_DAILY=[{date:todayISO,target:'Chloroplaste',text:'On parle d\\'une petite structure présente dans bien des plantes. Elle capte la lumière et aide la plante à fabriquer des sucres, ce qui explique la couleur bien verte de nombreuses feuilles.'}];
+const DEMO_DAILY=[{date:todayISO,target:'Chloroplaste',text:'On parle d'une petite structure présente dans bien des plantes. Elle capte la lumière et aide la plante à fabriquer des sucres, ce qui explique la couleur bien verte de nombreuses feuilles.'}];
 
 let loaded=false;
 let QUESTIONS_NORMAL=[], QUESTIONS=[], PED_DAILY=null;
@@ -262,8 +261,8 @@ async function loadData(){
   const normal = await tryFetch('./data/questions_normal.json') || DEMO_QUESTIONS;
   QUESTIONS_NORMAL = Array.isArray(normal) ? normal : DEMO_QUESTIONS;
   QUESTIONS = QUESTIONS_NORMAL;
-  const daily = await tryFetch('./data/pedantix_daily.json') || DEMO_DAILY;
-  PED_DAILY = daily.find(x=>x.date===todayISO) || daily[0];
+  const daily = await tryFetch('./data/pedantix_daily.json') || [{date:todayISO,target:'Chloroplaste',text:DEMO_QUESTIONS[0].explanation||'Texte.'}];
+  PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:'Chloroplaste',text:'Texte démo.'};
   loaded=true;
 }
 
@@ -400,7 +399,7 @@ function resetQuizState(){
 
 /* ====== Bouton Elo ====== */
 $('setEloBtn').onclick = () => {
-  alert('⚠️ Attention : n\\'utilise pas ce réglage pour tricher ! 🐮');
+  alert('⚠️ Attention : n'utilise pas ce réglage pour tricher ! 🐮');
   const v = prompt('Entre ton Elo souhaité (ex: 1000). Plage conseillée: 700–1800');
   if(v===null) return;
   const n = Math.round(Number(v));
@@ -588,7 +587,7 @@ function titleMask(){
   if(!pedState.target) return '';
   const letters = [...pedState.target];
   const masked = letters.map(ch=>{
-    if(/\\s/.test(ch)) return ' ';
+    if(/\s/.test(ch)) return ' ';
     if(/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch)) return '█';
     return ch;
   }).join('');
@@ -613,7 +612,7 @@ function pickDaily(){
   const entry = PED_DAILY;
   pedState.date = entry?.date || todayISO;
   pedState.target = entry?.target || 'Chloroplaste';
-  pedState.text = entry?.text || DEMO_DAILY[0].text;
+  pedState.text = entry?.text || 'Texte démo.';
   pedState.tokens = tokenize(pedState.text);
   pedState.revealed = new Set();
   pedState.guessed = [];
