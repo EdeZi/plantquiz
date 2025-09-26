@@ -1,3 +1,4 @@
+[
 {"id": "L01Q23", "level": 1, "prompt": "Quelle plante donne les frites ? (contexte botanique)", "choices": [{"id": "a", "text": "Pomme de terre", "correct": true}, {"id": "b", "text": "Carotte"}, {"id": "c", "text": "Maïs"}, {"id": "d", "text": "Pommier"}], "explanation": "Frites = tubercules de pomme de terre."}
 {"id": "L01Q46", "level": 1, "prompt": "La domestication du blé remonte environ à… (contexte agronomie)", "choices": [{"id": "a", "text": "Hier"}, {"id": "b", "text": "1500 ap. J.-C."}, {"id": "c", "text": "8000 av. J.-C.", "correct": true}, {"id": "d", "text": "3000 av. J.-C."}], "explanation": "Début de l’agriculture au Proche-Orient."}
 {"id": "L01Q47", "level": 1, "prompt": "Quelle boisson utilise le houblon ? (contexte botanique)", "choices": [{"id": "a", "text": "Kombucha"}, {"id": "b", "text": "Bière", "correct": true}, {"id": "c", "text": "Cidre"}, {"id": "d", "text": "Vin"}], "explanation": "Le houblon aromatise la bière."}
@@ -125,3 +126,4 @@
 {"id": "L10Q13", "level": 10, "prompt": "Structure de la Rubisco végétale : (essentiel)", "choices": [{"id": "a", "text": "S16"}, {"id": "b", "text": "L8S8", "correct": true}, {"id": "c", "text": "L4"}, {"id": "d", "text": "S8"}], "explanation": "8 grandes + 8 petites sous-unités."}
 {"id": "L10Q14", "level": 10, "prompt": "Signal systémique rapide : (contexte agronomie)", "choices": [{"id": "a", "text": "Aucun"}, {"id": "b", "text": "ABA seul"}, {"id": "c", "text": "Diffusion d’auxine"}, {"id": "d", "text": "Vague ROS/Ca²⁺ GLR/RBOH", "correct": true}], "explanation": "Vagues électriques et ROS."}
 {"id": "L10Q15", "level": 10, "prompt": "Chargement phloème apoplastique via : (contexte botanique)", "choices": [{"id": "a", "text": "Aquaporines"}, {"id": "b", "text": "Diffusion"}, {"id": "c", "text": "Symport H⁺-saccharose", "correct": true}, {"id": "d", "text": "Pompe K⁺"}], "explanation": "Gradient de protons."}
+]
