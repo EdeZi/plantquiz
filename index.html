@@ -272,12 +272,12 @@ const eloToLevel    = e => Math.min(MAX_LEVEL, Math.max(1, Math.round((e-700)/10
 let elo=1000, level=eloToLevel(elo);
 let qCount=0, goodCount=0, streak=0, wrongStreak=0, answeredTotal=0;
 
-const BASE_K=28, CALIB_K=40;
+const BASE_K=40, CALIB_K=60;
 function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
 function kFactor(){
   let K = (answeredTotal<8) ? CALIB_K : BASE_K;
-  if(streak>=3) K = Math.round(K*1.25);
-  if(wrongStreak>=2) K = Math.round(K*0.85);
+  if(streak>=3) K = Math.round(K*1.5);
+  if(wrongStreak>=2) K = Math.round(K*0.95);
   return K;
 }
 function applyElo(win, qLevel){
