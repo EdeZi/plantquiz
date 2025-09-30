@@ -39,6 +39,17 @@
   #profChoices label{display:flex;gap:8px;align-items:center}
   #profChoices input[type="text"]{flex:1}
   #profOutput{min-height:140px;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+  #historyPanel{position:fixed;inset:0;background:rgba(17,17,17,.45);display:flex;align-items:center;justify-content:center;z-index:60}
+  #historyPanel[hidden]{display:none}
+  #historyPanel .history-card{max-width:520px;width:min(92%,520px);max-height:80vh;overflow:auto}
+  #historyList{display:grid;gap:12px;margin-top:12px}
+  .history-item{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .history-item.ok{border-color:rgba(22,163,74,.4)}
+  .history-item.ko{border-color:rgba(239,68,68,.4)}
+  .history-meta{display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:6px}
+  .history-result.ok{color:var(--ok)}
+  .history-result.ko{color:var(--ko)}
+  #historyPanel h3{margin:0}
   /* Pédantix */
   .pedantix-text{line-height:1.7; font-size:1.05rem}
   .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px}
@@ -121,16 +132,17 @@
   <!-- NORMAL -->
   <section id="normal" hidden>
     <div class="card">
-      <h2 style="margin:0 0 6px">Quiz normal</h2>
-      <p class="muted">Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.</p>
+      <h2 id="quizTitle" style="margin:0 0 6px">Quiz normal</h2>
+      <p id="quizSubtitle" class="muted">Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.</p>
       <hr style="margin:12px 0"/>
       <article>
         <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:6px">
-          <span class="pill">Elo: <b id="eloPill2">1000</b></span>
+          <span id="eloWrap" class="pill">Elo: <b id="eloPill2">1000</b></span>
           <button id="setEloBtn" class="btn outline" title="Régler manuellement ton Elo">↕️ Régler Elo</button>
           <span class="pill">Q: <b id="qPill2">0</b></span>
           <span class="pill">Bonnes: <b id="goodPill2">0</b></span>
-          <span class="pill">Streak: <b id="streakPill2">0</b> <span id="streakNote2" class="muted"></span></span>
+          <span id="streakWrap" class="pill">Streak: <b id="streakPill2">0</b> <span id="streakNote2" class="muted"></span></span>
+          <button id="historyBtn" class="btn outline" type="button" hidden style="margin-left:auto">Historique</button>
         </div>
         <h3 id="qPrompt"></h3>
         <div class="choices" id="choices"></div>
@@ -191,6 +203,17 @@
   </section>
 </main>
 
+<section id="historyPanel" hidden>
+  <div class="card history-card">
+    <div class="rowL" style="justify-content:space-between;align-items:center">
+      <h3>Historique des questions</h3>
+      <button id="historyClose" class="btn outline" type="button">Fermer</button>
+    </div>
+    <p id="historyEmpty" class="muted" style="margin:12px 0 0">Aucune question répondue pour l’instant.</p>
+    <div id="historyList"></div>
+  </div>
+</section>
+
 <script>
 /* ========= Helpers & état commun ========= */
 const $ = id => document.getElementById(id);
@@ -203,6 +226,7 @@ function go(mode){
   $(mode).hidden=false;
   $("backBtn").hidden = (mode==="home");
   try{ history.replaceState({}, "", mode==="home" ? location.pathname : `?mode=${mode}`); }catch{}
+  if(mode!=="normal"){ const panel=$("historyPanel"); if(panel) panel.hidden=true; }
 }
 $("brand").onclick=()=>go("home");
 $("backBtn").onclick=()=>go("home");
@@ -216,6 +240,8 @@ let loaded=false;
 /* IMPORTANT: on distingue les questions normales originales de la liste active. */
 let QUESTIONS_NORMAL=[], QUESTIONS=[], PED_DAILY=null;
 let REV_DATA={semesters:[]};
+let activeQuizMode="normal";
+let revisionHistory=[];
 
 async function loadData(){
   if(loaded) return;
@@ -230,8 +256,72 @@ async function loadData(){
   loaded=true;
 }
 
+function resetRevisionHistory(){
+  revisionHistory.length=0;
+  const panel=$("historyPanel");
+  if(panel) panel.hidden=true;
+  const list=$("historyList");
+  if(list) list.innerHTML="";
+  const empty=$("historyEmpty");
+  if(empty) empty.hidden=false;
+}
+
+function updateHistoryUI(){
+  const list=$("historyList");
+  const empty=$("historyEmpty");
+  if(!list || !empty) return;
+  if(!revisionHistory.length){
+    list.innerHTML="";
+    empty.hidden=false;
+    return;
+  }
+  empty.hidden=true;
+  list.innerHTML="";
+  const frag=document.createDocumentFragment();
+  revisionHistory.forEach((item, idx)=>{
+    const block=document.createElement("div");
+    block.className="history-item" + (item.win?" ok":" ko");
+    const meta=document.createElement("div");
+    meta.className="history-meta";
+    const badge=document.createElement("span");
+    badge.className="pill";
+    badge.textContent=`Q${idx+1}`;
+    meta.appendChild(badge);
+    const result=document.createElement("span");
+    result.className="history-result " + (item.win?"ok":"ko");
+    result.textContent = item.win ? "✅ Bonne réponse" : "❌ Mauvaise réponse";
+    meta.appendChild(result);
+    block.appendChild(meta);
+    const title=document.createElement("h4");
+    title.textContent=item.prompt || "Question";
+    block.appendChild(title);
+    const user=document.createElement("p");
+    const userLabel=document.createElement("strong");
+    userLabel.textContent="Ta réponse : ";
+    user.appendChild(userLabel);
+    user.appendChild(document.createTextNode(item.picked || "—"));
+    block.appendChild(user);
+    const correct=document.createElement("p");
+    const correctLabel=document.createElement("strong");
+    correctLabel.textContent="Bonne réponse : ";
+    correct.appendChild(correctLabel);
+    correct.appendChild(document.createTextNode(item.correct || "—"));
+    block.appendChild(correct);
+    if(item.explanation){
+      const expl=document.createElement("p");
+      expl.className="muted";
+      expl.textContent=item.explanation;
+      block.appendChild(expl);
+    }
+    frag.appendChild(block);
+  });
+  list.appendChild(frag);
+}
+
 function restoreNormalQuestions(){
   QUESTIONS = QUESTIONS_NORMAL;
+  activeQuizMode="normal";
+  resetRevisionHistory();
   resetQuizState();
 }
 
@@ -301,11 +391,26 @@ function pickQuestion(){
 
 let currentQ=null, locked=false;
 function updateMeta(){
+  const quizTitle=$("quizTitle"), quizSubtitle=$("quizSubtitle");
+  if(quizTitle){
+    quizTitle.textContent = activeQuizMode==="revision" ? "Quiz révision" : "Quiz normal";
+  }
+  if(quizSubtitle){
+    quizSubtitle.textContent = activeQuizMode==="revision"
+      ? "Révise les UE sélectionnées sans Elo ni difficulté adaptative."
+      : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
+  }
   $("eloPill2").textContent=elo;
   $("qPill2").textContent=qCount;
   $("goodPill2").textContent=goodCount;
   $("streakPill2").textContent=streak;
   $("streakNote2").textContent = (streak>=7?"🥵 bouillant":streak>=4?"🔥 en feu":streak>=2?"😎 ça progresse":streak===1?"🙂 bien joué":streak===0?"":"🧊 va réviser");
+  const showElo = activeQuizMode==="normal";
+  const eloWrap=$("eloWrap"), streakWrap=$("streakWrap"), setEloBtn=$("setEloBtn"), historyBtn=$("historyBtn");
+  if(eloWrap) eloWrap.hidden=!showElo;
+  if(streakWrap) streakWrap.hidden=!showElo;
+  if(setEloBtn) setEloBtn.hidden=!showElo;
+  if(historyBtn) historyBtn.hidden=showElo;
 }
 function renderQuestion(){
   if(!QUESTIONS || !QUESTIONS.length){
@@ -339,18 +444,37 @@ function choose(choice, btn, qLevel){
   const correct = (currentQ.choices||[]).find(c=>c.correct);
   const win = !!(correct && correct.id===choice.id);
 
-  if(win){ goodCount++; streak++; wrongStreak=0; btn.classList.add("answer","ok"); }
-  else   { streak=0; wrongStreak++; btn.classList.add("answer","ko"); }
+  if(win){
+    goodCount++;
+    if(activeQuizMode==="normal"){ streak++; wrongStreak=0; }
+    else { streak=0; wrongStreak=0; }
+    btn.classList.add("answer","ok");
+  } else {
+    if(activeQuizMode==="normal"){ streak=0; wrongStreak++; }
+    else { streak=0; wrongStreak=0; }
+    btn.classList.add("answer","ko");
+  }
 
   [...$("choices").children].forEach(b=>{
     if(b.textContent===correct.text) b.classList.add("answer","ok");
     b.disabled=true;
   });
 
-  applyElo(win, qLevel);
+  if(activeQuizMode==="normal"){ applyElo(win, qLevel); }
   $("explain").hidden=false;
   $("explain").innerHTML = (win?"✅ Correct.":"❌ Incorrect.") + (currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"");
   updateMeta();
+  if(activeQuizMode==="revision"){
+    revisionHistory.push({
+      id: currentQ.id,
+      prompt: currentQ.prompt,
+      picked: choice?.text || "",
+      correct: correct?.text || "",
+      explanation: currentQ.explanation || "",
+      win,
+    });
+    updateHistoryUI();
+  }
   remember(currentQ.id);
   $("nextBtn").disabled=false;
 }
@@ -488,7 +612,9 @@ $("revLaunch").onclick=()=>{
     choices: Array.isArray(q.choices)?q.choices.map(c=>({...c})) : [],
     explanation: q.explanation,
   }));
+  activeQuizMode="revision";
   resetQuizState();
+  resetRevisionHistory();
   go("normal"); updateMeta(); renderQuestion();
 };
 
@@ -842,6 +968,22 @@ $("pedInput").addEventListener("keydown",e=>{
 });
 $("pedReset").onclick=pickDaily;
 $("pedHint").onclick=pedHint;
+
+const historyBtnEl=$("historyBtn");
+const historyCloseEl=$("historyClose");
+const historyPanelEl=$("historyPanel");
+if(historyBtnEl){
+  historyBtnEl.addEventListener("click",()=>{
+    updateHistoryUI();
+    if(historyPanelEl) historyPanelEl.hidden=false;
+  });
+}
+if(historyCloseEl){
+  historyCloseEl.addEventListener("click",()=>{ if(historyPanelEl) historyPanelEl.hidden=true; });
+}
+if(historyPanelEl){
+  historyPanelEl.addEventListener("click",evt=>{ if(evt.target===historyPanelEl) historyPanelEl.hidden=true; });
+}
 
 /* ========= Handlers d’accueil ========= */
 document.querySelectorAll("[data-go]").forEach(b=>{
