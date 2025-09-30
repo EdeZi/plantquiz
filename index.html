@@ -217,22 +217,6 @@ let loaded=false;
 let QUESTIONS_NORMAL=[], QUESTIONS=[], PED_DAILY=null;
 let REV_DATA={semesters:[]};
 
-const REV_DATA = (() => {
-  const seen = new Set();
-  const entries = [];
-  if(Array.isArray(REV_INDEX?.semesters)){
-    REV_INDEX.semesters.forEach(sem => {
-      [...(sem.core||[]), ...(sem.options||[])].forEach(item => {
-        if(item?.id && !seen.has(item.id)){
-          seen.add(item.id);
-          entries.push({id:item.id,label:item.label||item.id});
-        }
-      });
-    });
-  }
-  return entries.sort((a,b)=>a.label.localeCompare(b.label,'fr',{sensitivity:'base'}));
-})();
-
 async function loadData(){
   if(loaded) return;
   const normal = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
@@ -242,6 +226,7 @@ async function loadData(){
   PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:"Chloroplaste",text:"Texte démo."};
   const rev = await tryFetch("./data/questions_revision.json");
   REV_DATA = (rev && Array.isArray(rev.semesters)) ? rev : {semesters:[]};
+  fillProfMatter();
   loaded=true;
 }
 
@@ -304,7 +289,7 @@ function filteredChoicesForLevel(choices, lvl){
   }
 }
 function pickQuestion(){
-  if(!QUESTIONS?.length) return null;
+  if(!QUESTIONS || !QUESTIONS.length) return null;
   const lstar = eloToLevel(elo);
   const desired = sampleLevelAround(lstar);
   let pool = QUESTIONS.filter(q => (q.level||1)===desired).filter(notRecentlyAsked);
@@ -323,7 +308,7 @@ function updateMeta(){
   $("streakNote2").textContent = (streak>=7?"🥵 bouillant":streak>=4?"🔥 en feu":streak>=2?"😎 ça progresse":streak===1?"🙂 bien joué":streak===0?"":"🧊 va réviser");
 }
 function renderQuestion(){
-  if(!QUESTIONS?.length){
+  if(!QUESTIONS || !QUESTIONS.length){
     $("qPrompt").textContent="Pas de questions (data/questions_normal.json)";
     $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true;
     return;
@@ -414,8 +399,16 @@ function sanitizeSubjects(list, entry){
   let source = Array.isArray(list) ? list : null;
   if(!source && entry){
     const fallback=[];
-    if(Array.isArray(entry.core)) fallback.push(...entry.core.map(s=>({...s, type:s?.type || "core"})));
-    if(Array.isArray(entry.options)) fallback.push(...entry.options.map(s=>({...s, type:s?.type || "option"})));
+    if(Array.isArray(entry.core)) fallback.push(...entry.core.map(s=>{
+      const copy = {...s};
+      copy.type = (s && typeof s.type !== "undefined") ? s.type : "core";
+      return copy;
+    }));
+    if(Array.isArray(entry.options)) fallback.push(...entry.options.map(s=>{
+      const copy = {...s};
+      copy.type = (s && typeof s.type !== "undefined") ? s.type : "option";
+      return copy;
+    }));
     if(fallback.length) source=fallback;
   }
   if(!Array.isArray(source)) return [];
@@ -428,7 +421,7 @@ function sanitizeSubjects(list, entry){
 }
 function fillUEsForSem(sem){
   const entry = findSemesterEntry(sem);
-  const subjects = sanitizeSubjects(entry?.subjects, entry);
+  const subjects = sanitizeSubjects(entry && entry.subjects, entry);
   const core = subjects.filter(s=>s.type!=="option");
   const opt = subjects.filter(s=>s.type==="option");
   ueCore.innerHTML = core.length ? core.map(u=>label(u.id,u.label)).join("") : "<span class=\"muted\">Aucun élément</span>";
@@ -447,7 +440,7 @@ function collectRevisionQuestions(ids){
   const out=[];
   if(!ids.size) return out;
   for(const sem of REV_DATA.semesters||[]){
-    const subjects = sanitizeSubjects(sem?.subjects, sem);
+    const subjects = sanitizeSubjects(sem && sem.subjects, sem);
     for(const subject of subjects){
       if(!subject || !ids.has(subject.id)) continue;
       const questions = Array.isArray(subject.questions)?subject.questions:[];
@@ -465,6 +458,19 @@ function collectRevisionQuestions(ids){
     }
   }
   return out;
+}
+
+function listProfSubjects(){
+  const seen=new Map();
+  for(const sem of REV_DATA.semesters||[]){
+    const subjects=sanitizeSubjects(sem && sem.subjects, sem);
+    subjects.forEach(subject=>{
+      if(subject && subject.id && !seen.has(subject.id)){
+        seen.set(subject.id,{id:subject.id,label:subject.label||subject.id});
+      }
+    });
+  }
+  return [...seen.values()].sort((a,b)=>a.label.localeCompare(b.label,'fr',{sensitivity:'base'}));
 }
 
 $("revLaunch").onclick=()=>{
@@ -494,11 +500,16 @@ const profCorrectInputs=[...document.querySelectorAll('input[name="profCorrect"]
 let profCounter=1;
 
 function fillProfMatter(){
+  if(!profMatter) return;
   const current=profMatter.value;
-  profMatter.innerHTML = REV_DATA.map(item=>`<option value="${item.id}">${item.label}</option>`).join("");
-  if(REV_DATA.length){
-    profMatter.value = REV_DATA.some(item=>item.id===current) ? current : REV_DATA[0].id;
+  const list=listProfSubjects();
+  if(!list.length){
+    profMatter.innerHTML = '<option value="">Aucune matière disponible</option>';
+    profMatter.value="";
+    return;
   }
+  profMatter.innerHTML = list.map(item=>`<option value="${item.id}">${item.label}</option>`).join("");
+  profMatter.value = list.some(item=>item.id===current) ? current : list[0].id;
 }
 fillProfMatter();
 
@@ -772,9 +783,9 @@ function renderPed(){
 }
 function pickDaily(){
   const entry = PED_DAILY;
-  pedState.date = entry?.date || todayISO;
-  pedState.target = entry?.target || "Chloroplaste";
-  pedState.text = entry?.text || "Texte démo.";
+  pedState.date = (entry && entry.date) || todayISO;
+  pedState.target = (entry && entry.target) || "Chloroplaste";
+  pedState.text = (entry && entry.text) || "Texte démo.";
   pedState.tokens = tokenize(pedState.text);
   pedState.revealed = new Set(); // tout masqué
   pedState.guessed = [];
