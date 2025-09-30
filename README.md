@@ -1,15 +1,15 @@
 # PlantQuizz
 
-
-Projet de M2 de : Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu DRUENNE.
+Projet de M2 de : Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu.
 
 Contact (questions techniques sur le site) : Louis GRARD – grard.louis34@gmail.com
 
-PlantQuizz est un quiz web centré sur les sciences du végétal. Il propose deux modes complémentaires :
+PlantQuizz est un quiz web centré sur les sciences du végétal. Il propose trois modules complémentaires :
 
- 
 - **Quiz normal** – suit un système Elo qui adapte la difficulté des questions en fonction de vos réponses.
 - **Quiz révision** – permet de travailler des UE précises sans impact sur l’Elo et d’accéder à l’historique des questions déjà vues.
+- **Pédantix végétal** – variante façon « texte masqué » : tapez des mots pour dévoiler le contenu et devinez le titre.
+
 
 Le site est accessible en ligne sur [https://edezi.github.io/plantquizz/](https://edezi.github.io/plantquizz/) et peut également être ouvert localement en lançant `index.html` dans un navigateur moderne.
 
@@ -27,7 +27,7 @@ Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne 
 
 ## Modes de jeu
 
-### Quiz normal
+
 - Répondez pour faire évoluer votre Elo et accéder à des questions plus avancées.
 
 ### Quiz révision
@@ -36,13 +36,19 @@ Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne 
 - Un bouton **Historique** permet de rouvrir les questions déjà posées avec leur correction.
 - Les statistiques se limitent à `Q` et `Bonnes` pour un retour rapide sur votre progression.
 
+### Pédantix végétal
+- Accédez au module via la carte dédiée sur l’accueil.
+- Chaque jour, un texte thématique est masqué : saisissez des mots pour révéler les occurrences correspondantes.
+- L’objectif est de retrouver le titre caché ; un bouton **Indice** révèle progressivement des mots si besoin.
+- Les essais sont listés pour faciliter la stratégie et le suivi de vos hypothèses.
+
 ## Guide enseignant – outil prof
 
-L’outil prof est intégré directement à la page d’accueil afin de faciliter la contribution des équipes pédagogiques. Il génère automatiquement le JSON attendu pour le mode Révision.
+L’outil prof est accessible via le bouton **« Outil prof »** présent dans la barre supérieure. Il ouvre une page dédiée et génère automatiquement le JSON attendu pour le mode Révision. Utilisez le bouton **« Retour »** de la navigation pour revenir à l’accueil.
 
 ### 1. Ouvrir l’outil
-- Cliquez sur le bouton **« Outil prof »** en haut à droite de l’interface.
-- La fenêtre flottante peut être refermée à tout moment avec **« Fermer »**.
+- Cliquez sur le bouton **« Outil prof »** dans la barre supérieure.
+- La page affiche le générateur ; vous pouvez revenir à l’accueil avec **« Retour »**.
 
 ### 2. Sélectionner la matière
 - Le menu déroulant **Matière** liste les UE disponibles pour le semestre courant.
@@ -89,4 +95,3 @@ L’outil prof est intégré directement à la page d’accueil afin de facilite
 - Pensez à conserver des identifiants (`id`) uniques pour chaque question afin d’éviter les doublons pendant l’import.
 - Pour vérifier les changements, ouvrez `index.html` localement et testez les modes Normal et Révision.
 
-En cas de question ou pour proposer des améliorations, contactez l’équipe en charge du quiz pédagogique.

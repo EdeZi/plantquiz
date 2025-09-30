@@ -30,11 +30,8 @@
   select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
   .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
   .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
-  #profTool{position:fixed;right:24px;bottom:24px;max-width:420px;width:min(100%,420px);z-index:50}
-  #profTool .card{position:relative;padding-bottom:18px}
-  #profTool .close{position:absolute;top:16px;right:16px}
-  #profTool .fields{display:grid;gap:12px;margin-top:16px}
-  #profTool textarea{min-height:96px;resize:vertical}
+  #prof .fields{display:grid;gap:12px;margin-top:16px}
+  #prof textarea{min-height:96px;resize:vertical}
   #profChoices{display:grid;gap:8px}
   #profChoices label{display:flex;gap:8px;align-items:center}
   #profChoices input[type="text"]{flex:1}
@@ -64,16 +61,15 @@
     <button id="backBtn" class="back" hidden>← Retour</button>
     <div id="brand" class="brand">🌿 Plant’Quiz</div>
     <span class="nav-spacer"></span>
-    <button id="profBtn" class="btn outline" type="button" aria-controls="profTool" aria-expanded="false">Outil prof</button>
+    <button id="profBtn" class="btn outline" type="button" data-go="prof">Outil prof</button>
   </nav>
 </header>
 
 <main class="container">
-  <section id="profTool" hidden>
+  <section id="prof" hidden>
     <div class="card">
-      <button id="profClose" class="btn outline close" type="button">Fermer</button>
-      <h2 style="margin:0">Générateur de questions</h2>
-      <p class="muted" style="margin:6px 0 0">Préparez des questions hors-ligne à copier dans vos fichiers.</p>
+      <h2 style="margin:0">Outil prof — Générateur de questions</h2>
+      <p class="muted" style="margin:6px 0 0">Préparez des questions hors-ligne à copier dans vos fichiers. Utilisez le bouton « Retour » en haut de page pour revenir à l’accueil.</p>
       <div class="fields">
         <label class="field">
           <span class="muted">Matière / UE</span>
@@ -222,7 +218,7 @@ const strip = s => (s||'').normalize("NFD").replace(/[\u0300-\u036f]/g,'').toLow
 
 /* ========= Navigation ========= */
 function go(mode){
-  ["home","normal","revision","pedantix"].forEach(id=>$(id).hidden=true);
+  ["home","normal","revision","pedantix","prof"].forEach(id=>$(id).hidden=true);
   $(mode).hidden=false;
   $("backBtn").hidden = (mode==="home");
   try{ history.replaceState({}, "", mode==="home" ? location.pathname : `?mode=${mode}`); }catch{}
@@ -440,8 +436,17 @@ function renderQuestion(){
 }
 function choose(choice, btn, qLevel){
   if(locked) return; locked=true;
-  qCount++; answeredTotal++;
+  const choiceButtons=[...($("choices")?.children||[])];
   const correct = (currentQ.choices||[]).find(c=>c.correct);
+  if(!correct){
+    choiceButtons.forEach(b=>{ b.disabled=true; });
+    $("explain").hidden=false;
+    $("explain").innerHTML = "⚠️ Aucune bonne réponse n’est définie pour cette question. Prévenez l’équipe pédagogique afin de corriger le fichier.";
+    remember(currentQ?.id);
+    $("nextBtn").disabled=false;
+    return;
+  }
+  qCount++; answeredTotal++;
   const win = !!(correct && correct.id===choice.id);
 
   if(win){
@@ -455,8 +460,8 @@ function choose(choice, btn, qLevel){
     btn.classList.add("answer","ko");
   }
 
-  [...$("choices").children].forEach(b=>{
-    if(b.textContent===correct.text) b.classList.add("answer","ok");
+  choiceButtons.forEach(b=>{
+    if(correct && b.textContent===correct.text) b.classList.add("answer","ok");
     b.disabled=true;
   });
 
@@ -619,7 +624,6 @@ $("revLaunch").onclick=()=>{
 };
 
 /* ========= Outil prof ========= */
-const profTool=$("profTool"), profBtn=$("profBtn"), profClose=$("profClose");
 const profMatter=$("profMatter"), profPrompt=$("profPrompt"), profExplain=$("profExplain"), profOutput=$("profOutput");
 const profChoicesInputs=[0,1,2,3].map(i=>$("profChoice"+i));
 const profCorrectInputs=[...document.querySelectorAll('input[name="profCorrect"]')];
@@ -675,27 +679,6 @@ function addRevisionQuestion(){
 
 $("profAdd").onclick=addRevisionQuestion;
 $("profReset").onclick=()=>{ resetProfFields(); profOutput.value=""; };
-
-function toggleProfTool(force){
-  if(typeof force==="boolean"){
-    profTool.hidden=!force;
-  }else{
-    profTool.hidden=!profTool.hidden;
-  }
-  if(!profTool.hidden){
-    profPrompt.focus();
-  }
-  if(profBtn){
-    profBtn.setAttribute("aria-expanded", String(!profTool.hidden));
-  }
-}
-
-if(profBtn){
-  profBtn.addEventListener("click",()=>toggleProfTool());
-}
-if(profClose){
-  profClose.addEventListener("click",()=>{ toggleProfTool(false); go("home"); });
-}
 
 /* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
@@ -997,6 +980,8 @@ document.querySelectorAll("[data-go]").forEach(b=>{
       go("revision"); fillUEsForSem(selSem.value || "S5");
     } else if(m==="pedantix"){
       go("pedantix"); pickDaily();
+    } else if(m==="prof"){
+      go("prof"); fillProfMatter(); if(profPrompt) profPrompt.focus();
     }
   });
 });
@@ -1013,6 +998,8 @@ const urlMode = new URLSearchParams(location.search).get("mode") || "home";
     go("revision"); fillUEsForSem(selSem.value || "S5");
   } else if(urlMode==="pedantix"){
     go("pedantix"); pickDaily();
+  } else if(urlMode==="prof"){
+    go("prof"); fillProfMatter(); if(profPrompt) profPrompt.focus();
   } else {
     go("home");
   }
