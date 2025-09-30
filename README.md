@@ -1,4 +1,4 @@
-# PlantQuizz
+# PlantQuiz
 
 Projet de M2 de : Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu DRUENNE.
 
