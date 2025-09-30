@@ -7,60 +7,32 @@
           "id": "S5_dev_plantes",
           "label": "Développement des plantes",
           "questions": [
-            {
-              "id": "S5_dev_plantes_q1",
-              "level": 4,
-              "prompt": "Quel organe végétal se différencie en premier lors de la germination d'une graine de dicotylédone ?",
-              "choices": [
-                {"id": "a", "text": "La tige"},
-                {"id": "b", "text": "La racine primaire", "correct": true},
-                {"id": "c", "text": "La première feuille"},
-                {"id": "d", "text": "Le méristème apical"}
-              ],
-              "explanation": "Chez de nombreuses dicotylédones, la radicule perce l'enveloppe de la graine avant la sortie des autres organes."
-            },
-            {
-              "id": "S5_dev_plantes_q2",
-              "level": 3,
-              "prompt": "Quelle hormone est principalement associée à l'allongement cellulaire dans les tiges ?",
-              "choices": [
-                {"id": "a", "text": "Les cytokinines"},
-                {"id": "b", "text": "Les auxines", "correct": true},
-                {"id": "c", "text": "L'acide abscissique"},
-                {"id": "d", "text": "Les brassinostéroïdes"}
-              ],
-              "explanation": "Les auxines stimulent l'allongement cellulaire en assouplissant la paroi, ce qui favorise la croissance des tiges."
-            }
+            {"id":"S5_dev_plantes_test1","level":1,"prompt":"Question test 1 pour Développement des plantes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S5_dev_plantes_test2","level":2,"prompt":"Question test 2 pour Développement des plantes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
           ]
         },
         {
-          "id": "S5_ecophy_bases",
-          "label": "Bases d'écophysiologie",
+          "id": "S5_genetique_fonctionnelle",
+          "label": "Génétique fonctionnelle",
           "questions": [
-            {
-              "id": "S5_ecophy_bases_q1",
-              "level": 2,
-              "prompt": "Quel facteur environnemental est le plus directement lié au taux de transpiration d'une feuille ?",
-              "choices": [
-                {"id": "a", "text": "La teneur en azote du sol"},
-                {"id": "b", "text": "L'humidité de l'air", "correct": true},
-                {"id": "c", "text": "La quantité de graines produites"},
-                {"id": "d", "text": "La présence de symbioses mycorhiziennes"}
-              ],
-              "explanation": "Une humidité atmosphérique faible accroît la demande évaporative et donc le flux de transpiration."
-            },
-            {
-              "id": "S5_ecophy_bases_q2",
-              "level": 3,
-              "prompt": "Quel est l'effet principal d'une fermeture des stomates sur la photosynthèse ?",
-              "choices": [
-                {"id": "a", "text": "Augmentation du CO₂ disponible"},
-                {"id": "b", "text": "Diminution de l'entrée de CO₂", "correct": true},
-                {"id": "c", "text": "Activation de la photolyse de l'eau"},
-                {"id": "d", "text": "Production accrue de sucres"}
-              ],
-              "explanation": "La fermeture des stomates limite les échanges gazeux, ce qui réduit l'assimilation de CO₂ et la photosynthèse."
-            }
+            {"id":"S5_genetique_fonctionnelle_test1","level":1,"prompt":"Question test 1 pour Génétique fonctionnelle ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S5_genetique_fonctionnelle_test2","level":2,"prompt":"Question test 2 pour Génétique fonctionnelle ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S5_biotechnologie",
+          "label": "Biotechnologie (S5)",
+          "questions": [
+            {"id":"S5_biotechnologie_test1","level":1,"prompt":"Question test 1 pour Biotechnologie (S5) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S5_biotechnologie_test2","level":2,"prompt":"Question test 2 pour Biotechnologie (S5) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S5_biologie_moleculaire",
+          "label": "Biologie moléculaire",
+          "questions": [
+            {"id":"S5_biologie_moleculaire_test1","level":1,"prompt":"Question test 1 pour Biologie moléculaire ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S5_biologie_moleculaire_test2","level":2,"prompt":"Question test 2 pour Biologie moléculaire ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
           ]
         }
       ]
@@ -69,63 +41,357 @@
       "sem": "S6",
       "subjects": [
         {
-          "id": "S6_ipm",
-          "label": "Interactions plantes-microorganismes",
+          "id": "S6_bases_agroecologie",
+          "label": "Bases de l’agroécologie",
           "questions": [
-            {
-              "id": "S6_ipm_q1",
-              "level": 4,
-              "prompt": "Quel est le rôle principal des nodules formés par les légumineuses ?",
-              "choices": [
-                {"id": "a", "text": "Stocker des réserves glucidiques"},
-                {"id": "b", "text": "Assurer la fixation symbiotique de l'azote", "correct": true},
-                {"id": "c", "text": "Produire des hormones végétales"},
-                {"id": "d", "text": "Limiter la transpiration"}
-              ],
-              "explanation": "Les nodules abritent des bactéries fixatrices d'azote qui fournissent de l'azote assimilable à la plante."
-            },
-            {
-              "id": "S6_ipm_q2",
-              "level": 2,
-              "prompt": "Quel terme décrit une relation bénéfique réciproque entre une plante et un microorganisme ?",
-              "choices": [
-                {"id": "a", "text": "Parasitisme"},
-                {"id": "b", "text": "Commensalisme"},
-                {"id": "c", "text": "Mutualisme", "correct": true},
-                {"id": "d", "text": "Saprophytisme"}
-              ],
-              "explanation": "Le mutualisme décrit une interaction où chaque partenaire tire un bénéfice de l'association."
-            }
+            {"id":"S6_bases_agroecologie_test1","level":1,"prompt":"Question test 1 pour Bases de l’agroécologie ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S6_bases_agroecologie_test2","level":2,"prompt":"Question test 2 pour Bases de l’agroécologie ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
           ]
         },
         {
-          "id": "S6_bioinfo",
-          "label": "Bioinformatique : bases de données",
+          "id": "S6_autotrophie",
+          "label": "Autotrophie",
           "questions": [
-            {
-              "id": "S6_bioinfo_q1",
-              "level": 1,
-              "prompt": "Quel format est couramment utilisé pour stocker des séquences génétiques ?",
-              "choices": [
-                {"id": "a", "text": "CSV"},
-                {"id": "b", "text": "PNG"},
-                {"id": "c", "text": "FASTQ", "correct": true},
-                {"id": "d", "text": "MP4"}
-              ],
-              "explanation": "Le format FASTQ associe séquence nucléotidique et scores de qualité pour chaque base."
-            },
-            {
-              "id": "S6_bioinfo_q2",
-              "level": 3,
-              "prompt": "Quel concept décrit une table reliant plusieurs clés étrangères pour relier des entités ?",
-              "choices": [
-                {"id": "a", "text": "Table de faits", "correct": true},
-                {"id": "b", "text": "Index bitmap"},
-                {"id": "c", "text": "Colonne calculée"},
-                {"id": "d", "text": "Vue matérialisée"}
-              ],
-              "explanation": "Les tables de faits associent des clés étrangères provenant de tables de dimensions pour modéliser les relations dans un schéma en étoile."
-            }
+            {"id":"S6_autotrophie_test1","level":1,"prompt":"Question test 1 pour Autotrophie ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S6_autotrophie_test2","level":2,"prompt":"Question test 2 pour Autotrophie ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S6_genie_genetique",
+          "label": "Génie génétique végétal",
+          "questions": [
+            {"id":"S6_genie_genetique_test1","level":1,"prompt":"Question test 1 pour Génie génétique végétal ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S6_genie_genetique_test2","level":2,"prompt":"Question test 2 pour Génie génétique végétal ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        }
+      ]
+    },
+    {
+      "sem": "S7",
+      "subjects": [
+        {
+          "id": "S7_biostat_R",
+          "label": "Biostatistiques avec R",
+          "questions": [
+            {"id":"S7_biostat_R_test1","level":1,"prompt":"Question test 1 pour Biostatistiques avec R ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_biostat_R_test2","level":2,"prompt":"Question test 2 pour Biostatistiques avec R ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_dev_plantes",
+          "label": "Développement des plantes",
+          "questions": [
+            {"id":"S7_dev_plantes_test1","level":1,"prompt":"Question test 1 pour Développement des plantes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_dev_plantes_test2","level":2,"prompt":"Question test 2 pour Développement des plantes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_interactions_pm",
+          "label": "Interactions plantes–microorganismes",
+          "questions": [
+            {"id":"S7_interactions_pm_test1","level":1,"prompt":"Question test 1 pour Interactions plantes–microorganismes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_interactions_pm_test2","level":2,"prompt":"Question test 2 pour Interactions plantes–microorganismes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_bases_ecophysiologie",
+          "label": "Bases d’écophysiologie",
+          "questions": [
+            {"id":"S7_bases_ecophysiologie_test1","level":1,"prompt":"Question test 1 pour Bases d’écophysiologie ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_bases_ecophysiologie_test2","level":2,"prompt":"Question test 2 pour Bases d’écophysiologie ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_genetique_moleculaire",
+          "label": "Génétique moléculaire végétale",
+          "questions": [
+            {"id":"S7_genetique_moleculaire_test1","level":1,"prompt":"Question test 1 pour Génétique moléculaire végétale ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_genetique_moleculaire_test2","level":2,"prompt":"Question test 2 pour Génétique moléculaire végétale ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_ingenierie_metabolique",
+          "label": "Ingénierie métabolique (production de biomolécules végétales d’intérêt)",
+          "questions": [
+            {"id":"S7_ingenierie_metabolique_test1","level":1,"prompt":"Question test 1 pour Ingénierie métabolique (production de biomolécules végétales d’intérêt) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_ingenierie_metabolique_test2","level":2,"prompt":"Question test 2 pour Ingénierie métabolique (production de biomolécules végétales d’intérêt) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_outils_amelioration",
+          "label": "Outils pour l’amélioration des plantes",
+          "questions": [
+            {"id":"S7_outils_amelioration_test1","level":1,"prompt":"Question test 1 pour Outils pour l’amélioration des plantes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_outils_amelioration_test2","level":2,"prompt":"Question test 2 pour Outils pour l’amélioration des plantes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes",
+          "label": "Nutrition des plantes",
+          "questions": [
+            {"id":"S7_nutrition_plantes_test1","level":1,"prompt":"Question test 1 pour Nutrition des plantes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_nutrition_plantes_test2","level":2,"prompt":"Question test 2 pour Nutrition des plantes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_adaptation_signalisation",
+          "label": "Adaptation à l’environnement et signalisation",
+          "optional": true,
+          "questions": [
+            {"id":"S7_adaptation_signalisation_test1","level":1,"prompt":"Question test 1 pour Adaptation à l’environnement et signalisation ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_adaptation_signalisation_test2","level":2,"prompt":"Question test 2 pour Adaptation à l’environnement et signalisation ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_ingenierie_metabolique_app",
+          "label": "Ingénierie métabolique (approfondissement)",
+          "optional": true,
+          "questions": [
+            {"id":"S7_ingenierie_metabolique_app_test1","level":1,"prompt":"Question test 1 pour Ingénierie métabolique (approfondissement) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_ingenierie_metabolique_app_test2","level":2,"prompt":"Question test 2 pour Ingénierie métabolique (approfondissement) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_outils_amelioration_app",
+          "label": "Outils pour l’amélioration des plantes (approfondissement)",
+          "optional": true,
+          "questions": [
+            {"id":"S7_outils_amelioration_app_test1","level":1,"prompt":"Question test 1 pour Outils pour l’amélioration des plantes (approfondissement) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_outils_amelioration_app_test2","level":2,"prompt":"Question test 2 pour Outils pour l’amélioration des plantes (approfondissement) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_biologie_cellulaire_moleculaire",
+          "label": "Biologie cellulaire et moléculaire végétale",
+          "optional": true,
+          "questions": [
+            {"id":"S7_biologie_cellulaire_moleculaire_test1","level":1,"prompt":"Question test 1 pour Biologie cellulaire et moléculaire végétale ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_biologie_cellulaire_moleculaire_test2","level":2,"prompt":"Question test 2 pour Biologie cellulaire et moléculaire végétale ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S7_pathologie_element",
+          "label": "Pathologie végétale (éléments)",
+          "optional": true,
+          "questions": [
+            {"id":"S7_pathologie_element_test1","level":1,"prompt":"Question test 1 pour Pathologie végétale (éléments) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S7_pathologie_element_test2","level":2,"prompt":"Question test 2 pour Pathologie végétale (éléments) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        }
+      ]
+    },
+    {
+      "sem": "S8",
+      "subjects": [
+        {
+          "id": "S8_bioinformatique_donnees",
+          "label": "Bioinformatique : données et bases de données",
+          "questions": [
+            {"id":"S8_bioinformatique_donnees_test1","level":1,"prompt":"Question test 1 pour Bioinformatique : données et bases de données ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S8_bioinformatique_donnees_test2","level":2,"prompt":"Question test 2 pour Bioinformatique : données et bases de données ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S8_approches_experimentales",
+          "label": "Approches expérimentales de la biologie des plantes",
+          "questions": [
+            {"id":"S8_approches_experimentales_test1","level":1,"prompt":"Question test 1 pour Approches expérimentales de la biologie des plantes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S8_approches_experimentales_test2","level":2,"prompt":"Question test 2 pour Approches expérimentales de la biologie des plantes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S8_management_projets",
+          "label": "Management de projets",
+          "questions": [
+            {"id":"S8_management_projets_test1","level":1,"prompt":"Question test 1 pour Management de projets ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S8_management_projets_test2","level":2,"prompt":"Question test 2 pour Management de projets ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S8_reseaux_genes",
+          "label": "Réseaux de gènes – modélisation",
+          "optional": true,
+          "questions": [
+            {"id":"S8_reseaux_genes_test1","level":1,"prompt":"Question test 1 pour Réseaux de gènes – modélisation ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S8_reseaux_genes_test2","level":2,"prompt":"Question test 2 pour Réseaux de gènes – modélisation ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S8_amelioration_tropicales",
+          "label": "Amélioration des plantes tropicales et méditerranéennes",
+          "optional": true,
+          "questions": [
+            {"id":"S8_amelioration_tropicales_test1","level":1,"prompt":"Question test 1 pour Amélioration des plantes tropicales et méditerranéennes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S8_amelioration_tropicales_test2","level":2,"prompt":"Question test 2 pour Amélioration des plantes tropicales et méditerranéennes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        }
+      ]
+    },
+    {
+      "sem": "S9",
+      "subjects": [
+        {
+          "id": "S9_approche_integree",
+          "label": "Approche intégrée d’amélioration des plantes (étude de cas)",
+          "questions": [
+            {"id":"S9_approche_integree_test1","level":1,"prompt":"Question test 1 pour Approche intégrée d’amélioration des plantes (étude de cas) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_approche_integree_test2","level":2,"prompt":"Question test 2 pour Approche intégrée d’amélioration des plantes (étude de cas) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_epigenetique",
+          "label": "Épigénétique chez les plantes",
+          "questions": [
+            {"id":"S9_epigenetique_test1","level":1,"prompt":"Question test 1 pour Épigénétique chez les plantes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_epigenetique_test2","level":2,"prompt":"Question test 2 pour Épigénétique chez les plantes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_bigomics",
+          "label": "BigOmics (génomique comparative)",
+          "questions": [
+            {"id":"S9_bigomics_test1","level":1,"prompt":"Question test 1 pour BigOmics (génomique comparative) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_bigomics_test2","level":2,"prompt":"Question test 2 pour BigOmics (génomique comparative) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_ecophysiologie",
+          "label": "Écophysiologie : du phénotype à l’idéotype",
+          "questions": [
+            {"id":"S9_ecophysiologie_test1","level":1,"prompt":"Question test 1 pour Écophysiologie : du phénotype à l’idéotype ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_ecophysiologie_test2","level":2,"prompt":"Question test 2 pour Écophysiologie : du phénotype à l’idéotype ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_genetique_quantitative",
+          "label": "Génétique quantitative",
+          "questions": [
+            {"id":"S9_genetique_quantitative_test1","level":1,"prompt":"Question test 1 pour Génétique quantitative ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_genetique_quantitative_test2","level":2,"prompt":"Question test 2 pour Génétique quantitative ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_traitement_donnees",
+          "label": "Traitement de données",
+          "questions": [
+            {"id":"S9_traitement_donnees_test1","level":1,"prompt":"Question test 1 pour Traitement de données ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_traitement_donnees_test2","level":2,"prompt":"Question test 2 pour Traitement de données ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_gestion_projets",
+          "label": "Gestion de projets",
+          "questions": [
+            {"id":"S9_gestion_projets_test1","level":1,"prompt":"Question test 1 pour Gestion de projets ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_gestion_projets_test2","level":2,"prompt":"Question test 2 pour Gestion de projets ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_nutrition_minerale",
+          "label": "Nutrition minérale et adaptation des plantes aux stress abiotiques",
+          "optional": true,
+          "questions": [
+            {"id":"S9_nutrition_minerale_test1","level":1,"prompt":"Question test 1 pour Nutrition minérale et adaptation des plantes aux stress abiotiques ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_nutrition_minerale_test2","level":2,"prompt":"Question test 2 pour Nutrition minérale et adaptation des plantes aux stress abiotiques ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_expression_differencielle",
+          "label": "Analyse de l’expression différentielle des gènes",
+          "optional": true,
+          "questions": [
+            {"id":"S9_expression_differencielle_test1","level":1,"prompt":"Question test 1 pour Analyse de l’expression différentielle des gènes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_expression_differencielle_test2","level":2,"prompt":"Question test 2 pour Analyse de l’expression différentielle des gènes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_signalisation_dynamiques",
+          "label": "Signalisation et dynamiques (école thématique)",
+          "optional": true,
+          "questions": [
+            {"id":"S9_signalisation_dynamiques_test1","level":1,"prompt":"Question test 1 pour Signalisation et dynamiques (école thématique) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_signalisation_dynamiques_test2","level":2,"prompt":"Question test 2 pour Signalisation et dynamiques (école thématique) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_plantes_modeles",
+          "label": "Plantes modèles et modélisation",
+          "optional": true,
+          "questions": [
+            {"id":"S9_plantes_modeles_test1","level":1,"prompt":"Question test 1 pour Plantes modèles et modélisation ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_plantes_modeles_test2","level":2,"prompt":"Question test 2 pour Plantes modèles et modélisation ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_adaptation_cultures_tropicales",
+          "label": "Adaptation des grandes cultures tropicales au changement climatique",
+          "optional": true,
+          "questions": [
+            {"id":"S9_adaptation_cultures_tropicales_test1","level":1,"prompt":"Question test 1 pour Adaptation des grandes cultures tropicales au changement climatique ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_adaptation_cultures_tropicales_test2","level":2,"prompt":"Question test 2 pour Adaptation des grandes cultures tropicales au changement climatique ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_plantes_hommes",
+          "label": "Plantes et hommes, histoire partagée",
+          "optional": true,
+          "questions": [
+            {"id":"S9_plantes_hommes_test1","level":1,"prompt":"Question test 1 pour Plantes et hommes, histoire partagée ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_plantes_hommes_test2","level":2,"prompt":"Question test 2 pour Plantes et hommes, histoire partagée ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_virologie",
+          "label": "Virologie",
+          "optional": true,
+          "questions": [
+            {"id":"S9_virologie_test1","level":1,"prompt":"Question test 1 pour Virologie ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_virologie_test2","level":2,"prompt":"Question test 2 pour Virologie ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_phytobiome",
+          "label": "Phytobiome (école thématique)",
+          "optional": true,
+          "questions": [
+            {"id":"S9_phytobiome_test1","level":1,"prompt":"Question test 1 pour Phytobiome (école thématique) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_phytobiome_test2","level":2,"prompt":"Question test 2 pour Phytobiome (école thématique) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_protection_cultures",
+          "label": "Protection des cultures",
+          "optional": true,
+          "questions": [
+            {"id":"S9_protection_cultures_test1","level":1,"prompt":"Question test 1 pour Protection des cultures ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_protection_cultures_test2","level":2,"prompt":"Question test 2 pour Protection des cultures ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_interactions_signalisation",
+          "label": "Interactions et signalisation",
+          "optional": true,
+          "questions": [
+            {"id":"S9_interactions_signalisation_test1","level":1,"prompt":"Question test 1 pour Interactions et signalisation ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_interactions_signalisation_test2","level":2,"prompt":"Question test 2 pour Interactions et signalisation ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_projet_integre",
+          "label": "Projet intégré d’amélioration des plantes (phénotypes)",
+          "optional": true,
+          "questions": [
+            {"id":"S9_projet_integre_test1","level":1,"prompt":"Question test 1 pour Projet intégré d’amélioration des plantes (phénotypes) ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_projet_integre_test2","level":2,"prompt":"Question test 2 pour Projet intégré d’amélioration des plantes (phénotypes) ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+          ]
+        },
+        {
+          "id": "S9_bioinfo_requetes",
+          "label": "Bioinformatique : construire des requêtes",
+          "optional": true,
+          "questions": [
+            {"id":"S9_bioinfo_requetes_test1","level":1,"prompt":"Question test 1 pour Bioinformatique : construire des requêtes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
+            {"id":"S9_bioinfo_requetes_test2","level":2,"prompt":"Question test 2 pour Bioinformatique : construire des requêtes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
           ]
         }
       ]
