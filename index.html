@@ -215,89 +215,7 @@ const DEMO_QUESTIONS=[{id:"demo1",level:4,prompt:"Quelle partie réalise la phot
 let loaded=false;
 /* IMPORTANT: on distingue les questions normales originales de la liste active. */
 let QUESTIONS_NORMAL=[], QUESTIONS=[], PED_DAILY=null;
-
-/* ===== Révision: index S5..S9 (tronc commun + options) ===== */
-const REV_INDEX = {
-  semesters: [
-    {
-      sem:"S5",
-      core:[
-        {id:"S5_dev_plantes",label:"Développement des plantes"},
-        {id:"S5_genetique_fonctionnelle",label:"Génétique fonctionnelle"},
-        {id:"S5_biotechnologie",label:"Biotechnologie S5"},
-        {id:"S5_bio_moleculaire",label:"Biologie Moléculaire"}
-      ],
-      options:[]
-    },
-    {
-      sem:"S6",
-      core:[
-        {id:"S6_bases_agroeco",label:"Bases de l’agroécologie"},
-        {id:"S6_autotrophie",label:"Autotrophie"},
-        {id:"S6_genie_genetique",label:"Génie génétique végétal"}
-      ],
-      options:[]
-    },
-    {
-      sem:"S7",
-      core:[
-        {id:"S7_biostat_R",label:"Biostatistiques avec R"},
-        {id:"S7_dev_plantes",label:"Développement des plantes"},
-        {id:"S7_interactions_PM",label:"Interactions Plantes-Microorganismes"},
-        {id:"S7_bases_ecophysio",label:"Bases d'écophysiologie"},
-        {id:"S7_gen_mol_veg",label:"Génétique moléculaire végétale"},
-        {id:"S7_ing_metabo",label:"Ingénierie métabolique product biomolécules végétales d'inté"},
-        {id:"S7_outils_amelio",label:"Outils pour l'amélioration des plantes"},
-        {id:"S7_nutrition_plantes",label:"Nutrition des plantes"}
-      ],
-      options:[
-        {id:"S7_opt_adaptation_signal",label:"Adaptation à l'environnement et signalisation"},
-        {id:"S7_opt_ing_metabo",label:"Ingénierie métabolique product biomolécules végétales d'inté"},
-        {id:"S7_opt_outils_amelio",label:"Outils pour l'amélioration des plantes"},
-        {id:"S7_opt_bio_cell_mol_veg",label:"Biologie Cellulaire et Moléculaire végétale"},
-        {id:"S7_opt_patho_veg",label:"Eléments de pathologie végétale"}
-      ]
-    },
-    {
-      sem:"S8",
-      core:[
-        {id:"S8_bioinfo_donnees_bdd",label:"BioInformatique: Données et Bases de Données"},
-        {id:"S8_approches_exp_biologie_plantes",label:"Approches expérimentales de la biologie des plantes"},
-        {id:"S8_management_projets",label:"Management de projets"}
-      ],
-      options:[
-        {id:"S8_opt_reseaux_genes_model",label:"Réseaux de gènes-Modélisation"},
-        {id:"S8_opt_amelio_tropicales_medit",label:"Amélioration des plantes tropicales et méditerranéennes"}
-      ]
-    },
-    {
-      sem:"S9",
-      core:[
-        {id:"S9_approche_integree",label:"Approche intégrée d'amélioration des plantes: étude de cas"},
-        {id:"S9_epigenetique",label:"Epigénétique chez les plantes"},
-        {id:"S9_bigomics",label:"BigOmics, génomique comparative"},
-        {id:"S9_ecophysio_ideotype",label:"Ecophysiologie: du phénotype à l'idéotype"},
-        {id:"S9_genetique_quantitative",label:"Génétique quantitative"},
-        {id:"S9_traitement_donnees",label:"Traitement de données"},
-        {id:"S9_gestion_projets",label:"Gestion de projets"}
-      ],
-      options:[
-        {id:"S9_opt_nutri_minerale",label:"Nutrition minérale adaptation plantes aux contraintes abioti"},
-        {id:"S9_opt_expression_diff",label:"Analyse de l'expression différentielle de gènes"},
-        {id:"S9_opt_ecole_signal_dyna",label:"Ecole signalisation, dyna"},
-        {id:"S9_opt_plantes_modeles_modelisation",label:"Plantes modèles, modélisation"},
-        {id:"S9_opt_adaptation_grandes_cultures",label:"Adaptation grandes cultures tropicales aux changements clima"},
-        {id:"S9_opt_plantes_hommes",label:"Plantes et Hommes, une histoire partagée"},
-        {id:"S9_opt_virologie",label:"Virologie"},
-        {id:"S9_opt_ecole_phytobiome",label:"Ecole phytobiome"},
-        {id:"S9_opt_protection_cultures",label:"Protection des cultures"},
-        {id:"S9_opt_interactions_signal",label:"Interactions et signalisation"},
-        {id:"S9_opt_projet_integre",label:"Projet Intégré d'amélioration des plantes: phénotypes"},
-        {id:"S9_opt_bioinfo_requetes",label:"BioInformatique: construire des requêtes"}
-      ]
-    }
-  ]
-};
+let REV_DATA={semesters:[]};
 
 const REV_DATA = (() => {
   const seen = new Set();
@@ -322,6 +240,8 @@ async function loadData(){
   QUESTIONS = QUESTIONS_NORMAL;
   const daily = await tryFetch("./data/pedantix_daily.json") || [{date:todayISO,target:"Chloroplaste",text:DEMO_QUESTIONS[0].explanation||"Texte."}];
   PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:"Chloroplaste",text:"Texte démo."};
+  const rev = await tryFetch("./data/questions_revision.json");
+  REV_DATA = (rev && Array.isArray(rev.semesters)) ? rev : {semesters:[]};
   loaded=true;
 }
 
@@ -471,25 +391,96 @@ $("setEloBtn").onclick = () => {
 /* ========= MODE RÉVISION (S5..S9) ========= */
 const selSem = $("selSem"), ueCore=$("ueCore"), ueOpt=$("ueOpt");
 function label(id,lbl){ return `<label class="pill"><input type="checkbox" data-id="${id}"> ${lbl}</label>`; }
+function updateRevLaunchState(){
+  $("revLaunch").disabled = !document.querySelector("#revision input:checked");
+}
+function subjectType(subject){
+  if(!subject || typeof subject!=="object") return "core";
+  if(subject.optional===true) return "option";
+  if(typeof subject.core==="boolean") return subject.core?"core":"option";
+  const raw = String(subject.type || subject.category || subject.group || subject.kind || "").toLowerCase();
+  if(["core","tronc","mandatory","obligatoire"].includes(raw)) return "core";
+  if(["option","opt","optional"].includes(raw)) return "option";
+  return "core";
+}
+function findSemesterEntry(sem){
+  return (REV_DATA.semesters||[]).find(entry=>{
+    if(!entry) return false;
+    const keys=[entry.sem, entry.id, entry.code, entry.semester].filter(Boolean);
+    return keys.includes(sem);
+  }) || null;
+}
+function sanitizeSubjects(list, entry){
+  let source = Array.isArray(list) ? list : null;
+  if(!source && entry){
+    const fallback=[];
+    if(Array.isArray(entry.core)) fallback.push(...entry.core.map(s=>({...s, type:s?.type || "core"})));
+    if(Array.isArray(entry.options)) fallback.push(...entry.options.map(s=>({...s, type:s?.type || "option"})));
+    if(fallback.length) source=fallback;
+  }
+  if(!Array.isArray(source)) return [];
+  return source.filter(s=>s && s.id).map(s=>({
+    id: s.id,
+    label: s.label || s.name || s.id,
+    type: subjectType(s),
+    questions: Array.isArray(s.questions)?s.questions:[],
+  }));
+}
 function fillUEsForSem(sem){
-  const s = REV_INDEX.semesters.find(x=>x.sem===sem);
-  ueCore.innerHTML=(s && s.core ? s.core : []).map(u=>label(u.id,u.label)).join("");
-  ueOpt.innerHTML=(s && s.options ? s.options : []).map(u=>label(u.id,u.label)).join("");
+  const entry = findSemesterEntry(sem);
+  const subjects = sanitizeSubjects(entry?.subjects, entry);
+  const core = subjects.filter(s=>s.type!=="option");
+  const opt = subjects.filter(s=>s.type==="option");
+  ueCore.innerHTML = core.length ? core.map(u=>label(u.id,u.label)).join("") : "<span class=\"muted\">Aucun élément</span>";
+  ueOpt.innerHTML = opt.length ? opt.map(u=>label(u.id,u.label)).join("") : "<span class=\"muted\">Aucun élément</span>";
   $("revLaunch").disabled=true;
-  document.querySelectorAll("#revision input[type=checkbox]").forEach(i=> i.onchange=()=>{ $("revLaunch").disabled=!document.querySelector("#revision input:checked"); });
+  document.querySelectorAll("#revision input[type=checkbox]").forEach(i=>{
+    i.onchange=updateRevLaunchState;
+  });
 }
 selSem.onchange = () => fillUEsForSem(selSem.value);
-$("btnAllCore").onclick=()=>{ ueCore.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
-$("btnAllOpt").onclick=()=>{ ueOpt.querySelectorAll("input").forEach(i=>i.checked=true); $("revLaunch").disabled=false; };
-$("btnClear").onclick=()=>{ document.querySelectorAll("#revision input[type=checkbox]").forEach(i=>i.checked=false); $("revLaunch").disabled=true; };
+$("btnAllCore").onclick=()=>{ const inputs=ueCore.querySelectorAll("input"); inputs.forEach(i=>i.checked=true); updateRevLaunchState(); };
+$("btnAllOpt").onclick=()=>{ const inputs=ueOpt.querySelectorAll("input"); inputs.forEach(i=>i.checked=true); updateRevLaunchState(); };
+$("btnClear").onclick=()=>{ document.querySelectorAll("#revision input[type=checkbox]").forEach(i=>i.checked=false); updateRevLaunchState(); };
+
+function collectRevisionQuestions(ids){
+  const out=[];
+  if(!ids.size) return out;
+  for(const sem of REV_DATA.semesters||[]){
+    const subjects = sanitizeSubjects(sem?.subjects, sem);
+    for(const subject of subjects){
+      if(!subject || !ids.has(subject.id)) continue;
+      const questions = Array.isArray(subject.questions)?subject.questions:[];
+      questions.forEach((q,idx)=>{
+        if(!q) return;
+        const choices = Array.isArray(q.choices) ? q.choices.map(choice=>({...choice})) : [];
+        out.push({
+          id: q.id || `${subject.id}_${idx}`,
+          level: q.level ?? 1,
+          prompt: q.prompt || "Question",
+          choices,
+          explanation: q.explanation || "",
+        });
+      });
+    }
+  }
+  return out;
+}
 
 $("revLaunch").onclick=()=>{
-  const picked=[...document.querySelectorAll("#revision input:checked")].map(i=>i.parentElement.textContent.trim());
-  if(!picked.length) return;
-  QUESTIONS = picked.map((lbl,ix)=>({
-    id:`UE${ix}`,level:5,prompt:`UE: ${lbl} — question démo`,
-    choices:[{id:"a",text:"A"},{id:"b",text:"B",correct:true},{id:"c",text:"C"},{id:"d",text:"D"}],
-    explanation:"Placeholder à remplacer."
+  const pickedIds = new Set([...document.querySelectorAll("#revision input:checked")].map(i=>i.dataset.id).filter(Boolean));
+  if(!pickedIds.size) return;
+  const selectedQuestions = collectRevisionQuestions(pickedIds);
+  if(!selectedQuestions.length){
+    alert("Aucune question trouvée pour les matières sélectionnées.");
+    return;
+  }
+  QUESTIONS = selectedQuestions.map(q=>({
+    id: q.id,
+    level: q.level,
+    prompt: q.prompt,
+    choices: Array.isArray(q.choices)?q.choices.map(c=>({...c})) : [],
+    explanation: q.explanation,
   }));
   resetQuizState();
   go("normal"); updateMeta(); renderQuestion();
