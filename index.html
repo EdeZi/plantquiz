@@ -12,6 +12,7 @@
   nav{display:flex;gap:12px;align-items:center;max-width:1120px;margin:0 auto;padding:12px 24px}
   .brand{font-size:20px;font-weight:800;cursor:pointer}
   .back{appearance:none;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
+  .nav-spacer{flex:1}
   .container{max-width:1120px;margin:0 auto;padding:24px}
   .grid{display:grid;gap:14px} .grid3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
   .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04);padding:20px}
@@ -29,6 +30,15 @@
   select, input[type="text"]{padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
   .group{border:1px solid #e5e7eb;border-radius:12px;padding:12px;margin-top:8px}
   .pill{padding:4px 10px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;font-size:12px}
+  #profTool{position:fixed;right:24px;bottom:24px;max-width:420px;width:min(100%,420px);z-index:50}
+  #profTool .card{position:relative;padding-bottom:18px}
+  #profTool .close{position:absolute;top:16px;right:16px}
+  #profTool .fields{display:grid;gap:12px;margin-top:16px}
+  #profTool textarea{min-height:96px;resize:vertical}
+  #profChoices{display:grid;gap:8px}
+  #profChoices label{display:flex;gap:8px;align-items:center}
+  #profChoices input[type="text"]{flex:1}
+  #profOutput{min-height:140px;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
   /* Pédantix */
   .pedantix-text{line-height:1.7; font-size:1.05rem}
   .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px}
@@ -42,10 +52,50 @@
   <nav>
     <button id="backBtn" class="back" hidden>← Retour</button>
     <div id="brand" class="brand">🌿 Plant’Quiz</div>
+    <span class="nav-spacer"></span>
+    <button id="profBtn" class="btn outline" type="button" aria-controls="profTool" aria-expanded="false">Outil prof</button>
   </nav>
 </header>
 
 <main class="container">
+  <section id="profTool" hidden>
+    <div class="card">
+      <button id="profClose" class="btn outline close" type="button">Fermer</button>
+      <h2 style="margin:0">Générateur de questions</h2>
+      <p class="muted" style="margin:6px 0 0">Préparez des questions hors-ligne à copier dans vos fichiers.</p>
+      <div class="fields">
+        <label class="field">
+          <span class="muted">Matière / UE</span>
+          <select id="profMatter"></select>
+        </label>
+        <label class="field">
+          <span class="muted">Énoncé</span>
+          <textarea id="profPrompt" placeholder="Saisir la question" spellcheck="false"></textarea>
+        </label>
+        <div class="field">
+          <span class="muted">Réponses possibles</span>
+          <div id="profChoices">
+            <label><input type="radio" name="profCorrect" value="0"><input type="text" id="profChoice0" placeholder="Réponse A"></label>
+            <label><input type="radio" name="profCorrect" value="1"><input type="text" id="profChoice1" placeholder="Réponse B"></label>
+            <label><input type="radio" name="profCorrect" value="2"><input type="text" id="profChoice2" placeholder="Réponse C"></label>
+            <label><input type="radio" name="profCorrect" value="3"><input type="text" id="profChoice3" placeholder="Réponse D"></label>
+          </div>
+        </div>
+        <label class="field">
+          <span class="muted">Explication (facultative)</span>
+          <textarea id="profExplain" placeholder="Ajoutez un complément ou laissez vide" spellcheck="false"></textarea>
+        </label>
+        <div class="row" style="justify-content:flex-start">
+          <button id="profAdd" class="btn" type="button">Ajouter</button>
+          <button id="profReset" class="btn outline" type="button">Réinitialiser</button>
+        </div>
+        <label class="field">
+          <span class="muted">Sortie JSON (une ligne par question)</span>
+          <textarea id="profOutput" readonly spellcheck="false"></textarea>
+        </label>
+      </div>
+    </div>
+  </section>
   <!-- ACCUEIL -->
   <section id="home">
     <div class="grid grid3">
@@ -249,6 +299,22 @@ const REV_INDEX = {
   ]
 };
 
+const REV_DATA = (() => {
+  const seen = new Set();
+  const entries = [];
+  if(Array.isArray(REV_INDEX?.semesters)){
+    REV_INDEX.semesters.forEach(sem => {
+      [...(sem.core||[]), ...(sem.options||[])].forEach(item => {
+        if(item?.id && !seen.has(item.id)){
+          seen.add(item.id);
+          entries.push({id:item.id,label:item.label||item.id});
+        }
+      });
+    });
+  }
+  return entries.sort((a,b)=>a.label.localeCompare(b.label,'fr',{sensitivity:'base'}));
+})();
+
 async function loadData(){
   if(loaded) return;
   const normal = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
@@ -428,6 +494,80 @@ $("revLaunch").onclick=()=>{
   resetQuizState();
   go("normal"); updateMeta(); renderQuestion();
 };
+
+/* ========= Outil prof ========= */
+const profTool=$("profTool"), profBtn=$("profBtn"), profClose=$("profClose");
+const profMatter=$("profMatter"), profPrompt=$("profPrompt"), profExplain=$("profExplain"), profOutput=$("profOutput");
+const profChoicesInputs=[0,1,2,3].map(i=>$("profChoice"+i));
+const profCorrectInputs=[...document.querySelectorAll('input[name="profCorrect"]')];
+let profCounter=1;
+
+function fillProfMatter(){
+  const current=profMatter.value;
+  profMatter.innerHTML = REV_DATA.map(item=>`<option value="${item.id}">${item.label}</option>`).join("");
+  if(REV_DATA.length){
+    profMatter.value = REV_DATA.some(item=>item.id===current) ? current : REV_DATA[0].id;
+  }
+}
+fillProfMatter();
+
+function resetProfFields(){
+  profPrompt.value="";
+  profExplain.value="";
+  profChoicesInputs.forEach(inp=>inp.value="");
+  profCorrectInputs.forEach(inp=>inp.checked=false);
+}
+
+function addRevisionQuestion(){
+  const matter=profMatter.value;
+  const prompt=profPrompt.value.trim();
+  const explanation=profExplain.value.trim();
+  const answers=profChoicesInputs.map(inp=>inp.value.trim());
+  const correctIndex=profCorrectInputs.findIndex(inp=>inp.checked);
+
+  if(!matter){ alert("Choisissez une matière."); return; }
+  if(!prompt){ alert("Ajoutez un énoncé."); profPrompt.focus(); return; }
+  if(answers.some(a=>!a)){ alert("Toutes les réponses doivent être renseignées."); return; }
+  if(correctIndex<0){ alert("Sélectionnez la bonne réponse."); return; }
+
+  const idBase=matter.replace(/[^a-z0-9_]+/gi,"_");
+  const questionId=`${idBase}_${Date.now().toString(36)}_${profCounter++}`;
+  const choices=answers.map((text,idx)=>{
+    const choice={id:`${idBase}_c${idx+1}`,text};
+    if(idx===correctIndex) choice.correct=true;
+    return choice;
+  });
+  const payload={id:questionId,level:5,prompt,choices,explanation:explanation||""};
+  const line=JSON.stringify(payload);
+  profOutput.value = profOutput.value ? `${profOutput.value}\n${line}` : line;
+  profOutput.scrollTop = profOutput.scrollHeight;
+  resetProfFields();
+  profPrompt.focus();
+}
+
+$("profAdd").onclick=addRevisionQuestion;
+$("profReset").onclick=()=>{ resetProfFields(); profOutput.value=""; };
+
+function toggleProfTool(force){
+  if(typeof force==="boolean"){
+    profTool.hidden=!force;
+  }else{
+    profTool.hidden=!profTool.hidden;
+  }
+  if(!profTool.hidden){
+    profPrompt.focus();
+  }
+  if(profBtn){
+    profBtn.setAttribute("aria-expanded", String(!profTool.hidden));
+  }
+}
+
+if(profBtn){
+  profBtn.addEventListener("click",()=>toggleProfTool());
+}
+if(profClose){
+  profClose.addEventListener("click",()=>{ toggleProfTool(false); go("home"); });
+}
 
 /* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
