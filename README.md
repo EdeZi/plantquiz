@@ -1,11 +1,13 @@
 # PlantQuizz
 
+
 Projet de M2 de : Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu.
 
 Contact (questions techniques sur le site) : Louis GRARD – grard.louis34@gmail.com
 
 PlantQuizz est un quiz web centré sur les sciences du végétal. Il propose deux modes complémentaires :
 
+ 
 - **Quiz normal** – suit un système Elo qui adapte la difficulté des questions en fonction de vos réponses.
 - **Quiz révision** – permet de travailler des UE précises sans impact sur l’Elo et d’accéder à l’historique des questions déjà vues.
 
@@ -88,3 +90,5 @@ L’outil prof est intégré directement à la page d’accueil afin de facilite
 - Les contributions se font principalement en ajoutant ou en corrigeant des questions dans les fichiers JSON.
 - Pensez à conserver des identifiants (`id`) uniques pour chaque question afin d’éviter les doublons pendant l’import.
 - Pour vérifier les changements, ouvrez `index.html` localement et testez les modes Normal et Révision.
+
+En cas de question ou pour proposer des améliorations, contactez l’équipe en charge du quiz pédagogique.
