@@ -1,7 +1,7 @@
 # PlantQuizz
 
 
-Projet de M2 de : Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu.
+Projet de M2 de : Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu DRUENNE.
 
 Contact (questions techniques sur le site) : Louis GRARD – grard.louis34@gmail.com
 
