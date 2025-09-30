@@ -132,8 +132,8 @@
   <!-- NORMAL -->
   <section id="normal" hidden>
     <div class="card">
-      <h2 style="margin:0 0 6px">Quiz normal</h2>
-      <p class="muted">Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.</p>
+      <h2 id="quizTitle" style="margin:0 0 6px">Quiz normal</h2>
+      <p id="quizSubtitle" class="muted">Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.</p>
       <hr style="margin:12px 0"/>
       <article>
         <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:6px">
@@ -391,6 +391,15 @@ function pickQuestion(){
 
 let currentQ=null, locked=false;
 function updateMeta(){
+  const quizTitle=$("quizTitle"), quizSubtitle=$("quizSubtitle");
+  if(quizTitle){
+    quizTitle.textContent = activeQuizMode==="revision" ? "Quiz révision" : "Quiz normal";
+  }
+  if(quizSubtitle){
+    quizSubtitle.textContent = activeQuizMode==="revision"
+      ? "Révise les UE sélectionnées sans Elo ni difficulté adaptative."
+      : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
+  }
   $("eloPill2").textContent=elo;
   $("qPill2").textContent=qCount;
   $("goodPill2").textContent=goodCount;
