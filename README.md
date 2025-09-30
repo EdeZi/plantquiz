@@ -27,6 +27,7 @@ Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne 
 
 ## Modes de jeu
 
+### Quiz normal
 
 - Répondez pour faire évoluer votre Elo et accéder à des questions plus avancées.
 
