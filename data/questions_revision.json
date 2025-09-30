@@ -1,0 +1,134 @@
+{
+  "semesters": [
+    {
+      "sem": "S5",
+      "subjects": [
+        {
+          "id": "S5_dev_plantes",
+          "label": "Développement des plantes",
+          "questions": [
+            {
+              "id": "S5_dev_plantes_q1",
+              "level": 4,
+              "prompt": "Quel organe végétal se différencie en premier lors de la germination d'une graine de dicotylédone ?",
+              "choices": [
+                {"id": "a", "text": "La tige"},
+                {"id": "b", "text": "La racine primaire", "correct": true},
+                {"id": "c", "text": "La première feuille"},
+                {"id": "d", "text": "Le méristème apical"}
+              ],
+              "explanation": "Chez de nombreuses dicotylédones, la radicule perce l'enveloppe de la graine avant la sortie des autres organes."
+            },
+            {
+              "id": "S5_dev_plantes_q2",
+              "level": 3,
+              "prompt": "Quelle hormone est principalement associée à l'allongement cellulaire dans les tiges ?",
+              "choices": [
+                {"id": "a", "text": "Les cytokinines"},
+                {"id": "b", "text": "Les auxines", "correct": true},
+                {"id": "c", "text": "L'acide abscissique"},
+                {"id": "d", "text": "Les brassinostéroïdes"}
+              ],
+              "explanation": "Les auxines stimulent l'allongement cellulaire en assouplissant la paroi, ce qui favorise la croissance des tiges."
+            }
+          ]
+        },
+        {
+          "id": "S5_ecophy_bases",
+          "label": "Bases d'écophysiologie",
+          "questions": [
+            {
+              "id": "S5_ecophy_bases_q1",
+              "level": 2,
+              "prompt": "Quel facteur environnemental est le plus directement lié au taux de transpiration d'une feuille ?",
+              "choices": [
+                {"id": "a", "text": "La teneur en azote du sol"},
+                {"id": "b", "text": "L'humidité de l'air", "correct": true},
+                {"id": "c", "text": "La quantité de graines produites"},
+                {"id": "d", "text": "La présence de symbioses mycorhiziennes"}
+              ],
+              "explanation": "Une humidité atmosphérique faible accroît la demande évaporative et donc le flux de transpiration."
+            },
+            {
+              "id": "S5_ecophy_bases_q2",
+              "level": 3,
+              "prompt": "Quel est l'effet principal d'une fermeture des stomates sur la photosynthèse ?",
+              "choices": [
+                {"id": "a", "text": "Augmentation du CO₂ disponible"},
+                {"id": "b", "text": "Diminution de l'entrée de CO₂", "correct": true},
+                {"id": "c", "text": "Activation de la photolyse de l'eau"},
+                {"id": "d", "text": "Production accrue de sucres"}
+              ],
+              "explanation": "La fermeture des stomates limite les échanges gazeux, ce qui réduit l'assimilation de CO₂ et la photosynthèse."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sem": "S6",
+      "subjects": [
+        {
+          "id": "S6_ipm",
+          "label": "Interactions plantes-microorganismes",
+          "questions": [
+            {
+              "id": "S6_ipm_q1",
+              "level": 4,
+              "prompt": "Quel est le rôle principal des nodules formés par les légumineuses ?",
+              "choices": [
+                {"id": "a", "text": "Stocker des réserves glucidiques"},
+                {"id": "b", "text": "Assurer la fixation symbiotique de l'azote", "correct": true},
+                {"id": "c", "text": "Produire des hormones végétales"},
+                {"id": "d", "text": "Limiter la transpiration"}
+              ],
+              "explanation": "Les nodules abritent des bactéries fixatrices d'azote qui fournissent de l'azote assimilable à la plante."
+            },
+            {
+              "id": "S6_ipm_q2",
+              "level": 2,
+              "prompt": "Quel terme décrit une relation bénéfique réciproque entre une plante et un microorganisme ?",
+              "choices": [
+                {"id": "a", "text": "Parasitisme"},
+                {"id": "b", "text": "Commensalisme"},
+                {"id": "c", "text": "Mutualisme", "correct": true},
+                {"id": "d", "text": "Saprophytisme"}
+              ],
+              "explanation": "Le mutualisme décrit une interaction où chaque partenaire tire un bénéfice de l'association."
+            }
+          ]
+        },
+        {
+          "id": "S6_bioinfo",
+          "label": "Bioinformatique : bases de données",
+          "questions": [
+            {
+              "id": "S6_bioinfo_q1",
+              "level": 1,
+              "prompt": "Quel format est couramment utilisé pour stocker des séquences génétiques ?",
+              "choices": [
+                {"id": "a", "text": "CSV"},
+                {"id": "b", "text": "PNG"},
+                {"id": "c", "text": "FASTQ", "correct": true},
+                {"id": "d", "text": "MP4"}
+              ],
+              "explanation": "Le format FASTQ associe séquence nucléotidique et scores de qualité pour chaque base."
+            },
+            {
+              "id": "S6_bioinfo_q2",
+              "level": 3,
+              "prompt": "Quel concept décrit une table reliant plusieurs clés étrangères pour relier des entités ?",
+              "choices": [
+                {"id": "a", "text": "Table de faits", "correct": true},
+                {"id": "b", "text": "Index bitmap"},
+                {"id": "c", "text": "Colonne calculée"},
+                {"id": "d", "text": "Vue matérialisée"}
+              ],
+              "explanation": "Les tables de faits associent des clés étrangères provenant de tables de dimensions pour modéliser les relations dans un schéma en étoile."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
