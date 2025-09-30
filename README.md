@@ -28,9 +28,7 @@ Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne 
 ## Modes de jeu
 
 ### Quiz normal
-- Sélectionnez un ensemble d’UE à la volée ou laissez le mode automatique.
 - Répondez pour faire évoluer votre Elo et accéder à des questions plus avancées.
-- Servez-vous de l’indicateur `Streak` pour suivre votre dynamique.
 
 ### Quiz révision
 - Choisissez un semestre puis les UE (obligatoires ou optionnelles) que vous souhaitez réviser.
@@ -43,7 +41,7 @@ Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne 
 L’outil prof est intégré directement à la page d’accueil afin de faciliter la contribution des équipes pédagogiques. Il génère automatiquement le JSON attendu pour le mode Révision.
 
 ### 1. Ouvrir l’outil
-- Cliquez sur le bouton **« Outil prof »** en bas à droite de l’interface.
+- Cliquez sur le bouton **« Outil prof »** en haut à droite de l’interface.
 - La fenêtre flottante peut être refermée à tout moment avec **« Fermer »**.
 
 ### 2. Sélectionner la matière
