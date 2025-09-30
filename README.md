@@ -1,7 +1,13 @@
 # PlantQuizz
 
+
+Projet de M2 de : Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu.
+
+Contact (questions techniques sur le site) : Louis GRARD – grard.louis34@gmail.com
+
 PlantQuizz est un quiz web centré sur les sciences du végétal. Il propose deux modes complémentaires :
 
+ 
 - **Quiz normal** – suit un système Elo qui adapte la difficulté des questions en fonction de vos réponses.
 - **Quiz révision** – permet de travailler des UE précises sans impact sur l’Elo et d’accéder à l’historique des questions déjà vues.
 
