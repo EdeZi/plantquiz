@@ -10,6 +10,7 @@ PlantQuizz est un quiz web centré sur les sciences du végétal. Il propose tro
 - **Quiz révision** – permet de travailler des UE précises sans impact sur l’Elo et d’accéder à l’historique des questions déjà vues.
 - **Pédantix végétal** – variante façon « texte masqué » : tapez des mots pour dévoiler le contenu et devinez le titre.
 
+
 Le site est accessible en ligne sur [https://edezi.github.io/plantquizz/](https://edezi.github.io/plantquizz/) et peut également être ouvert localement en lançant `index.html` dans un navigateur moderne.
 
 ## Fonctionnement du système Elo
@@ -26,10 +27,8 @@ Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne 
 
 ## Modes de jeu
 
-### Quiz normal
-- Sélectionnez un ensemble d’UE à la volée ou laissez le mode automatique.
+
 - Répondez pour faire évoluer votre Elo et accéder à des questions plus avancées.
-- Servez-vous de l’indicateur `Streak` pour suivre votre dynamique.
 
 ### Quiz révision
 - Choisissez un semestre puis les UE (obligatoires ou optionnelles) que vous souhaitez réviser.
@@ -95,3 +94,4 @@ L’outil prof est accessible via le bouton **« Outil prof »** présent da
 - Les contributions se font principalement en ajoutant ou en corrigeant des questions dans les fichiers JSON.
 - Pensez à conserver des identifiants (`id`) uniques pour chaque question afin d’éviter les doublons pendant l’import.
 - Pour vérifier les changements, ouvrez `index.html` localement et testez les modes Normal et Révision.
+
