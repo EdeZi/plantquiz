@@ -217,22 +217,6 @@ let loaded=false;
 let QUESTIONS_NORMAL=[], QUESTIONS=[], PED_DAILY=null;
 let REV_DATA={semesters:[]};
 
-const REV_DATA = (() => {
-  const seen = new Set();
-  const entries = [];
-  if(Array.isArray(REV_INDEX?.semesters)){
-    REV_INDEX.semesters.forEach(sem => {
-      [...(sem.core||[]), ...(sem.options||[])].forEach(item => {
-        if(item?.id && !seen.has(item.id)){
-          seen.add(item.id);
-          entries.push({id:item.id,label:item.label||item.id});
-        }
-      });
-    });
-  }
-  return entries.sort((a,b)=>a.label.localeCompare(b.label,'fr',{sensitivity:'base'}));
-})();
-
 async function loadData(){
   if(loaded) return;
   const normal = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
@@ -242,6 +226,7 @@ async function loadData(){
   PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:"Chloroplaste",text:"Texte démo."};
   const rev = await tryFetch("./data/questions_revision.json");
   REV_DATA = (rev && Array.isArray(rev.semesters)) ? rev : {semesters:[]};
+  fillProfMatter();
   loaded=true;
 }
 
@@ -467,6 +452,19 @@ function collectRevisionQuestions(ids){
   return out;
 }
 
+function listProfSubjects(){
+  const seen=new Map();
+  for(const sem of REV_DATA.semesters||[]){
+    const subjects=sanitizeSubjects(sem?.subjects, sem);
+    subjects.forEach(subject=>{
+      if(subject?.id && !seen.has(subject.id)){
+        seen.set(subject.id,{id:subject.id,label:subject.label||subject.id});
+      }
+    });
+  }
+  return [...seen.values()].sort((a,b)=>a.label.localeCompare(b.label,'fr',{sensitivity:'base'}));
+}
+
 $("revLaunch").onclick=()=>{
   const pickedIds = new Set([...document.querySelectorAll("#revision input:checked")].map(i=>i.dataset.id).filter(Boolean));
   if(!pickedIds.size) return;
@@ -494,11 +492,16 @@ const profCorrectInputs=[...document.querySelectorAll('input[name="profCorrect"]
 let profCounter=1;
 
 function fillProfMatter(){
+  if(!profMatter) return;
   const current=profMatter.value;
-  profMatter.innerHTML = REV_DATA.map(item=>`<option value="${item.id}">${item.label}</option>`).join("");
-  if(REV_DATA.length){
-    profMatter.value = REV_DATA.some(item=>item.id===current) ? current : REV_DATA[0].id;
+  const list=listProfSubjects();
+  if(!list.length){
+    profMatter.innerHTML = '<option value="">Aucune matière disponible</option>';
+    profMatter.value="";
+    return;
   }
+  profMatter.innerHTML = list.map(item=>`<option value="${item.id}">${item.label}</option>`).join("");
+  profMatter.value = list.some(item=>item.id===current) ? current : list[0].id;
 }
 fillProfMatter();
 
