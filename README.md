@@ -11,7 +11,7 @@ PlantQuizz est un quiz web centré sur les sciences du végétal. Il propose tro
 - **Pédantix végétal** – variante façon « texte masqué » : tapez des mots pour dévoiler le contenu et devinez le titre.
 
 
-Le site est accessible en ligne sur [https://edezi.github.io/plantquizz/](https://edezi.github.io/plantquiz/) et peut également être ouvert localement en lançant `index.html` dans un navigateur moderne.
+Le site est accessible en ligne sur [https://edezi.github.io/plantquiz/](https://edezi.github.io/plantquiz/) (le dépôt GitHub correspondant est désormais `EdeZi/plantquiz`) et peut également être ouvert localement en lançant `index.html` dans un navigateur moderne.
 
 ## Fonctionnement du système Elo
 
