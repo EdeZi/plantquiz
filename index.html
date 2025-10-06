@@ -751,28 +751,7 @@ $("profReset").onclick=()=>{ resetProfFields(); profOutput.value=""; };
 
 /* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
-let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[], targetKeys:new Set(), manualReveal:false, allowManualReveal:false };
-const pedWinActions = $("pedWinActions");
-const pedRevealToggle = $("pedRevealToggle");
-const pedContinueBtn = $("pedContinue");
-const pedShowPage = $("pedShowPage");
-
-function wikiUrl(target){
-  if(!target) return "https://fr.wikipedia.org/wiki/";
-  const slug = target.trim().replace(/\s+/g,'_');
-  return `https://fr.wikipedia.org/wiki/${encodeURIComponent(slug)}`;
-}
-function updateRevealToggle(){
-  if(!pedRevealToggle) return;
-  pedRevealToggle.textContent = pedState.manualReveal ? "Révélation activée — cliquer pour désactiver" : "Révéler mot par mot";
-  pedRevealToggle.setAttribute("aria-pressed", pedState.manualReveal ? "true" : "false");
-}
-function resetPedWinUI(){
-  pedState.manualReveal=false;
-  pedState.allowManualReveal=false;
-  updateRevealToggle();
-  if(pedWinActions) pedWinActions.hidden=true;
-}
+let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[], targetKeys:new Set() };
 
 /* irréguliers + participes présents fréquents (sans accents car strip) */
 const IRREG_FORMS = {
@@ -1089,16 +1068,10 @@ function renderPed(){
   pedState.tokens.forEach(t=>{
     const span = document.createElement("span");
     span.className = "token";
-    if(!t.isWord){
-      span.textContent = t.raw;
-    } else {
+    if(!t.isWord){ span.textContent = t.raw; }
+    else {
       const show = hasIntersection(t.keys, pedState.revealed) || hasIntersection(t.keys, pedState.targetKeys);
-      if(show){
-        span.textContent = t.raw;
-      } else {
-        const maskEl = makeMask(t);
-        span.appendChild(maskEl);
-      }
+      span.innerHTML = show ? t.raw : `<span class="mask">${"█".repeat(Math.max(1, t.raw.length))}</span>`;
     }
     frag.appendChild(span);
   });
@@ -1135,16 +1108,21 @@ function guessWord(w){
     }
   } else {
     pedState.tokens.forEach(t=>{ if(t.isWord) t.keys.forEach(k=>pedState.revealed.add(k)); });
-    pedState.allowManualReveal = true;
-    pedState.manualReveal = false;
   }
   renderPed();
-  if(win){
-    updateRevealToggle();
-    if(pedWinActions) pedWinActions.hidden=false;
-    if(pedShowPage) pedShowPage.href = wikiUrl(pedState.target);
-  }
   return {hits,win};
+}
+function pedHint(){
+  const cand=[];
+  for(const t of pedState.tokens){
+    if(!t.isWord) continue;
+    if(hasIntersection(t.keys, pedState.targetKeys)) continue;
+    if(!hasIntersection(t.keys, pedState.revealed)) cand.push(t);
+  }
+  if(!cand.length) return;
+  const t = cand[Math.floor(Math.random()*cand.length)];
+  t.keys.forEach(k=>pedState.revealed.add(k));
+  renderPed();
 }
 $("pedInput").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
