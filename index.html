@@ -55,7 +55,6 @@
   .token{display:inline}
   .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   .exp{margin-top:10px;padding:12px;border:1px dashed #e5e7eb;border-radius:12px;background:#fafafa}
-  .ped-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -188,27 +187,20 @@
       <div class="rowL" style="justify-content:space-between">
         <h2 style="margin:0">Pédantix du jour <span id="pedScore" class="pillScore" hidden></span></h2>
         <div class="rowL">
+          <button id="pedInfo" class="btn outline" type="button" aria-expanded="false" aria-controls="pedInfoPanel" title="Afficher les règles">ℹ️ Info</button>
           <button id="pedReset" class="btn outline">Réinitialiser du jour</button>
         </div>
       </div>
       <p class="muted" id="pedTitleMask"></p>
-      <div class="exp ped-desc">
-        <p><strong>Découvrez la page Wikipédia&nbsp;!</strong></p>
-        <p>Le but du jeu est de découvrir la page Wikipédia en révélant les mots qui composent son introduction par essais successifs.</p>
-        <p>Les mots corrects apparaîtront en clair au fur et à mesure que vous les essaierez. Ceux qui sont suffisamment proches resteront grisés avec un niveau de gris proportionnel à la proximité du mot réel dans le champ lexical. Ce calcul de proximité est similaire à celui utilisé par Cémantix. Vous pouvez voir la longueur d’un mot caché en pressant sur sa boîte noire.</p>
-        <p>Lorsque les mots composant le titre de la page Wikipédia seront dévoilés, vous aurez gagné&nbsp;! Notez que les mots du titre sont corrects ou pas, ils ne sont jamais grisés. La forme masculine singulière d’un mot ou l’infinitif d’un verbe peuvent suffire à révéler ses formes féminines, plurielles ou conjuguées. Les majuscules ne sont pas nécessaires.</p>
-        <p>À la fin de la partie, vous aurez le choix entre afficher la page, révéler chaque mot séparément en cliquant sur sa boîte noire, ou continuer à jouer sans spoiler.</p>
+      <div id="pedInfoPanel" class="exp ped-desc" hidden>
+        <p><strong>Objectif :</strong> taper des mots pour dévoiler progressivement l’introduction et deviner le titre caché.</p>
+        <p>Les mots trouvés deviennent lisibles, les autres restent masqués. Clique ou maintiens sur une boîte noire pour connaître la longueur d’un mot.</p>
       </div>
       <div id="pedText" class="pedantix-text"></div>
       <div class="row" style="justify-content:flex-start;margin-top:12px">
         <input id="pedInput" class="choice" placeholder="Tape un mot (objectif : le titre caché)" />
       </div>
       <ol id="pedGuesses" class="results"></ol>
-      <div id="pedWinActions" class="ped-actions" hidden>
-        <a id="pedShowPage" class="btn outline" target="_blank" rel="noopener">Afficher la page Wikipédia</a>
-        <button id="pedRevealToggle" class="btn outline" type="button" aria-pressed="false">Révéler mot par mot</button>
-        <button id="pedContinue" class="btn outline" type="button">Continuer sans spoiler</button>
-      </div>
     </div>
   </section>
 </main>
@@ -751,7 +743,17 @@ $("profReset").onclick=()=>{ resetProfFields(); profOutput.value=""; };
 
 /* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
-let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[], targetKeys:new Set() };
+let pedState = {
+  date: null,
+  target: null,
+  text: "",
+  tokens: [],
+  revealed: new Set(),
+  targetKeys: new Set(),
+  won: false,
+};
+const pedInfoBtn = $("pedInfo");
+const pedInfoPanel = $("pedInfoPanel");
 
 /* irréguliers + participes présents fréquents (sans accents car strip) */
 const IRREG_FORMS = {
@@ -1016,14 +1018,7 @@ function renderPed(){
     mask.dataset.letters = String(letterCount);
     mask.tabIndex = 0;
     const baseLabel = `Mot caché de ${letterCount} lettre${letterCount>1?'s':''}`;
-    const updateLabel = ()=>{
-      let extra = "";
-      if(pedState.allowManualReveal){
-        extra = pedState.manualReveal ? " — cliquer pour dévoiler" : " — maintenir pour voir la longueur";
-      }
-      mask.setAttribute("aria-label", baseLabel + extra);
-    };
-    updateLabel();
+    mask.setAttribute("aria-label", baseLabel);
     const showLen = ()=>{
       mask.textContent = `${letterCount} lettre${letterCount>1?'s':''}`;
       mask.classList.add("mask-show");
@@ -1031,11 +1026,6 @@ function renderPed(){
     const hideLen = ()=>{
       mask.textContent = mask.dataset.mask || masked;
       mask.classList.remove("mask-show");
-    };
-    const revealToken = ()=>{
-      if(!pedState.allowManualReveal || !pedState.manualReveal) return;
-      token.keys.forEach(k=>pedState.revealed.add(k));
-      renderPed();
     };
     mask.addEventListener("mousedown", evt=>{ evt.preventDefault(); showLen(); });
     mask.addEventListener("mouseup", hideLen);
@@ -1050,19 +1040,8 @@ function renderPed(){
         showLen();
       }
     });
-    mask.addEventListener("keyup", evt=>{
-      hideLen();
-      if((evt.key===" " || evt.key==="Enter") && pedState.allowManualReveal && pedState.manualReveal){
-        evt.preventDefault();
-        revealToken();
-      }
-    });
-    mask.addEventListener("click", evt=>{
-      if(pedState.allowManualReveal && pedState.manualReveal){
-        evt.preventDefault();
-        revealToken();
-      }
-    });
+    mask.addEventListener("keyup", hideLen);
+    mask.addEventListener("click", evt=>{ evt.preventDefault(); showLen(); setTimeout(hideLen, 200); });
     return mask;
   };
   pedState.tokens.forEach(t=>{
@@ -1070,8 +1049,12 @@ function renderPed(){
     span.className = "token";
     if(!t.isWord){ span.textContent = t.raw; }
     else {
-      const show = hasIntersection(t.keys, pedState.revealed) || hasIntersection(t.keys, pedState.targetKeys);
-      span.innerHTML = show ? t.raw : `<span class="mask">${"█".repeat(Math.max(1, t.raw.length))}</span>`;
+      const show = pedState.won || hasIntersection(t.keys, pedState.revealed);
+      if(show){
+        span.textContent = t.raw;
+      } else {
+        span.appendChild(makeMask(t));
+      }
     }
     frag.appendChild(span);
   });
@@ -1085,9 +1068,9 @@ function pickDaily(){
   pedState.tokens = tokenize(pedState.text);
   pedState.revealed = new Set(); // tout masqué
   pedState.targetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
-  pedState.guessed = [];
-  resetPedWinUI();
-  if(pedShowPage){ pedShowPage.href = wikiUrl(pedState.target); }
+  pedState.won = false;
+  if(pedInfoPanel){ pedInfoPanel.hidden = true; }
+  if(pedInfoBtn){ pedInfoBtn.setAttribute("aria-expanded","false"); }
   $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
   renderPed();
 }
@@ -1107,22 +1090,11 @@ function guessWord(w){
       }
     }
   } else {
+    pedState.won = true;
     pedState.tokens.forEach(t=>{ if(t.isWord) t.keys.forEach(k=>pedState.revealed.add(k)); });
   }
   renderPed();
   return {hits,win};
-}
-function pedHint(){
-  const cand=[];
-  for(const t of pedState.tokens){
-    if(!t.isWord) continue;
-    if(hasIntersection(t.keys, pedState.targetKeys)) continue;
-    if(!hasIntersection(t.keys, pedState.revealed)) cand.push(t);
-  }
-  if(!cand.length) return;
-  const t = cand[Math.floor(Math.random()*cand.length)];
-  t.keys.forEach(k=>pedState.revealed.add(k));
-  renderPed();
 }
 $("pedInput").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
@@ -1131,24 +1103,18 @@ $("pedInput").addEventListener("keydown",e=>{
   const li=document.createElement("li"); li.className="result-item";
   li.innerHTML=`<div class="num ${win?'ok':(hits>0?'ok':'ko')}">${$("pedGuesses").children.length+1}</div><div><b>${val}</b> — ${win?'🎯 Titre trouvé !':(hits>0?`${hits} occurrence(s)`:'0')}</div>`;
   $("pedGuesses").prepend(li);
-  if(win){ $("pedScore").hidden=false; $("pedScore").textContent="BRAVO !"; }
+  if(win){
+    $("pedScore").hidden=false;
+    $("pedScore").textContent="BRAVO !";
+  }
   $("pedInput").value="";
 });
 $("pedReset").onclick=pickDaily;
-if(pedRevealToggle){
-  pedRevealToggle.addEventListener("click",()=>{
-    if(!pedState.allowManualReveal) return;
-    pedState.manualReveal = !pedState.manualReveal;
-    updateRevealToggle();
-    renderPed();
-  });
-}
-if(pedContinueBtn){
-  pedContinueBtn.addEventListener("click",()=>{
-    pedState.manualReveal=false;
-    updateRevealToggle();
-    if(pedWinActions) pedWinActions.hidden=true;
-    renderPed();
+if(pedInfoBtn && pedInfoPanel){
+  pedInfoBtn.addEventListener("click",()=>{
+    const expanded = pedInfoBtn.getAttribute("aria-expanded") === "true";
+    pedInfoBtn.setAttribute("aria-expanded", expanded ? "false" : "true");
+    pedInfoPanel.hidden = expanded;
   });
 }
 
