@@ -751,7 +751,59 @@ $("profReset").onclick=()=>{ resetProfFields(); profOutput.value=""; };
 
 /* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
-let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[], targetKeys:new Set() };
+let pedState = {
+  date: null,
+  target: null,
+  text: "",
+  tokens: [],
+  revealed: new Set(),
+  targetKeys: new Set(),
+  allowManualReveal: false,
+  manualReveal: false,
+};
+
+const pedShowPage = $("pedShowPage");
+const pedRevealToggle = $("pedRevealToggle");
+const pedWinActions = $("pedWinActions");
+const pedContinueBtn = $("pedContinue");
+const pedRevealLabel = pedRevealToggle ? pedRevealToggle.textContent.trim() : "";
+const pedRevealHideLabel = "Masquer les mots";
+
+function wikiUrl(title){
+  const safe = (title || "").trim().replace(/\s+/g, "_");
+  if(!safe) return "#";
+  return `https://fr.wikipedia.org/wiki/${encodeURIComponent(safe)}`;
+}
+
+function updateRevealToggle(){
+  if(!pedRevealToggle) return;
+  if(!pedState.allowManualReveal){
+    pedRevealToggle.hidden = true;
+    pedRevealToggle.setAttribute("aria-pressed","false");
+    pedRevealToggle.textContent = pedRevealLabel || "Révéler mot par mot";
+    return;
+  }
+  pedRevealToggle.hidden = false;
+  const active = !!pedState.manualReveal;
+  pedRevealToggle.setAttribute("aria-pressed", active ? "true" : "false");
+  pedRevealToggle.textContent = active ? pedRevealHideLabel : (pedRevealLabel || "Révéler mot par mot");
+}
+
+function resetPedWinUI(){
+  pedState.allowManualReveal = false;
+  pedState.manualReveal = false;
+  if(pedWinActions) pedWinActions.hidden = true;
+  updateRevealToggle();
+}
+
+function handlePedWin(){
+  pedState.allowManualReveal = true;
+  pedState.manualReveal = false;
+  if(pedWinActions) pedWinActions.hidden = false;
+  updateRevealToggle();
+}
+
+updateRevealToggle();
 
 /* irréguliers + participes présents fréquents (sans accents car strip) */
 const IRREG_FORMS = {
@@ -1085,7 +1137,6 @@ function pickDaily(){
   pedState.tokens = tokenize(pedState.text);
   pedState.revealed = new Set(); // tout masqué
   pedState.targetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
-  pedState.guessed = [];
   resetPedWinUI();
   if(pedShowPage){ pedShowPage.href = wikiUrl(pedState.target); }
   $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
@@ -1131,7 +1182,11 @@ $("pedInput").addEventListener("keydown",e=>{
   const li=document.createElement("li"); li.className="result-item";
   li.innerHTML=`<div class="num ${win?'ok':(hits>0?'ok':'ko')}">${$("pedGuesses").children.length+1}</div><div><b>${val}</b> — ${win?'🎯 Titre trouvé !':(hits>0?`${hits} occurrence(s)`:'0')}</div>`;
   $("pedGuesses").prepend(li);
-  if(win){ $("pedScore").hidden=false; $("pedScore").textContent="BRAVO !"; }
+  if(win){
+    $("pedScore").hidden=false;
+    $("pedScore").textContent="BRAVO !";
+    handlePedWin();
+  }
   $("pedInput").value="";
 });
 $("pedReset").onclick=pickDaily;
@@ -1145,9 +1200,7 @@ if(pedRevealToggle){
 }
 if(pedContinueBtn){
   pedContinueBtn.addEventListener("click",()=>{
-    pedState.manualReveal=false;
-    updateRevealToggle();
-    if(pedWinActions) pedWinActions.hidden=true;
+    resetPedWinUI();
     renderPed();
   });
 }
