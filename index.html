@@ -49,10 +49,13 @@
   #historyPanel h3{margin:0}
   /* Pédantix */
   .pedantix-text{line-height:1.7; font-size:1.05rem}
-  .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px}
+  .mask{background:#111;color:#111;border-radius:4px;padding:1px 4px;cursor:pointer;user-select:none;transition:background .2s,color .2s}
+  .mask:focus-visible{outline:2px solid #4b5563;outline-offset:2px}
+  .mask-show{background:#e0e7ff;color:#111;font-weight:600}
   .token{display:inline}
   .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   .exp{margin-top:10px;padding:12px;border:1px dashed #e5e7eb;border-radius:12px;background:#fafafa}
+  .ped-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -186,15 +189,26 @@
         <h2 style="margin:0">Pédantix du jour <span id="pedScore" class="pillScore" hidden></span></h2>
         <div class="rowL">
           <button id="pedReset" class="btn outline">Réinitialiser du jour</button>
-          <button id="pedHint" class="btn outline">Indice (révèle un mot)</button>
         </div>
       </div>
       <p class="muted" id="pedTitleMask"></p>
+      <div class="exp ped-desc">
+        <p><strong>Découvrez la page Wikipédia&nbsp;!</strong></p>
+        <p>Le but du jeu est de découvrir la page Wikipédia en révélant les mots qui composent son introduction par essais successifs.</p>
+        <p>Les mots corrects apparaîtront en clair au fur et à mesure que vous les essaierez. Ceux qui sont suffisamment proches resteront grisés avec un niveau de gris proportionnel à la proximité du mot réel dans le champ lexical. Ce calcul de proximité est similaire à celui utilisé par Cémantix. Vous pouvez voir la longueur d’un mot caché en pressant sur sa boîte noire.</p>
+        <p>Lorsque les mots composant le titre de la page Wikipédia seront dévoilés, vous aurez gagné&nbsp;! Notez que les mots du titre sont corrects ou pas, ils ne sont jamais grisés. La forme masculine singulière d’un mot ou l’infinitif d’un verbe peuvent suffire à révéler ses formes féminines, plurielles ou conjuguées. Les majuscules ne sont pas nécessaires.</p>
+        <p>À la fin de la partie, vous aurez le choix entre afficher la page, révéler chaque mot séparément en cliquant sur sa boîte noire, ou continuer à jouer sans spoiler.</p>
+      </div>
       <div id="pedText" class="pedantix-text"></div>
       <div class="row" style="justify-content:flex-start;margin-top:12px">
         <input id="pedInput" class="choice" placeholder="Tape un mot (objectif : le titre caché)" />
       </div>
       <ol id="pedGuesses" class="results"></ol>
+      <div id="pedWinActions" class="ped-actions" hidden>
+        <a id="pedShowPage" class="btn outline" target="_blank" rel="noopener">Afficher la page Wikipédia</a>
+        <button id="pedRevealToggle" class="btn outline" type="button" aria-pressed="false">Révéler mot par mot</button>
+        <button id="pedContinue" class="btn outline" type="button">Continuer sans spoiler</button>
+      </div>
     </div>
   </section>
 </main>
@@ -682,10 +696,34 @@ $("profReset").onclick=()=>{ resetProfFields(); profOutput.value=""; };
 
 /* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
-let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[] };
+let pedState = { date:null, target:null, text:"", tokens:[], revealed:new Set(), guessed:[], targetKeys:new Set(), manualReveal:false, allowManualReveal:false };
+const pedWinActions = $("pedWinActions");
+const pedRevealToggle = $("pedRevealToggle");
+const pedContinueBtn = $("pedContinue");
+const pedShowPage = $("pedShowPage");
+
+function wikiUrl(target){
+  if(!target) return "https://fr.wikipedia.org/wiki/";
+  const slug = target.trim().replace(/\s+/g,'_');
+  return `https://fr.wikipedia.org/wiki/${encodeURIComponent(slug)}`;
+}
+function updateRevealToggle(){
+  if(!pedRevealToggle) return;
+  pedRevealToggle.textContent = pedState.manualReveal ? "Révélation activée — cliquer pour désactiver" : "Révéler mot par mot";
+  pedRevealToggle.setAttribute("aria-pressed", pedState.manualReveal ? "true" : "false");
+}
+function resetPedWinUI(){
+  pedState.manualReveal=false;
+  pedState.allowManualReveal=false;
+  updateRevealToggle();
+  if(pedWinActions) pedWinActions.hidden=true;
+}
 
 /* irréguliers + participes présents fréquents (sans accents car strip) */
 const IRREG_FORMS = {
+  "etre":"etre",
+  "faire":"faire",
+  "dire":"dire",
   /* AVOIR */
   "ai":"avoir","as":"avoir","a":"avoir","avons":"avoir","avez":"avoir","ont":"avoir",
   "avais":"avoir","avait":"avoir","avions":"avoir","aviez":"avoir","avaient":"avoir",
@@ -808,9 +846,11 @@ const IRREG_FORMS = {
 
 function lemmaFr(rawWord){
   // retire élisions communes et normalise
-  let w = strip(rawWord.replace(/^([ldmtscnj])'|^qu'|^jusqu'|^lorsqu'|^puisqu'/i, ""));
+  const cleaned = (rawWord || "").replace(/^([ldmtscnj])'|^qu'|^jusqu'|^lorsqu'|^puisqu'/i, "");
+  let w = strip(cleaned);
   if (!w) return w;
   if (IRREG_FORMS[w]) return IRREG_FORMS[w];
+  if(/\s/.test(cleaned)) return w;
 
   // RÈGLES PRIORITAIRES — participes/adjectifs
   // 1er groupe: montant/montante/montants/montantes -> monter
@@ -824,36 +864,89 @@ function lemmaFr(rawWord){
     if (stem.length>=3) return stem;
   }
 
+  const rawLower = cleaned.toLowerCase();
+  const rawNFD = cleaned.normalize("NFD");
+  const hasAcute = /\u0301/.test(rawNFD) || rawLower.includes("é");
+
   // Heuristiques verbales — ordre important
   const rules = [
-    // participes/gérondifs 1er groupe
-    [/(ees|ee|es|e)$/i, "er"],
-    [/ant$/i, "er"],
+    // participes/gérondifs 1er groupe (uniquement si accent dans la forme originale)
+    [/(ees|ee|es|e)$/i, v => hasAcute ? v.replace(/(ees|ee|es|e)$/i, "er") : v],
+    [/ant$/i, v => v.replace(/ant$/i, "er")],
     // participes/gérondifs 2e groupe
-    [/(ies|ie|is|it)$/i, "ir"],
-    [/(ues|ue|us|u)$/i, ""],
+    [/(ies|ie|is|it)$/i, v => /(ais|ait)$/i.test(v) ? v : v.replace(/(ies|ie|is|it)$/i, "ir")],
+    [/(ues)$/i, v => v.replace(/ues$/i, "u")],
+    [/(ue)$/i, v => v.replace(/ue$/i, "u")],
+    [/(us)$/i, v => v.replace(/us$/i, "u")],
+    [/(u)$/i, v => v],
     // imparfait
-    [/(ais|ait|ions|iez|aient)$/i, ""],
+    [/(ais|ait|ions|iez|aient)$/i, v => v.replace(/(ais|ait|ions|iez|aient)$/i, "")],
     // futur/conditionnel 1er groupe
-    [/(erai|eras|era|erons|erez|eront)$/i, "er"],
-    [/(erais|erait|erions|eriez|eraient)$/i, "er"],
+    [/(erai|eras|era|erons|erez|eront)$/i, v => v.replace(/(erai|eras|era|erons|erez|eront)$/i, "er")],
+    [/(erais|erait|erions|eriez|eraient)$/i, v => v.replace(/(erais|erait|erions|eriez|eraient)$/i, "er")],
     // présent 1er groupe
-    [/(e|es|ons|ez|ent)$/i, "er"],
+    [/(e|es|ons|ez|ent)$/i, v => /(euses?|trices?|ives?|elles?|ennes?|onnes?|ettes?)$/i.test(v) ? v : v.replace(/(e|es|ons|ez|ent)$/i, "er")],
     // 2e groupe -ir
-    [/(irai|iras|ira|irons|irez|iront)$/i, "ir"],
-    [/(irais|irait|irions|iriez|iraient)$/i, "ir"],
-    [/(issons|issez|issent)$/i, "ir"],
-    [/(is|it)$/i, "ir"],
+    [/(irai|iras|ira|irons|irez|iront)$/i, v => v.replace(/(irai|iras|ira|irons|irez|iront)$/i, "ir")],
+    [/(irais|irait|irions|iriez|iraient)$/i, v => v.replace(/(irais|irait|irions|iriez|iraient)$/i, "ir")],
+    [/(issons|issez|issent)$/i, v => v.replace(/(issons|issez|issent)$/i, "ir")],
+    [/(is|it)$/i, v => v.replace(/(is|it)$/i, "ir")],
     // 3e groupe divers
-    [/re$/i, "re"]
+    [/re$/i, v => v]
   ];
-  for(const [re, rep] of rules){
-    if(re.test(w)){
-      const stem = w.replace(re, rep);
-      if(stem.length>=3) return stem;
+  let lemma = w;
+  for(const [re, transform] of rules){
+    if(re.test(lemma)){
+      const stem = transform(lemma);
+      if(stem && stem.length>=3 && stem!==lemma){
+        lemma = IRREG_FORMS[stem] || stem;
+      }
     }
   }
-  return w;
+  return lemma;
+}
+
+function expandGenderNumber(base, acc){
+  if(!base || base.length<3) return;
+  if(/\s/.test(base)) return;
+  const rules = [
+    [/euses?$/i, val => val.replace(/euses?$/i, "eux")],
+    [/trices?$/i, val => val.replace(/trices?$/i, "teur")],
+    [/rices?$/i, val => val.replace(/rices?$/i, "eur")],
+    [/ives?$/i, val => val.replace(/ives?$/i, "if")],
+    [/ales?$/i, val => val.replace(/ales?$/i, "al")],
+    [/elles?$/i, val => val.replace(/elles?$/i, "el")],
+    [/ennes?$/i, val => val.replace(/ennes?$/i, "en")],
+    [/onnes?$/i, val => val.replace(/onnes?$/i, "on")],
+    [/eaux$/i, val => val.replace(/eaux$/i, "eau")],
+    [/aux$/i, val => val.replace(/aux$/i, "al")],
+    [/ettes?$/i, val => val.replace(/ettes?$/i, "et")]
+  ];
+  for(const [re, fn] of rules){
+    if(re.test(base)){
+      const v = fn(base);
+      if(v && v.length>=3) acc.add(v);
+    }
+  }
+  if(base.endsWith("es") && base.length>4) acc.add(base.slice(0,-2));
+  if(base.endsWith("s") && base.length>3) acc.add(base.slice(0,-1));
+  if(base.endsWith("x") && base.length>3) acc.add(base.slice(0,-1));
+}
+
+function buildKeySet(norm, lemma, raw){
+  const set = new Set();
+  const add = v => { if(v && v.length) set.add(v); };
+  add(norm);
+  add(lemma);
+  if(raw && raw!==norm){ add(strip(raw)); }
+  [norm, lemma].forEach(b=>expandGenderNumber(b, set));
+  return set;
+}
+
+function hasIntersection(setA, setB){
+  if(!setA || !setB) return false;
+  for(const v of setA){ if(setB.has(v)) return true; }
+  return false;
 }
 
 function tokenize(text){
@@ -862,7 +955,8 @@ function tokenize(text){
     const isWord = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+/.test(p);
     const norm = isWord ? strip(p) : p;
     const lemma = isWord ? lemmaFr(p) : p;
-    return { raw:p, norm, lemma, isWord };
+    const keys = isWord ? buildKeySet(norm, lemma, p) : new Set();
+    return { raw:p, norm, lemma, isWord, keys };
   });
 }
 function titleMask(){
@@ -878,13 +972,78 @@ function titleMask(){
 function renderPed(){
   $("pedTitleMask").textContent = titleMask();
   const frag = document.createDocumentFragment();
+  const makeMask = (token)=>{
+    const mask = document.createElement("span");
+    mask.className="mask";
+    const masked = "█".repeat(Math.max(1, token.raw.length));
+    const letterCount = (token.raw.match(/[A-Za-zÀ-ÖØ-öø-ÿ]/g) || []).length || token.raw.length;
+    mask.textContent = masked;
+    mask.dataset.mask = masked;
+    mask.dataset.letters = String(letterCount);
+    mask.tabIndex = 0;
+    const baseLabel = `Mot caché de ${letterCount} lettre${letterCount>1?'s':''}`;
+    const updateLabel = ()=>{
+      let extra = "";
+      if(pedState.allowManualReveal){
+        extra = pedState.manualReveal ? " — cliquer pour dévoiler" : " — maintenir pour voir la longueur";
+      }
+      mask.setAttribute("aria-label", baseLabel + extra);
+    };
+    updateLabel();
+    const showLen = ()=>{
+      mask.textContent = `${letterCount} lettre${letterCount>1?'s':''}`;
+      mask.classList.add("mask-show");
+    };
+    const hideLen = ()=>{
+      mask.textContent = mask.dataset.mask || masked;
+      mask.classList.remove("mask-show");
+    };
+    const revealToken = ()=>{
+      if(!pedState.allowManualReveal || !pedState.manualReveal) return;
+      token.keys.forEach(k=>pedState.revealed.add(k));
+      renderPed();
+    };
+    mask.addEventListener("mousedown", evt=>{ evt.preventDefault(); showLen(); });
+    mask.addEventListener("mouseup", hideLen);
+    mask.addEventListener("mouseleave", hideLen);
+    mask.addEventListener("touchstart", evt=>{ evt.preventDefault(); showLen(); });
+    mask.addEventListener("touchend", hideLen);
+    mask.addEventListener("touchcancel", hideLen);
+    mask.addEventListener("blur", hideLen);
+    mask.addEventListener("keydown", evt=>{
+      if(evt.key===" " || evt.key==="Enter"){
+        evt.preventDefault();
+        showLen();
+      }
+    });
+    mask.addEventListener("keyup", evt=>{
+      hideLen();
+      if((evt.key===" " || evt.key==="Enter") && pedState.allowManualReveal && pedState.manualReveal){
+        evt.preventDefault();
+        revealToken();
+      }
+    });
+    mask.addEventListener("click", evt=>{
+      if(pedState.allowManualReveal && pedState.manualReveal){
+        evt.preventDefault();
+        revealToken();
+      }
+    });
+    return mask;
+  };
   pedState.tokens.forEach(t=>{
     const span = document.createElement("span");
     span.className = "token";
-    if(!t.isWord){ span.textContent = t.raw; }
-    else {
-      const show = pedState.revealed.has(t.norm) || pedState.revealed.has(t.lemma) || (t.norm===strip(pedState.target)) || (t.lemma===lemmaFr(pedState.target));
-      span.innerHTML = show ? t.raw : `<span class="mask">${"█".repeat(Math.max(1, t.raw.length))}</span>`;
+    if(!t.isWord){
+      span.textContent = t.raw;
+    } else {
+      const show = hasIntersection(t.keys, pedState.revealed) || hasIntersection(t.keys, pedState.targetKeys);
+      if(show){
+        span.textContent = t.raw;
+      } else {
+        const maskEl = makeMask(t);
+        span.appendChild(maskEl);
+      }
     }
     frag.appendChild(span);
   });
@@ -897,7 +1056,10 @@ function pickDaily(){
   pedState.text = (entry && entry.text) || "Texte démo.";
   pedState.tokens = tokenize(pedState.text);
   pedState.revealed = new Set(); // tout masqué
+  pedState.targetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
   pedState.guessed = [];
+  resetPedWinUI();
+  if(pedShowPage){ pedShowPage.href = wikiUrl(pedState.target); }
   $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
   renderPed();
 }
@@ -905,39 +1067,29 @@ function guessWord(w){
   const gRaw = (w||"").trim(); if(!gRaw) return {hits:0,win:false};
   const gNorm = strip(gRaw);
   const gLemma = lemmaFr(gRaw);
-  const win = gNorm === strip(pedState.target) || gLemma === lemmaFr(pedState.target);
+  const guessKeys = buildKeySet(gNorm, gLemma, gRaw);
+  const win = hasIntersection(guessKeys, pedState.targetKeys);
   let hits = 0;
   if(!win){
-    let found=false;
     for(const t of pedState.tokens){
       if(!t.isWord) continue;
-      if(t.norm===gNorm || t.lemma===gLemma){
-        pedState.revealed.add(t.norm);
-        pedState.revealed.add(t.lemma);
-        found=true;
+      if(hasIntersection(t.keys, guessKeys)){
+        hits++;
+        t.keys.forEach(k=>pedState.revealed.add(k));
       }
     }
-    if(found){
-      hits = pedState.tokens.filter(t => t.isWord && (t.norm===gNorm || t.lemma===gLemma)).length;
-    }
+  } else {
+    pedState.tokens.forEach(t=>{ if(t.isWord) t.keys.forEach(k=>pedState.revealed.add(k)); });
+    pedState.allowManualReveal = true;
+    pedState.manualReveal = false;
   }
   renderPed();
+  if(win){
+    updateRevealToggle();
+    if(pedWinActions) pedWinActions.hidden=false;
+    if(pedShowPage) pedShowPage.href = wikiUrl(pedState.target);
+  }
   return {hits,win};
-}
-function pedHint(){
-  const cand=[];
-  for(const t of pedState.tokens){
-    if(!t.isWord) continue;
-    if(t.norm===strip(pedState.target) || t.lemma===lemmaFr(pedState.target)) continue;
-    if(!pedState.revealed.has(t.norm) && !pedState.revealed.has(t.lemma)){ // bugfix: revealed
-      cand.push(t);
-    }
-  }
-  if(!cand.length) return;
-  const t = cand[Math.floor(Math.random()*cand.length)];
-  pedState.revealed.add(t.norm);
-  pedState.revealed.add(t.lemma);
-  renderPed();
 }
 $("pedInput").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
@@ -950,7 +1102,22 @@ $("pedInput").addEventListener("keydown",e=>{
   $("pedInput").value="";
 });
 $("pedReset").onclick=pickDaily;
-$("pedHint").onclick=pedHint;
+if(pedRevealToggle){
+  pedRevealToggle.addEventListener("click",()=>{
+    if(!pedState.allowManualReveal) return;
+    pedState.manualReveal = !pedState.manualReveal;
+    updateRevealToggle();
+    renderPed();
+  });
+}
+if(pedContinueBtn){
+  pedContinueBtn.addEventListener("click",()=>{
+    pedState.manualReveal=false;
+    updateRevealToggle();
+    if(pedWinActions) pedWinActions.hidden=true;
+    renderPed();
+  });
+}
 
 const historyBtnEl=$("historyBtn");
 const historyCloseEl=$("historyClose");
