@@ -748,14 +748,54 @@ let pedState = {
   target: null,
   text: "",
   tokens: [],
-  titleTokens: [],
   revealed: new Set(),
-  fullTargetKeys: new Set(),
-  titleLetters: 0,
-  won: false,
+  targetKeys: new Set(),
+  allowManualReveal: false,
+  manualReveal: false,
 };
-const pedInfoBtn = $("pedInfo");
-const pedInfoPanel = $("pedInfoPanel");
+
+const pedShowPage = $("pedShowPage");
+const pedRevealToggle = $("pedRevealToggle");
+const pedWinActions = $("pedWinActions");
+const pedContinueBtn = $("pedContinue");
+const pedRevealLabel = pedRevealToggle ? pedRevealToggle.textContent.trim() : "";
+const pedRevealHideLabel = "Masquer les mots";
+
+function wikiUrl(title){
+  const safe = (title || "").trim().replace(/\s+/g, "_");
+  if(!safe) return "#";
+  return `https://fr.wikipedia.org/wiki/${encodeURIComponent(safe)}`;
+}
+
+function updateRevealToggle(){
+  if(!pedRevealToggle) return;
+  if(!pedState.allowManualReveal){
+    pedRevealToggle.hidden = true;
+    pedRevealToggle.setAttribute("aria-pressed","false");
+    pedRevealToggle.textContent = pedRevealLabel || "Révéler mot par mot";
+    return;
+  }
+  pedRevealToggle.hidden = false;
+  const active = !!pedState.manualReveal;
+  pedRevealToggle.setAttribute("aria-pressed", active ? "true" : "false");
+  pedRevealToggle.textContent = active ? pedRevealHideLabel : (pedRevealLabel || "Révéler mot par mot");
+}
+
+function resetPedWinUI(){
+  pedState.allowManualReveal = false;
+  pedState.manualReveal = false;
+  if(pedWinActions) pedWinActions.hidden = true;
+  updateRevealToggle();
+}
+
+function handlePedWin(){
+  pedState.allowManualReveal = true;
+  pedState.manualReveal = false;
+  if(pedWinActions) pedWinActions.hidden = false;
+  updateRevealToggle();
+}
+
+updateRevealToggle();
 
 /* irréguliers + participes présents fréquents (sans accents car strip) */
 const IRREG_FORMS = {
@@ -1102,10 +1142,9 @@ function pickDaily(){
     return acc + (token.isWord ? (token.letters || 0) : 0);
   }, 0);
   pedState.revealed = new Set(); // tout masqué
-  pedState.fullTargetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
-  pedState.won = false;
-  if(pedInfoPanel){ pedInfoPanel.hidden = true; }
-  if(pedInfoBtn){ pedInfoBtn.setAttribute("aria-expanded","false"); }
+  pedState.targetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
+  resetPedWinUI();
+  if(pedShowPage){ pedShowPage.href = wikiUrl(pedState.target); }
   $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
   renderPed();
 }
@@ -1116,35 +1155,20 @@ function guessWord(w){
   const guessKeys = buildKeySet(gNorm, gLemma, gRaw);
   const wasWon = pedState.won;
   let hits = 0;
-  for(const t of pedState.tokens){
-    if(!t.isWord) continue;
-    if(hasIntersection(t.keys, guessKeys)){
-      const alreadyVisible = hasIntersection(t.keys, pedState.revealed);
-      if(!alreadyVisible) hits++;
-      t.keys.forEach(k=>pedState.revealed.add(k));
+  if(!win){
+    for(const t of pedState.tokens){
+      if(!t.isWord) continue;
+      if(hasIntersection(t.keys, guessKeys)){
+        hits++;
+        t.keys.forEach(k=>pedState.revealed.add(k));
+      }
     }
-  }
-
-  for(const token of pedState.titleTokens){
-    if(!token.isWord || token.revealed) continue;
-    if(hasIntersection(token.keys, guessKeys)){
-      token.revealed = true;
-    }
-  }
-
-  const fullMatch = hasIntersection(guessKeys, pedState.fullTargetKeys);
-  if(fullMatch){
+  } else {
     pedState.won = true;
-  } else if(!pedState.won && pedState.titleTokens.every(token=>!token.isWord || token.revealed)){
-    pedState.won = true;
-  }
-
-  if(pedState.won){
-    pedState.titleTokens.forEach(token=>{ if(token.isWord) token.revealed = true; });
     pedState.tokens.forEach(t=>{ if(t.isWord) t.keys.forEach(k=>pedState.revealed.add(k)); });
   }
   renderPed();
-  return {hits,win:(!wasWon && pedState.won)};
+  return {hits,win};
 }
 $("pedInput").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
@@ -1156,15 +1180,23 @@ $("pedInput").addEventListener("keydown",e=>{
   if(win){
     $("pedScore").hidden=false;
     $("pedScore").textContent="BRAVO !";
+    handlePedWin();
   }
   $("pedInput").value="";
 });
 $("pedReset").onclick=pickDaily;
-if(pedInfoBtn && pedInfoPanel){
-  pedInfoBtn.addEventListener("click",()=>{
-    const expanded = pedInfoBtn.getAttribute("aria-expanded") === "true";
-    pedInfoBtn.setAttribute("aria-expanded", expanded ? "false" : "true");
-    pedInfoPanel.hidden = expanded;
+if(pedRevealToggle){
+  pedRevealToggle.addEventListener("click",()=>{
+    if(!pedState.allowManualReveal) return;
+    pedState.manualReveal = !pedState.manualReveal;
+    updateRevealToggle();
+    renderPed();
+  });
+}
+if(pedContinueBtn){
+  pedContinueBtn.addEventListener("click",()=>{
+    resetPedWinUI();
+    renderPed();
   });
 }
 
