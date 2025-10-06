@@ -49,10 +49,13 @@
   #historyPanel h3{margin:0}
   /* Pédantix */
   .pedantix-text{line-height:1.7; font-size:1.05rem}
-  .mask{background:#111;color:#111;border-radius:4px;padding:1px 2px}
+  .mask{background:#111;color:#111;border-radius:4px;padding:1px 4px;cursor:pointer;user-select:none;transition:background .2s,color .2s}
+  .mask:focus-visible{outline:2px solid #4b5563;outline-offset:2px}
+  .mask-show{background:#e0e7ff;color:#111;font-weight:600}
   .token{display:inline}
   .pillScore{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-size:12px}
   .exp{margin-top:10px;padding:12px;border:1px dashed #e5e7eb;border-radius:12px;background:#fafafa}
+  .ped-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -186,15 +189,26 @@
         <h2 style="margin:0">Pédantix du jour <span id="pedScore" class="pillScore" hidden></span></h2>
         <div class="rowL">
           <button id="pedReset" class="btn outline">Réinitialiser du jour</button>
-          <button id="pedHint" class="btn outline">Indice (révèle un mot)</button>
         </div>
       </div>
       <p class="muted" id="pedTitleMask"></p>
+      <div class="exp ped-desc">
+        <p><strong>Découvrez la page Wikipédia&nbsp;!</strong></p>
+        <p>Le but du jeu est de découvrir la page Wikipédia en révélant les mots qui composent son introduction par essais successifs.</p>
+        <p>Les mots corrects apparaîtront en clair au fur et à mesure que vous les essaierez. Ceux qui sont suffisamment proches resteront grisés avec un niveau de gris proportionnel à la proximité du mot réel dans le champ lexical. Ce calcul de proximité est similaire à celui utilisé par Cémantix. Vous pouvez voir la longueur d’un mot caché en pressant sur sa boîte noire.</p>
+        <p>Lorsque les mots composant le titre de la page Wikipédia seront dévoilés, vous aurez gagné&nbsp;! Notez que les mots du titre sont corrects ou pas, ils ne sont jamais grisés. La forme masculine singulière d’un mot ou l’infinitif d’un verbe peuvent suffire à révéler ses formes féminines, plurielles ou conjuguées. Les majuscules ne sont pas nécessaires.</p>
+        <p>À la fin de la partie, vous aurez le choix entre afficher la page, révéler chaque mot séparément en cliquant sur sa boîte noire, ou continuer à jouer sans spoiler.</p>
+      </div>
       <div id="pedText" class="pedantix-text"></div>
       <div class="row" style="justify-content:flex-start;margin-top:12px">
         <input id="pedInput" class="choice" placeholder="Tape un mot (objectif : le titre caché)" />
       </div>
       <ol id="pedGuesses" class="results"></ol>
+      <div id="pedWinActions" class="ped-actions" hidden>
+        <a id="pedShowPage" class="btn outline" target="_blank" rel="noopener">Afficher la page Wikipédia</a>
+        <button id="pedRevealToggle" class="btn outline" type="button" aria-pressed="false">Révéler mot par mot</button>
+        <button id="pedContinue" class="btn outline" type="button">Continuer sans spoiler</button>
+      </div>
     </div>
   </section>
 </main>
@@ -937,6 +951,65 @@ function titleMask(){
 function renderPed(){
   $("pedTitleMask").textContent = titleMask();
   const frag = document.createDocumentFragment();
+  const makeMask = (token)=>{
+    const mask = document.createElement("span");
+    mask.className="mask";
+    const masked = "█".repeat(Math.max(1, token.raw.length));
+    const letterCount = (token.raw.match(/[A-Za-zÀ-ÖØ-öø-ÿ]/g) || []).length || token.raw.length;
+    mask.textContent = masked;
+    mask.dataset.mask = masked;
+    mask.dataset.letters = String(letterCount);
+    mask.tabIndex = 0;
+    const baseLabel = `Mot caché de ${letterCount} lettre${letterCount>1?'s':''}`;
+    const updateLabel = ()=>{
+      let extra = "";
+      if(pedState.allowManualReveal){
+        extra = pedState.manualReveal ? " — cliquer pour dévoiler" : " — maintenir pour voir la longueur";
+      }
+      mask.setAttribute("aria-label", baseLabel + extra);
+    };
+    updateLabel();
+    const showLen = ()=>{
+      mask.textContent = `${letterCount} lettre${letterCount>1?'s':''}`;
+      mask.classList.add("mask-show");
+    };
+    const hideLen = ()=>{
+      mask.textContent = mask.dataset.mask || masked;
+      mask.classList.remove("mask-show");
+    };
+    const revealToken = ()=>{
+      if(!pedState.allowManualReveal || !pedState.manualReveal) return;
+      token.keys.forEach(k=>pedState.revealed.add(k));
+      renderPed();
+    };
+    mask.addEventListener("mousedown", evt=>{ evt.preventDefault(); showLen(); });
+    mask.addEventListener("mouseup", hideLen);
+    mask.addEventListener("mouseleave", hideLen);
+    mask.addEventListener("touchstart", evt=>{ evt.preventDefault(); showLen(); });
+    mask.addEventListener("touchend", hideLen);
+    mask.addEventListener("touchcancel", hideLen);
+    mask.addEventListener("blur", hideLen);
+    mask.addEventListener("keydown", evt=>{
+      if(evt.key===" " || evt.key==="Enter"){
+        evt.preventDefault();
+        showLen();
+      }
+    });
+    mask.addEventListener("keyup", evt=>{
+      hideLen();
+      if((evt.key===" " || evt.key==="Enter") && pedState.allowManualReveal && pedState.manualReveal){
+        evt.preventDefault();
+        revealToken();
+      }
+    });
+    mask.addEventListener("click", evt=>{
+      if(pedState.allowManualReveal && pedState.manualReveal){
+        evt.preventDefault();
+        revealToken();
+      }
+    });
+    return mask;
+  };
   pedState.tokens.forEach(t=>{
     const span = document.createElement("span");
     span.className = "token";
@@ -958,6 +1031,8 @@ function pickDaily(){
   pedState.revealed = new Set(); // tout masqué
   pedState.targetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
   pedState.guessed = [];
+  resetPedWinUI();
+  if(pedShowPage){ pedShowPage.href = wikiUrl(pedState.target); }
   $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
   renderPed();
 }
@@ -1005,7 +1080,22 @@ $("pedInput").addEventListener("keydown",e=>{
   $("pedInput").value="";
 });
 $("pedReset").onclick=pickDaily;
-$("pedHint").onclick=pedHint;
+if(pedRevealToggle){
+  pedRevealToggle.addEventListener("click",()=>{
+    if(!pedState.allowManualReveal) return;
+    pedState.manualReveal = !pedState.manualReveal;
+    updateRevealToggle();
+    renderPed();
+  });
+}
+if(pedContinueBtn){
+  pedContinueBtn.addEventListener("click",()=>{
+    pedState.manualReveal=false;
+    updateRevealToggle();
+    if(pedWinActions) pedWinActions.hidden=true;
+    renderPed();
+  });
+}
 
 const historyBtnEl=$("historyBtn");
 const historyCloseEl=$("historyClose");
