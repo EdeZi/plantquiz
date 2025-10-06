@@ -1037,7 +1037,34 @@ function tokenize(text){
     return { raw:p, norm, lemma, isWord, keys };
   });
 }
+function tokenizeTitle(title){
+  const parts = (title || "").match(wordRe) || [];
+  return parts.map(part=>{
+    const isWord = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+/.test(part);
+    if(!isWord){
+      return { raw: part, isWord: false };
+    }
+    const norm = strip(part);
+    const lemma = lemmaFr(part);
+    const keys = buildKeySet(norm, lemma, part);
+    const chars = [...part];
+    const letters = chars.filter(ch=>/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch)).length || part.length;
+    const mask = chars.map(ch=>/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch) ? "█" : ch).join("");
+    return { raw: part, isWord: true, keys, revealed: false, letters, mask };
+  });
+}
 function titleMask(){
+  if(pedState.titleTokens && pedState.titleTokens.length){
+    const total = pedState.titleLetters || pedState.titleTokens.reduce((acc, token)=>{
+      return acc + (token.isWord ? (token.letters || 0) : 0);
+    }, 0);
+    const display = pedState.titleTokens.map(token=>{
+      if(!token.isWord) return token.raw;
+      return (pedState.won || token.revealed) ? token.raw : token.mask;
+    }).join("");
+    const label = total === 1 ? "lettre" : "lettres";
+    return `Titre : ${display} (${total} ${label})`;
+  }
   if(!pedState.target) return "";
   const letters = [...pedState.target];
   const masked = letters.map(ch=>{
@@ -1045,7 +1072,9 @@ function titleMask(){
     if(/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(ch)) return "█";
     return ch;
   }).join("");
-  return `Titre : ${masked} (${letters.filter(c=>/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(c)).length} lettres)`;
+  const total = letters.filter(c=>/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(c)).length;
+  const label = total === 1 ? "lettre" : "lettres";
+  return `Titre : ${masked} (${total} ${label})`;
 }
 function renderPed(){
   $("pedTitleMask").textContent = titleMask();
@@ -1108,6 +1137,10 @@ function pickDaily(){
   pedState.target = (entry && entry.target) || "Chloroplaste";
   pedState.text = (entry && entry.text) || "Texte démo.";
   pedState.tokens = tokenize(pedState.text);
+  pedState.titleTokens = tokenizeTitle(pedState.target);
+  pedState.titleLetters = pedState.titleTokens.reduce((acc, token)=>{
+    return acc + (token.isWord ? (token.letters || 0) : 0);
+  }, 0);
   pedState.revealed = new Set(); // tout masqué
   pedState.targetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
   resetPedWinUI();
@@ -1120,7 +1153,7 @@ function guessWord(w){
   const gNorm = strip(gRaw);
   const gLemma = lemmaFr(gRaw);
   const guessKeys = buildKeySet(gNorm, gLemma, gRaw);
-  const win = hasIntersection(guessKeys, pedState.targetKeys);
+  const wasWon = pedState.won;
   let hits = 0;
   if(!win){
     for(const t of pedState.tokens){
