@@ -752,6 +752,7 @@ let pedState = {
   targetKeys: new Set(),
   allowManualReveal: false,
   manualReveal: false,
+  won: false,
 };
 
 const pedShowPage = $("pedShowPage");
@@ -1143,6 +1144,7 @@ function pickDaily(){
   }, 0);
   pedState.revealed = new Set(); // tout masqué
   pedState.targetKeys = buildKeySet(strip(pedState.target), lemmaFr(pedState.target), pedState.target);
+  pedState.won = false;
   resetPedWinUI();
   if(pedShowPage){ pedShowPage.href = wikiUrl(pedState.target); }
   $("pedGuesses").innerHTML=""; $("pedScore").hidden=true;
@@ -1153,7 +1155,7 @@ function guessWord(w){
   const gNorm = strip(gRaw);
   const gLemma = lemmaFr(gRaw);
   const guessKeys = buildKeySet(gNorm, gLemma, gRaw);
-  const wasWon = pedState.won;
+  const win = !!pedState.won || hasIntersection(guessKeys, pedState.targetKeys);
   let hits = 0;
   if(!win){
     for(const t of pedState.tokens){
@@ -1167,6 +1169,12 @@ function guessWord(w){
     pedState.won = true;
     pedState.tokens.forEach(t=>{ if(t.isWord) t.keys.forEach(k=>pedState.revealed.add(k)); });
   }
+  (pedState.titleTokens || []).forEach(token=>{
+    if(!token.isWord) return;
+    if(pedState.won || hasIntersection(token.keys, pedState.revealed) || hasIntersection(token.keys, guessKeys)){
+      token.revealed = true;
+    }
+  });
   renderPed();
   return {hits,win};
 }
@@ -1185,6 +1193,16 @@ $("pedInput").addEventListener("keydown",e=>{
   $("pedInput").value="";
 });
 $("pedReset").onclick=pickDaily;
+const pedInfoBtn = $("pedInfo");
+const pedInfoPanel = $("pedInfoPanel");
+if(pedInfoBtn && pedInfoPanel){
+  pedInfoBtn.addEventListener("click",()=>{
+    const expanded = pedInfoBtn.getAttribute("aria-expanded") === "true";
+    const next = !expanded;
+    pedInfoBtn.setAttribute("aria-expanded", next ? "true" : "false");
+    pedInfoPanel.hidden = !next;
+  });
+}
 if(pedRevealToggle){
   pedRevealToggle.addEventListener("click",()=>{
     if(!pedState.allowManualReveal) return;
