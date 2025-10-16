@@ -528,19 +528,12 @@ function desiredLevel(){
   return clampLevel(levelAnchor);
 }
 
-function minActiveLevel(){
-  if(answeredTotal<CALIBRATION_LENGTH){
-    return 1;
-  }
-  return wrongStreak>=2 ? 1 : 2;
-}
-
 function sampleLevelAround(lstar){
   const floor = minActiveLevel();
   const r = Math.random();
-  if(r<0.55) return Math.max(floor, lstar);
+  if(r<0.55) return lstar;
   if(r<0.80) return Math.min(MAX_LEVEL, lstar+0.7);
-  return Math.max(floor, lstar-0.7);
+  return Math.max(1, lstar-0.7);
 }
 
 function enqueueError(id){
