@@ -382,35 +382,194 @@ function restoreNormalQuestions(){
 /* ========= MODE NORMAL — Elo ========= */
 const MAX_LEVEL=12;
 const levelToRating = l => 700 + (l-1)*100;
-const eloToLevel    = e => Math.min(MAX_LEVEL, Math.max(1, Math.round((e-700)/100 + 1)));
+const eloToLevelFloat = e => ((e-700)/100) + 1;
+const clampLevel = l => Math.min(MAX_LEVEL, Math.max(1, l));
+const eloToLevel    = e => clampLevel(Math.round(eloToLevelFloat(e)));
 
 let elo=1000, level=eloToLevel(elo);
+let levelAnchor=eloToLevelFloat(elo);
 let qCount=0, goodCount=0, streak=0, wrongStreak=0, answeredTotal=0;
 
-const BASE_K=40, CALIB_K=60;
+const BASE_K=22, CALIB_K=32;
+const STREAK_STEP=0.05, STREAK_MAX=1.2, WRONG_STEP=0.05, WRONG_MAX=0.15;
 function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
 function kFactor(){
-  let K = (answeredTotal<8) ? CALIB_K : BASE_K;
-  if(streak>=3) K = Math.round(K*1.5);
-  if(wrongStreak>=2) K = Math.round(K*0.95);
-  return K;
+  const base = (answeredTotal<CALIBRATION_LENGTH) ? CALIB_K : BASE_K;
+  const streakMult = 1 + Math.min(STREAK_MAX-1, Math.max(0, streak*STREAK_STEP));
+  const wrongMult = 1 - Math.min(WRONG_MAX, Math.max(0, wrongStreak*WRONG_STEP));
+  return Math.round(base * streakMult * wrongMult);
+}
+function blendAnchor(nextLevel){
+  levelAnchor = (0.75*levelAnchor) + (0.25*nextLevel);
+  levelAnchor = clampLevel(levelAnchor);
+  level = eloToLevel(levelToRating(levelAnchor));
 }
 function applyElo(win, qLevel){
   const rq = levelToRating(qLevel);
   const ex = expected(elo, rq);
   const K = kFactor();
   elo = Math.round(elo + K * ((win?1:0) - ex));
-  level = eloToLevel(elo);
+  const instantLevel = clampLevel(eloToLevelFloat(elo));
+  blendAnchor(instantLevel);
 }
 
-const recentIds=[]; const RECENT_MAX=20;
-function remember(id){ recentIds.push(id); if(recentIds.length>RECENT_MAX) recentIds.shift(); }
+const recentIds=[]; const RECENT_MAX=40;
+const errorQueue=[];
+const ERROR_REASK_DELAY=2;
+const CALIBRATION_SEQUENCE=[4,6,3,7,5,8];
+const CALIBRATION_LENGTH=CALIBRATION_SEQUENCE.length;
+
+const STATS_KEY="plantquiz.stats.v1";
+const questionStats=new Map();
+let statsSaveTimer=null;
+
+function remember(id){
+  if(!id) return;
+  recentIds.push(id);
+  if(recentIds.length>RECENT_MAX) recentIds.shift();
+}
+function forgetRecent(id){
+  const idx = recentIds.indexOf(id);
+  if(idx>=0) recentIds.splice(idx,1);
+}
 function notRecentlyAsked(q){ return !recentIds.includes(q.id); }
+
+function loadQuestionStats(){
+  if(typeof localStorage==="undefined") return;
+  try{
+    const raw=localStorage.getItem(STATS_KEY);
+    if(!raw) return;
+    const parsed=JSON.parse(raw);
+    if(parsed && typeof parsed==="object"){
+      Object.keys(parsed).forEach(id=>{
+        const entry=parsed[id];
+        if(entry && typeof entry==="object") questionStats.set(id,{...entry});
+      });
+    }
+  }catch{}
+}
+function saveQuestionStats(){
+  if(typeof localStorage==="undefined") return;
+  try{
+    const payload={};
+    questionStats.forEach((val,id)=>{ payload[id]=val; });
+    localStorage.setItem(STATS_KEY, JSON.stringify(payload));
+  }catch{}
+}
+function scheduleStatsSave(){
+  if(statsSaveTimer) return;
+  statsSaveTimer=setTimeout(()=>{ statsSaveTimer=null; saveQuestionStats(); }, 600);
+}
+loadQuestionStats();
+if(typeof window!=="undefined"){
+  window.addEventListener("beforeunload", saveQuestionStats);
+  window.addEventListener("pagehide", saveQuestionStats);
+}
+
+function questionStatFor(id, baseLevel){
+  if(!id) return null;
+  if(!questionStats.has(id)){
+    questionStats.set(id,{
+      seen:0,
+      correct:0,
+      rating:levelToRating(baseLevel||1),
+      lastSeen:0,
+      lastWrong:-1,
+    });
+  }
+  return questionStats.get(id);
+}
+
+function recordQuestionResult(q, win, qLevel){
+  if(!q || !q.id) return;
+  const baseLevel=q.level||1;
+  const stat=questionStatFor(q.id, baseLevel);
+  if(typeof stat.rating!=="number") stat.rating=levelToRating(baseLevel);
+  stat.seen = (stat.seen||0) + 1;
+  if(win){
+    stat.correct = (stat.correct||0) + 1;
+  }
+  stat.lastSeen = answeredTotal;
+  if(!win){
+    stat.lastWrong = answeredTotal;
+  }
+  const currentRating = typeof stat.rating==="number" ? stat.rating : levelToRating(baseLevel);
+  const target = win ? 1 : 0;
+  const playerRating = levelToRating(qLevel);
+  const expectedScore = expected(currentRating, playerRating);
+  const questionK = win ? 8 : 12;
+  stat.rating = Math.round(currentRating + questionK * (target - expectedScore));
+  scheduleStatsSave();
+}
+
+function questionDifficulty(q){
+  if(!q) return 1;
+  const base=Number(q.level)||1;
+  const stat = q.id ? questionStats.get(q.id) : null;
+  if(!stat) return base;
+  const seen = stat.seen||0;
+  const success = seen>0 ? (stat.correct||0)/seen : null;
+  let adjust = 0;
+  if(success!==null && seen>=3){
+    if(success>=0.85) adjust-=0.7;
+    else if(success>=0.7) adjust-=0.4;
+    else if(success<=0.3) adjust+=0.8;
+    else if(success<=0.5) adjust+=0.4;
+  }
+  const ratingLevel = clampLevel(eloToLevelFloat(stat.rating||levelToRating(base)));
+  const blended = (0.6*base)+(0.4*ratingLevel)+adjust;
+  return clampLevel(blended);
+}
+
+function desiredLevel(){
+  if(answeredTotal<CALIBRATION_LENGTH){
+    return CALIBRATION_SEQUENCE[answeredTotal] || 4;
+  }
+  return clampLevel(levelAnchor);
+}
+
+function minActiveLevel(){
+  if(answeredTotal<CALIBRATION_LENGTH){
+    return 1;
+  }
+  return wrongStreak>=2 ? 1 : 2;
+}
+
 function sampleLevelAround(lstar){
+  const floor = minActiveLevel();
   const r = Math.random();
-  if(r<0.45) return lstar;
-  if(r<0.80) return Math.min(MAX_LEVEL, lstar+1);
-  return Math.max(1, lstar-1);
+  if(r<0.55) return Math.max(floor, lstar);
+  if(r<0.80) return Math.min(MAX_LEVEL, lstar+0.7);
+  return Math.max(floor, lstar-0.7);
+}
+
+function enqueueError(id){
+  if(!id) return;
+  if(errorQueue.some(entry=>entry && entry.id===id)) return;
+  errorQueue.push({id, at: answeredTotal});
+}
+
+function clearError(id){
+  if(!id) return;
+  const idx = errorQueue.findIndex(entry=>entry && entry.id===id);
+  if(idx>=0) errorQueue.splice(idx,1);
+}
+
+function takeErrorCandidate(){
+  while(errorQueue.length){
+    const entry = errorQueue[0];
+    if(!entry){ errorQueue.shift(); continue; }
+    if(answeredTotal - entry.at < ERROR_REASK_DELAY){
+      break;
+    }
+    const q = QUESTIONS.find(item=>item.id===entry.id);
+    errorQueue.shift();
+    if(q){
+      forgetRecent(entry.id);
+      return q;
+    }
+  }
+  return null;
 }
 function filteredChoicesForLevel(choices, lvl){
   if(!Array.isArray(choices)) return [];
@@ -434,13 +593,29 @@ function filteredChoicesForLevel(choices, lvl){
 }
 function pickQuestion(){
   if(!QUESTIONS || !QUESTIONS.length) return null;
-  const lstar = eloToLevel(elo);
-  const desired = sampleLevelAround(lstar);
-  let pool = QUESTIONS.filter(q => (q.level||1)===desired).filter(notRecentlyAsked);
-  if(!pool.length) pool = QUESTIONS.filter(q => Math.abs((q.level||1)-desired)<=1).filter(notRecentlyAsked);
-  if(!pool.length) pool = QUESTIONS.filter(notRecentlyAsked);
-  if(!pool.length) pool = QUESTIONS;
-  return pool[Math.floor(Math.random()*pool.length)];
+
+  if(activeQuizMode==="normal"){
+    const revisit = takeErrorCandidate();
+    if(revisit) return revisit;
+  }
+
+  const anchor = desiredLevel();
+  const target = sampleLevelAround(anchor);
+
+  const scored = QUESTIONS.map(q=>({
+    q,
+    eff: questionDifficulty(q),
+  }));
+
+  const selectWithWindow=(window)=>{
+    const eligible = scored.filter(entry=>Math.abs(entry.eff - target)<=window).map(entry=>entry.q).filter(notRecentlyAsked);
+    if(eligible.length) return eligible[Math.floor(Math.random()*eligible.length)];
+    const fallback = scored.filter(entry=>Math.abs(entry.eff - target)<=window);
+    if(fallback.length) return fallback[Math.floor(Math.random()*fallback.length)].q;
+    return null;
+  };
+
+  return selectWithWindow(0.6) || selectWithWindow(1.2) || selectWithWindow(2.5) || QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
 }
 
 let currentQ=null, locked=false;
@@ -474,7 +649,7 @@ function renderQuestion(){
   }
   currentQ = pickQuestion(); locked=false;
 
-  const lvl = currentQ.level || 1;
+  const lvl = Math.round(questionDifficulty(currentQ));
   let choices = filteredChoicesForLevel(currentQ.choices||[], lvl);
   if(!choices.some(c=>c.correct) && (currentQ.choices||[]).some(c=>c.correct)){
     const correct = currentQ.choices.find(c=>c.correct);
@@ -515,18 +690,23 @@ function choose(choice, btn, qLevel){
     if(activeQuizMode==="normal"){ streak++; wrongStreak=0; }
     else { streak=0; wrongStreak=0; }
     btn.classList.add("answer","ok");
+    if(activeQuizMode==="normal") clearError(currentQ.id);
   } else {
     if(activeQuizMode==="normal"){ streak=0; wrongStreak++; }
     else { streak=0; wrongStreak=0; }
     btn.classList.add("answer","ko");
+    if(activeQuizMode==="normal") enqueueError(currentQ.id);
   }
+
+  const effectiveLevel = Math.round(questionDifficulty(currentQ));
+  recordQuestionResult(currentQ, win, effectiveLevel);
 
   choiceButtons.forEach(b=>{
     if(correct && b.textContent===correct.text) b.classList.add("answer","ok");
     b.disabled=true;
   });
 
-  if(activeQuizMode==="normal"){ applyElo(win, qLevel); }
+  if(activeQuizMode==="normal"){ applyElo(win, effectiveLevel); }
   $("explain").hidden=false;
   $("explain").innerHTML = (win?"✅ Correct.":"❌ Incorrect.") + (currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"");
   updateMeta();
@@ -547,7 +727,9 @@ function choose(choice, btn, qLevel){
 $("nextBtn").onclick=renderQuestion;
 
 function resetQuizState(){
-  elo=1000; level=eloToLevel(elo); qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0; recentIds.length=0;
+  elo=1000; level=eloToLevel(elo); levelAnchor=eloToLevelFloat(elo);
+  qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0;
+  recentIds.length=0; errorQueue.length=0;
 }
 
 /* ====== Bouton Elo ====== */
@@ -560,6 +742,7 @@ $("setEloBtn").onclick = () => {
   const clamped = Math.max(400, Math.min(2400, n));
   elo = clamped;
   level = eloToLevel(elo);
+  levelAnchor = eloToLevelFloat(elo);
   updateMeta();
 };
 
