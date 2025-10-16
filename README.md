@@ -30,6 +30,7 @@ Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne 
 ### Quiz normal
 
 - Répondez pour faire évoluer votre Elo et accéder à des questions plus avancées.
+- Certaines questions peuvent comporter plusieurs bonnes réponses : sélectionnez toutes les propositions pertinentes puis utilisez le bouton **Valider la sélection** avant de passer à la question suivante.
 
 ### Quiz révision
 - Choisissez un semestre puis les UE (obligatoires ou optionnelles) que vous souhaitez réviser.
@@ -57,8 +58,8 @@ L’outil prof est accessible via le bouton **« Outil prof »** présent da
 
 ### 3. Renseigner la question
 1. Saisissez l’énoncé dans le champ **Question**.
-2. Remplissez les quatre propositions dans les champs A, B, C, D (les intitulés peuvent être libres, mais quatre réponses sont nécessaires).
-3. Cochez la réponse correcte à l’aide du bouton radio situé à gauche de l’option correspondante.
+2. Ajoutez entre deux et cinq propositions (boutons **+ Ajouter une option** / **− Retirer la dernière option**). Les intitulés sont libres.
+3. Cochez toutes les réponses correctes à l’aide des cases à cocher situées à gauche de chaque proposition (une ou plusieurs réponses peuvent être justes).
 4. (Optionnel) Ajoutez une explication dans **Complément** pour fournir un feedback aux étudiants.
 
 ### 4. Générer et récupérer le JSON
@@ -72,7 +73,7 @@ L’outil prof est accessible via le bouton **« Outil prof »** présent da
 3. Collez les nouvelles lignes JSON dans le tableau `questions` correspondant. Chaque question doit rester sur **une seule ligne** pour rester compatible avec les outils d’import.
 4. Vérifiez que chaque entrée respecte la structure suivante :
    ```json
-   {"id":"UE_identifiant_unique","level":1,"prompt":"Texte de la question ?","choices":[{"id":"a","text":"Réponse A","correct":true},{"id":"b","text":"Réponse B"},{"id":"c","text":"Réponse C"},{"id":"d","text":"Réponse D"}],"explanation":"Optionnel : explication"}
+   {"id":"UE_identifiant_unique","level":1,"prompt":"Texte de la question ?","choices":[{"id":"a","text":"Réponse A","correct":true},{"id":"b","text":"Réponse B","correct":true},{"id":"c","text":"Réponse C"},{"id":"d","text":"Réponse D"}],"explanation":"Optionnel : explication"}
    ```
 5. Enregistrez le fichier puis rechargez la page pour vérifier que les questions apparaissent correctement.
 

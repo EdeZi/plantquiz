@@ -20,8 +20,9 @@
   .btn[disabled]{background:#9ca3af;cursor:not-allowed} .btn.outline{background:#fff;color:#111;border:1px solid #e5e7eb}
   .muted{color:var(--muted)}
   .choices{display:grid;gap:10px;margin-top:12px}
-  .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer}
+  .choice{padding:14px 16px;border:1px solid #e5e7eb;border-radius:14px;text-align:left;background:#fff;color:#111;cursor:pointer;transition:box-shadow .2s,border-color .2s,background .2s}
   .choice:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+  .choice.selected{border-color:var(--brand);box-shadow:0 0 0 3px rgba(17,17,17,.08);background:rgba(17,17,17,.02)}
   .answer.ok{border-color:var(--ok);box-shadow:0 0 0 3px rgba(22,163,74,.2)}
   .answer.ko{border-color:var(--ko);box-shadow:0 0 0 3px rgba(239,68,68,.2)}
   .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
@@ -83,11 +84,10 @@
         </label>
         <div class="field">
           <span class="muted">Réponses possibles</span>
-          <div id="profChoices">
-            <label><input type="radio" name="profCorrect" value="0"><input type="text" id="profChoice0" placeholder="Réponse A"></label>
-            <label><input type="radio" name="profCorrect" value="1"><input type="text" id="profChoice1" placeholder="Réponse B"></label>
-            <label><input type="radio" name="profCorrect" value="2"><input type="text" id="profChoice2" placeholder="Réponse C"></label>
-            <label><input type="radio" name="profCorrect" value="3"><input type="text" id="profChoice3" placeholder="Réponse D"></label>
+          <div id="profChoices"></div>
+          <div class="rowL" style="justify-content:flex-start;margin-top:6px">
+            <button id="profChoiceAdd" class="btn outline" type="button">+ Ajouter une option</button>
+            <button id="profChoiceRemove" class="btn outline" type="button">− Retirer la dernière option</button>
           </div>
         </div>
         <label class="field">
@@ -145,7 +145,8 @@
         <h3 id="qPrompt"></h3>
         <div class="choices" id="choices"></div>
         <div id="explain" class="exp" hidden></div>
-        <div class="row">
+        <div class="row" style="justify-content:flex-end;flex-wrap:wrap;gap:10px">
+          <button id="checkBtn" class="btn" type="button" disabled hidden>Valider la sélection</button>
           <button id="nextBtn" class="btn" disabled>Question suivante</button>
         </div>
       </article>
@@ -628,6 +629,11 @@ function pickQuestion(){
 }
 
 let currentQ=null, locked=false;
+let multiSelect=false;
+let currentQuestionLevel=1;
+const selectedChoiceIds=new Set();
+let choiceButtons=[];
+let choiceById=new Map();
 function updateMeta(){
   const quizTitle=$("quizTitle"), quizSubtitle=$("quizSubtitle");
   if(quizTitle){
@@ -650,81 +656,115 @@ function updateMeta(){
   if(setEloBtn) setEloBtn.hidden=!showElo;
   if(historyBtn) historyBtn.hidden=showElo;
 }
-function renderQuestion(){
-  if(!QUESTIONS || !QUESTIONS.length){
-    $("qPrompt").textContent="Pas de questions (data/questions_normal.json)";
-    $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true;
-    return;
-  }
-  currentQ = pickQuestion(); locked=false;
-
-  const lvl = Math.round(questionDifficulty(currentQ));
-  let choices = filteredChoicesForLevel(currentQ.choices||[], lvl);
-  if(!choices.some(c=>c.correct) && (currentQ.choices||[]).some(c=>c.correct)){
-    const correct = currentQ.choices.find(c=>c.correct);
-    choices = [correct, ...choices.filter(c=>c.id!==correct.id)];
-  }
-
-  $("qPrompt").textContent=currentQ.prompt;
-  $("choices").innerHTML="";
-  choices.forEach(c=>{
-    const b=document.createElement("button");
-    b.className="choice";
-    b.textContent=c.text;
-    b.onclick=()=>choose(c,b,lvl);
-    $("choices").appendChild(b);
-  });
-  $("explain").hidden=true; $("nextBtn").disabled=true;
+function clearChoiceSelection(){
+  choiceButtons.forEach(btn=>btn.classList.remove("selected"));
+  selectedChoiceIds.clear();
 }
-function choose(choice, btn, qLevel){
-  if(locked) return; locked=true;
-  const choicesContainer = $("choices");
-  const choiceButtons = choicesContainer ? [...choicesContainer.children] : [];
-  const correct = (currentQ.choices||[]).find(c=>c.correct);
-  if(!correct){
-    choiceButtons.forEach(b=>{ b.disabled=true; });
-    $("explain").hidden=false;
-    $("explain").innerHTML = "⚠️ Aucune bonne réponse n’est définie pour cette question. Prévenez l’équipe pédagogique afin de corriger le fichier.";
-    if(currentQ && currentQ.id){
-      remember(currentQ.id);
+function updateCheckButton(){
+  const checkBtn=$("checkBtn");
+  if(!checkBtn) return;
+  if(multiSelect){
+    checkBtn.hidden=false;
+    checkBtn.disabled = locked || selectedChoiceIds.size===0;
+  }else{
+    checkBtn.hidden=true;
+    checkBtn.disabled=true;
+  }
+}
+function handleChoiceClick(choiceId, btn, qLevel){
+  if(locked) return;
+  if(multiSelect){
+    const key=String(choiceId);
+    if(selectedChoiceIds.has(key)){
+      selectedChoiceIds.delete(key);
+      btn.classList.remove("selected");
+    }else{
+      selectedChoiceIds.add(key);
+      btn.classList.add("selected");
     }
+    updateCheckButton();
+  }else{
+    clearChoiceSelection();
+    selectedChoiceIds.add(String(choiceId));
+    choiceButtons.forEach(b=>{
+      if(b===btn) b.classList.add("selected");
+      else b.classList.remove("selected");
+    });
+    evaluateAnswer(new Set(selectedChoiceIds), qLevel);
+  }
+}
+function evaluateAnswer(selectedIds, qLevel){
+  if(locked) return;
+  locked=true;
+  const checkBtn=$("checkBtn");
+  if(checkBtn) checkBtn.disabled=true;
+  const normalizedSelected=new Set();
+  if(selectedIds && typeof selectedIds.forEach==="function"){
+    selectedIds.forEach(id=>{
+      if(id===undefined || id===null) return;
+      normalizedSelected.add(String(id));
+    });
+  }
+  const correctEntries=[...choiceById.entries()].filter(([,choice])=>choice && choice.correct);
+  const correctChoices=correctEntries.map(([,choice])=>choice);
+  if(!correctChoices.length){
+    choiceButtons.forEach(b=>{ b.disabled=true; b.classList.remove("selected"); });
+    $("explain").hidden=false;
+    $("explain").innerHTML="⚠️ Aucune bonne réponse n’est définie pour cette question. Prévenez l’équipe pédagogique afin de corriger le fichier.";
+    if(currentQ && currentQ.id){ remember(currentQ.id); }
     $("nextBtn").disabled=false;
+    updateCheckButton();
     return;
   }
   qCount++; answeredTotal++;
-  const win = !!(correct && correct.id===choice.id);
-
+  const correctIds=new Set(correctEntries.map(([id])=>String(id)));
+  const win = normalizedSelected.size===correctIds.size && [...normalizedSelected].every(id=>correctIds.has(id));
   if(win){
     goodCount++;
     if(activeQuizMode==="normal"){ streak++; wrongStreak=0; }
     else { streak=0; wrongStreak=0; }
-    btn.classList.add("answer","ok");
     if(activeQuizMode==="normal") clearError(currentQ.id);
-  } else {
+  }else{
     if(activeQuizMode==="normal"){ streak=0; wrongStreak++; }
     else { streak=0; wrongStreak=0; }
-    btn.classList.add("answer","ko");
     if(activeQuizMode==="normal") enqueueError(currentQ.id);
   }
-
-  const effectiveLevel = Math.round(questionDifficulty(currentQ));
+  const effectiveLevel=Math.round(questionDifficulty(currentQ));
   recordQuestionResult(currentQ, win, effectiveLevel);
 
-  choiceButtons.forEach(b=>{
-    if(correct && b.textContent===correct.text) b.classList.add("answer","ok");
-    b.disabled=true;
+  choiceButtons.forEach(btn=>{
+    const id=btn.dataset.id;
+    const isCorrect=correctIds.has(id);
+    const picked=normalizedSelected.has(id);
+    btn.disabled=true;
+    btn.classList.remove("selected");
+    if(isCorrect){
+      btn.classList.add("answer","ok");
+    }
+    if(picked && !isCorrect){
+      btn.classList.add("answer","ko");
+    }
+    if(picked && isCorrect){
+      btn.classList.add("answer","ok");
+    }
   });
 
   if(activeQuizMode==="normal"){ applyElo(win, effectiveLevel); }
+  const explanationText=currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"";
   $("explain").hidden=false;
-  $("explain").innerHTML = (win?"✅ Correct.":"❌ Incorrect.") + (currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"");
+  $("explain").innerHTML=(win?"✅ Correct.":"❌ Incorrect.")+explanationText;
   updateMeta();
   if(activeQuizMode==="revision"){
+    const pickedText=[...normalizedSelected].map(id=>{
+      const choice=choiceById.get(id);
+      return choice && choice.text ? choice.text : "";
+    }).filter(Boolean).join(" · ") || "—";
+    const correctText=correctChoices.map(c=>c && c.text ? c.text : "").filter(Boolean).join(" · ") || "—";
     revisionHistory.push({
       id: currentQ.id,
       prompt: currentQ.prompt,
-      picked: choice ? choice.text : "",
-      correct: correct ? correct.text : "",
+      picked: pickedText,
+      correct: correctText,
       explanation: currentQ.explanation || "",
       win,
     });
@@ -732,6 +772,59 @@ function choose(choice, btn, qLevel){
   }
   remember(currentQ.id);
   $("nextBtn").disabled=false;
+  selectedChoiceIds.clear();
+  updateCheckButton();
+}
+function renderQuestion(){
+  if(!QUESTIONS || !QUESTIONS.length){
+    $("qPrompt").textContent="Pas de questions (data/questions_normal.json)";
+    $("choices").innerHTML=""; $("explain").hidden=true; $("nextBtn").disabled=true;
+    const checkBtn=$("checkBtn");
+    if(checkBtn){ checkBtn.hidden=true; checkBtn.disabled=true; }
+    return;
+  }
+  currentQ = pickQuestion();
+  locked=false;
+  selectedChoiceIds.clear();
+  choiceButtons=[];
+  choiceById=new Map();
+
+  const lvl = Math.round(questionDifficulty(currentQ));
+  currentQuestionLevel=lvl;
+  let choices = filteredChoicesForLevel(currentQ.choices||[], lvl);
+  if(!choices.some(c=>c && c.correct) && (currentQ.choices||[]).some(c=>c && c.correct)){
+    const correct = (currentQ.choices||[]).find(c=>c && c.correct);
+    if(correct){
+      choices = [correct, ...choices.filter(c=>!c || c.id!==correct.id)];
+    }
+  }
+  const correctCount = (currentQ.choices||[]).filter(c=>c && c.correct).length;
+  multiSelect = correctCount !== 1;
+
+  $("qPrompt").textContent=currentQ.prompt;
+  const container=$("choices");
+  container.innerHTML="";
+  choices.forEach((c, idx)=>{
+    const b=document.createElement("button");
+    b.className="choice";
+    b.textContent=c && c.text ? c.text : `Option ${idx+1}`;
+    const choiceId=(c && c.id!==undefined && c.id!==null) ? String(c.id) : String(idx);
+    b.dataset.id=choiceId;
+    choiceById.set(choiceId, c);
+    b.onclick=()=>handleChoiceClick(choiceId, b, lvl);
+    container.appendChild(b);
+    choiceButtons.push(b);
+  });
+  $("explain").hidden=true; $("nextBtn").disabled=true;
+  const checkBtn=$("checkBtn");
+  if(checkBtn){
+    checkBtn.onclick = () => {
+      if(locked) return;
+      if(!selectedChoiceIds.size) return;
+      evaluateAnswer(new Set(selectedChoiceIds), currentQuestionLevel);
+    };
+  }
+  updateCheckButton();
 }
 $("nextBtn").onclick=renderQuestion;
 
@@ -739,6 +832,12 @@ function resetQuizState(){
   elo=1000; level=eloToLevel(elo); levelAnchor=eloToLevelFloat(elo);
   qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0;
   recentIds.length=0; errorQueue.length=0;
+  selectedChoiceIds.clear();
+  choiceButtons=[];
+  choiceById=new Map();
+  multiSelect=false;
+  const checkBtn=$("checkBtn");
+  if(checkBtn){ checkBtn.hidden=true; checkBtn.disabled=true; }
 }
 
 /* ====== Bouton Elo ====== */
@@ -878,9 +977,56 @@ $("revLaunch").onclick=()=>{
 
 /* ========= Outil prof ========= */
 const profMatter=$("profMatter"), profPrompt=$("profPrompt"), profExplain=$("profExplain"), profOutput=$("profOutput");
-const profChoicesInputs=[0,1,2,3].map(i=>$("profChoice"+i));
-const profCorrectInputs=[...document.querySelectorAll('input[name="profCorrect"]')];
+const profChoicesWrap=$("profChoices");
+const profChoiceAdd=$("profChoiceAdd");
+const profChoiceRemove=$("profChoiceRemove");
+const MIN_PROF_CHOICES=2;
+const MAX_PROF_CHOICES=5;
+let profChoiceItems=[];
 let profCounter=1;
+
+function profChoiceLabel(idx){
+  return String.fromCharCode(65 + idx);
+}
+
+function updateProfChoiceButtons(){
+  if(profChoiceAdd) profChoiceAdd.disabled = profChoiceItems.length>=MAX_PROF_CHOICES;
+  if(profChoiceRemove) profChoiceRemove.disabled = profChoiceItems.length<=MIN_PROF_CHOICES;
+}
+
+function rebuildProfChoicePlaceholders(){
+  profChoiceItems.forEach((item, idx)=>{
+    if(item.input) item.input.placeholder = `Réponse ${profChoiceLabel(idx)}`;
+  });
+}
+
+function addProfChoice(){
+  if(!profChoicesWrap) return;
+  if(profChoiceItems.length>=MAX_PROF_CHOICES) return;
+  const label=document.createElement("label");
+  const checkbox=document.createElement("input");
+  checkbox.type="checkbox";
+  const input=document.createElement("input");
+  input.type="text";
+  label.appendChild(checkbox);
+  label.appendChild(input);
+  profChoicesWrap.appendChild(label);
+  profChoiceItems.push({label, checkbox, input});
+  rebuildProfChoicePlaceholders();
+  updateProfChoiceButtons();
+  input.focus();
+}
+
+function removeProfChoice(){
+  if(!profChoicesWrap) return;
+  if(profChoiceItems.length<=MIN_PROF_CHOICES) return;
+  const item=profChoiceItems.pop();
+  if(item && item.label && item.label.parentNode===profChoicesWrap){
+    profChoicesWrap.removeChild(item.label);
+  }
+  rebuildProfChoicePlaceholders();
+  updateProfChoiceButtons();
+}
 
 function fillProfMatter(){
   if(!profMatter) return;
@@ -896,30 +1042,45 @@ function fillProfMatter(){
 }
 fillProfMatter();
 
+function initProfChoices(){
+  if(!profChoicesWrap) return;
+  profChoicesWrap.innerHTML="";
+  profChoiceItems=[];
+  const initialChoices=4;
+  for(let i=0;i<initialChoices;i++) addProfChoice();
+  updateProfChoiceButtons();
+}
+initProfChoices();
+if(profChoiceAdd) profChoiceAdd.onclick=()=>{ addProfChoice(); };
+if(profChoiceRemove) profChoiceRemove.onclick=()=>{ removeProfChoice(); };
+
 function resetProfFields(){
   profPrompt.value="";
   profExplain.value="";
-  profChoicesInputs.forEach(inp=>inp.value="");
-  profCorrectInputs.forEach(inp=>inp.checked=false);
+  profChoiceItems.forEach(item=>{
+    if(item.input) item.input.value="";
+    if(item.checkbox) item.checkbox.checked=false;
+  });
 }
 
 function addRevisionQuestion(){
   const matter=profMatter.value;
   const prompt=profPrompt.value.trim();
   const explanation=profExplain.value.trim();
-  const answers=profChoicesInputs.map(inp=>inp.value.trim());
-  const correctIndex=profCorrectInputs.findIndex(inp=>inp.checked);
+  const answers=profChoiceItems.map(item=>item && item.input ? item.input.value.trim() : "");
+  const correctSelections=profChoiceItems.filter(item=>item && item.checkbox && item.checkbox.checked);
 
   if(!matter){ alert("Choisissez une matière."); return; }
   if(!prompt){ alert("Ajoutez un énoncé."); profPrompt.focus(); return; }
   if(answers.some(a=>!a)){ alert("Toutes les réponses doivent être renseignées."); return; }
-  if(correctIndex<0){ alert("Sélectionnez la bonne réponse."); return; }
+  if(!correctSelections.length){ alert("Sélectionnez au moins une réponse correcte."); return; }
 
   const idBase=matter.replace(/[^a-z0-9_]+/gi,"_");
   const questionId=`${idBase}_${Date.now().toString(36)}_${profCounter++}`;
   const choices=answers.map((text,idx)=>{
     const choice={id:`${idBase}_c${idx+1}`,text};
-    if(idx===correctIndex) choice.correct=true;
+    const item=profChoiceItems[idx];
+    if(item && item.checkbox && item.checkbox.checked) choice.correct=true;
     return choice;
   });
   const payload={id:questionId,level:5,prompt,choices,explanation:explanation||""};
