@@ -298,5 +298,31 @@
       }
     ],
     "explanation": "La RNA-seq quantifie l'expression génique en séquençant les ARN messagers convertis en cDNA."
+  },
+  {
+    "id": "L08Q002",
+    "level": 8,
+    "prompt": "Quelles pratiques culturales contribuent directement à limiter l’érosion des sols dans une parcelle agricole ?",
+    "choices": [
+      {
+        "id": "a",
+        "text": "Maintenir un couvert végétal permanent",
+        "correct": true
+      },
+      {
+        "id": "b",
+        "text": "Laisser les parcelles nues tout l’hiver"
+      },
+      {
+        "id": "c",
+        "text": "Installer des haies ou des bandes enherbées",
+        "correct": true
+      },
+      {
+        "id": "d",
+        "text": "Concentrer l’irrigation sur les zones en pente"
+      }
+    ],
+    "explanation": "Le couvert végétal protège le sol des impacts de la pluie tandis que les haies et bandes enherbées ralentissent le ruissellement."
   }
 ]
