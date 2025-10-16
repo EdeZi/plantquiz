@@ -529,6 +529,7 @@ function desiredLevel(){
 }
 
 function sampleLevelAround(lstar){
+  const floor = minActiveLevel();
   const r = Math.random();
   if(r<0.55) return lstar;
   if(r<0.80) return Math.min(MAX_LEVEL, lstar+0.7);
