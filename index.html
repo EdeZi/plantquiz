@@ -382,12 +382,20 @@ function restoreNormalQuestions(){
 
 /* ========= MODE NORMAL — Elo ========= */
 const MAX_LEVEL=12;
-const levelToRating = l => 700 + (l-1)*100;
-const eloToLevelFloat = e => ((e-700)/100) + 1;
-const clampLevel = l => Math.min(MAX_LEVEL, Math.max(1, l));
+const LEVEL_MIN=1;
+const BASE_RATING=1000;
+const LEVEL_STEP=100;
+const RATING_FLOOR=0;
+const levelToRating = l => {
+  const clamped = Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
+  return BASE_RATING + (clamped - LEVEL_MIN) * LEVEL_STEP;
+};
+const MAX_RATING = levelToRating(MAX_LEVEL);
+const eloToLevelFloat = e => ((e - BASE_RATING) / LEVEL_STEP) + LEVEL_MIN;
+const clampLevel = l => Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
 const eloToLevel    = e => clampLevel(Math.round(eloToLevelFloat(e)));
 
-let elo=1000, level=eloToLevel(elo);
+let elo=levelToRating(LEVEL_MIN), level=LEVEL_MIN;
 let levelAnchor=eloToLevelFloat(elo);
 let qCount=0, goodCount=0, streak=0, wrongStreak=0, answeredTotal=0;
 
@@ -410,6 +418,8 @@ function applyElo(win, qLevel){
   const ex = expected(elo, rq);
   const K = kFactor();
   elo = Math.round(elo + K * ((win?1:0) - ex));
+  if(!Number.isFinite(elo)) elo = levelToRating(LEVEL_MIN);
+  if(elo < RATING_FLOOR) elo = RATING_FLOOR;
   const instantLevel = clampLevel(eloToLevelFloat(elo));
   blendAnchor(instantLevel);
 }
@@ -420,7 +430,7 @@ const ERROR_REASK_DELAY=2;
 const CALIBRATION_SEQUENCE=[4,6,3,7,5,8];
 const CALIBRATION_LENGTH=CALIBRATION_SEQUENCE.length;
 
-const STATS_KEY="plantquiz.stats.v1";
+const STATS_KEY="plantquiz.stats.v3";
 const questionStats=new Map();
 let statsSaveTimer=null;
 
@@ -473,7 +483,7 @@ function questionStatFor(id, baseLevel){
     questionStats.set(id,{
       seen:0,
       correct:0,
-      rating:levelToRating(baseLevel||1),
+      rating:levelToRating(baseLevel||LEVEL_MIN),
       lastSeen:0,
       lastWrong:-1,
     });
@@ -483,7 +493,7 @@ function questionStatFor(id, baseLevel){
 
 function recordQuestionResult(q, win, qLevel){
   if(!q || !q.id) return;
-  const baseLevel=q.level||1;
+  const baseLevel=q.level||LEVEL_MIN;
   const stat=questionStatFor(q.id, baseLevel);
   if(typeof stat.rating!=="number") stat.rating=levelToRating(baseLevel);
   stat.seen = (stat.seen||0) + 1;
@@ -505,7 +515,7 @@ function recordQuestionResult(q, win, qLevel){
 
 function questionDifficulty(q){
   if(!q) return 1;
-  const base=Number(q.level)||1;
+  const base=Number(q.level)||LEVEL_MIN;
   const stat = q.id ? questionStats.get(q.id) : null;
   if(!stat) return base;
   const seen = stat.seen||0;
@@ -530,19 +540,19 @@ function desiredLevel(){
 }
 
 function minActiveLevel(){
-  if(!Array.isArray(QUESTIONS) || !QUESTIONS.length) return 1;
+  if(!Array.isArray(QUESTIONS) || !QUESTIONS.length) return LEVEL_MIN;
   let min = MAX_LEVEL;
   let found = false;
   for(const q of QUESTIONS){
     if(!q) continue;
     const raw = Number(q.level);
     if(Number.isFinite(raw)){
-      const clamped = Math.max(1, Math.min(MAX_LEVEL, raw));
+      const clamped = Math.max(LEVEL_MIN, Math.min(MAX_LEVEL, raw));
       if(clamped < min) min = clamped;
       found = true;
     }
   }
-  return found ? min : 1;
+  return found ? min : LEVEL_MIN;
 }
 
 function sampleLevelAround(lstar){
@@ -550,7 +560,7 @@ function sampleLevelAround(lstar){
   const r = Math.random();
   if(r<0.55) return Math.max(floor, lstar);
   if(r<0.80) return Math.max(floor, Math.min(MAX_LEVEL, lstar+0.7));
-  return Math.max(floor, Math.max(1, lstar-0.7));
+  return Math.max(floor, Math.max(LEVEL_MIN, lstar-0.7));
 }
 
 function enqueueError(id){
@@ -829,7 +839,7 @@ function renderQuestion(){
 $("nextBtn").onclick=renderQuestion;
 
 function resetQuizState(){
-  elo=1000; level=eloToLevel(elo); levelAnchor=eloToLevelFloat(elo);
+  elo=levelToRating(LEVEL_MIN); level=LEVEL_MIN; levelAnchor=eloToLevelFloat(elo);
   qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0;
   recentIds.length=0; errorQueue.length=0;
   selectedChoiceIds.clear();
@@ -847,7 +857,7 @@ $("setEloBtn").onclick = () => {
   if(v===null) return;
   const n = Math.round(Number(v));
   if(Number.isNaN(n)) { alert("Valeur invalide."); return; }
-  const clamped = Math.max(400, Math.min(2400, n));
+  const clamped = Math.max(RATING_FLOOR, Math.min(MAX_RATING + 400, n));
   elo = clamped;
   level = eloToLevel(elo);
   levelAnchor = eloToLevelFloat(elo);
