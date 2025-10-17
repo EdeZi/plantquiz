@@ -312,7 +312,7 @@ function cloneQuestionList(list){
       };
     }
     const levelValue = Number(item.level);
-    const safeLevel = Number.isFinite(levelValue) ? Math.max(1, levelValue) : 1;
+    const safeLevel = Number.isFinite(levelValue) ? Math.max(LEVEL_MIN, levelValue) : LEVEL_MIN;
     const clonedChoices = Array.isArray(item.choices)
       ? item.choices.map(choice=>choice && typeof choice==="object" ? ({...choice}) : {text:String(choice==null?"":choice)})
       : [];
@@ -426,15 +426,16 @@ function restoreNormalQuestions(){
 
 /* ========= MODE NORMAL — Elo ========= */
 const MAX_LEVEL=12;
+const LEVEL_MIN=1;
 const MIN_RATING=0;
 const LEVEL_STEP=100;
 const levelToRating = l => {
-  const clamped = Math.min(MAX_LEVEL, Math.max(1, l));
+  const clamped = Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
   return MIN_RATING + (clamped - 1) * LEVEL_STEP;
 };
 const MAX_RATING = levelToRating(MAX_LEVEL);
 const eloToLevelFloat = e => ((Math.max(MIN_RATING, e) - MIN_RATING) / LEVEL_STEP) + 1;
-const clampLevel = l => Math.min(MAX_LEVEL, Math.max(1, l));
+const clampLevel = l => Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
 const eloToLevel    = e => clampLevel(Math.round(eloToLevelFloat(e)));
 
 let elo=MIN_RATING, level=eloToLevel(elo);
