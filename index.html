@@ -520,6 +520,14 @@ const MAX_LEVEL=12;
 const LEVEL_MIN=1;
 const MIN_RATING=0;
 const LEVEL_STEP=100;
+const ELO_PER_LEVEL = LEVEL_STEP;
+const ELO_START = MIN_RATING;
+const BASE_GAIN = 24;
+const EARLY_BOOST_LIMIT = 10;
+const EARLY_MULTIPLIER = 2;
+const LOSS_PENALTY = 16;
+let availableLevels = [];
+const levelBuckets = new Map();
 const levelToRating = l => {
   const clamped = Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
   return MIN_RATING + (clamped - 1) * LEVEL_STEP;
@@ -577,7 +585,11 @@ function forgetRecent(id){
   const idx = recentIds.indexOf(id);
   if(idx>=0) recentIds.splice(idx,1);
 }
-function notRecentlyAsked(q){ return !recentIds.includes(q.id); }
+function notRecentlyAsked(q){
+  if(!q) return false;
+  if(!q.id) return true;
+  return !recentIds.includes(q.id);
+}
 
 function loadQuestionStats(){
   if(typeof localStorage==="undefined") return;
@@ -622,9 +634,49 @@ function questionStatFor(id, baseLevel){
       lastWrong:-1,
     });
   }
-  const higher = availableLevels.find(lvl=>lvl>target);
-  if(higher==null) return lower;
-  return Math.abs(target-higher) < Math.abs(target-lower) ? higher : lower;
+  return questionStats.get(id);
+}
+
+function clampToAvailableLevel(target){
+  const numeric = Number(target);
+  const clamped = Number.isFinite(numeric) ? clampLevel(Math.round(numeric)) : LEVEL_MIN;
+  if(!availableLevels.length) return clamped;
+  if(availableLevels.includes(clamped)) return clamped;
+  const sorted = availableLevels;
+  let lower = sorted[0];
+  let higher = sorted[sorted.length-1];
+  for(const lvl of sorted){
+    if(lvl <= clamped) lower = lvl;
+    if(lvl >= clamped){
+      higher = lvl;
+      break;
+    }
+  }
+  if(clamped <= lower) return lower;
+  if(clamped >= higher) return higher;
+  return Math.abs(clamped-lower) <= Math.abs(higher-clamped) ? lower : higher;
+}
+
+function normalizeLevel(value){
+  const numeric = Number(value);
+  if(!availableLevels.length){
+    return clampLevel(Number.isFinite(numeric) ? Math.round(numeric) : LEVEL_MIN);
+  }
+  return clampToAvailableLevel(Number.isFinite(numeric) ? Math.round(numeric) : LEVEL_MIN);
+}
+
+function prepareLevelBuckets(list){
+  levelBuckets.clear();
+  availableLevels = [];
+  if(!Array.isArray(list) || !list.length) return;
+  list.forEach(question=>{
+    if(!question) return;
+    const lvl = normalizeLevel(question.level);
+    question.level = lvl;
+    if(!levelBuckets.has(lvl)) levelBuckets.set(lvl, []);
+    levelBuckets.get(lvl).push(question);
+  });
+  availableLevels = [...levelBuckets.keys()].sort((a,b)=>a-b);
 }
 
 function levelFromElo(value){
@@ -641,23 +693,13 @@ function applyProgress(win){
   const gain = currentGain();
   if(win){
     elo += gain;
+    wrongStreak = 0;
   }else{
     elo = Math.max(ELO_START, elo - LOSS_PENALTY);
+    wrongStreak++;
   }
   answeredTotal++;
   level = levelFromElo(elo);
-}
-
-function remember(id){
-  if(!id) return;
-  recentIds.push(id);
-  if(recentIds.length>RECENT_MAX) recentIds.shift();
-}
-
-function notRecentlyAsked(q){
-  if(!q) return false;
-  if(!q.id) return true;
-  return !recentIds.includes(q.id);
 }
 
 function orderLevelsByProximity(target){
