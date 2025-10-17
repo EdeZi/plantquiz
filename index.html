@@ -481,7 +481,7 @@ function questionStatFor(id, baseLevel){
     questionStats.set(id,{
       seen:0,
       correct:0,
-      rating:levelToRating(baseLevel||1),
+      rating:levelToRating(baseLevel||LEVEL_MIN),
       lastSeen:0,
       lastWrong:-1,
     });
@@ -491,7 +491,7 @@ function questionStatFor(id, baseLevel){
 
 function recordQuestionResult(q, win, qLevel){
   if(!q || !q.id) return;
-  const baseLevel=q.level||1;
+  const baseLevel=q.level||LEVEL_MIN;
   const stat=questionStatFor(q.id, baseLevel);
   if(typeof stat.rating!=="number") stat.rating=levelToRating(baseLevel);
   stat.seen = (stat.seen||0) + 1;
@@ -513,7 +513,7 @@ function recordQuestionResult(q, win, qLevel){
 
 function questionDifficulty(q){
   if(!q) return 1;
-  const base=Number(q.level)||1;
+  const base=Number(q.level)||LEVEL_MIN;
   const stat = q.id ? questionStats.get(q.id) : null;
   if(!stat) return base;
   const seen = stat.seen||0;
@@ -538,19 +538,19 @@ function desiredLevel(){
 }
 
 function minActiveLevel(){
-  if(!Array.isArray(QUESTIONS) || !QUESTIONS.length) return 1;
+  if(!Array.isArray(QUESTIONS) || !QUESTIONS.length) return LEVEL_MIN;
   let min = MAX_LEVEL;
   let found = false;
   for(const q of QUESTIONS){
     if(!q) continue;
     const raw = Number(q.level);
     if(Number.isFinite(raw)){
-      const clamped = Math.max(1, Math.min(MAX_LEVEL, raw));
+      const clamped = Math.max(LEVEL_MIN, Math.min(MAX_LEVEL, raw));
       if(clamped < min) min = clamped;
       found = true;
     }
   }
-  return found ? min : 1;
+  return found ? min : LEVEL_MIN;
 }
 
 function sampleLevelAround(lstar){
@@ -558,7 +558,7 @@ function sampleLevelAround(lstar){
   const r = Math.random();
   if(r<0.55) return Math.max(floor, lstar);
   if(r<0.80) return Math.max(floor, Math.min(MAX_LEVEL, lstar+0.7));
-  return Math.max(floor, Math.max(1, lstar-0.7));
+  return Math.max(floor, Math.max(LEVEL_MIN, lstar-0.7));
 }
 
 function enqueueError(id){
