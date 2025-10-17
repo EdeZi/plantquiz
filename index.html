@@ -287,7 +287,95 @@ $("brand").onclick=()=>go("home");
 $("backBtn").onclick=()=>go("home");
 
 /* ========= Chargement data ========= */
-async function tryFetch(path){ try{ const r=await fetch(path,{cache:"no-store"}); if(!r.ok) throw 0; return await r.json(); } catch{ return null; } }
+function uniqList(list){
+  const seen=new Set();
+  const out=[];
+  list.forEach(item=>{
+    if(!item) return;
+    if(seen.has(item)) return;
+    seen.add(item);
+    out.push(item);
+  });
+  return out;
+}
+
+function candidateUrls(file){
+  const trimmed = String(file||"").replace(/^\.\//,"");
+  const guesses=[file, `./${trimmed}`, trimmed];
+  if(trimmed.startsWith("data/")){
+    guesses.push(`../${trimmed}`);
+    guesses.push(`/${trimmed}`);
+  }
+  const bases=[];
+  if(typeof document!=="undefined" && document.baseURI){ bases.push(document.baseURI); }
+  if(typeof location!=="undefined"){
+    if(location.href) bases.push(location.href);
+    const locOrigin = (typeof location.origin==="string" && location.origin!=="null") ? location.origin : "";
+    if(locOrigin){
+      bases.push(locOrigin + (locOrigin.endsWith("/")?"":"/"));
+    }
+    if(location.pathname){
+      const pathParts=location.pathname.split("/").filter(Boolean);
+      while(pathParts.length){
+        if(locOrigin){
+          bases.push(locOrigin + "/" + pathParts.join("/") + "/");
+        }
+        pathParts.pop();
+      }
+    }
+  }
+  bases.forEach(base=>{
+    try{ guesses.push(new URL(trimmed, base).href); }catch{}
+  });
+  return uniqList(guesses);
+}
+
+function xhrJSON(url){
+  return new Promise(resolve=>{
+    if(typeof XMLHttpRequest!=="function"){ resolve(null); return; }
+    try{
+      const xhr=new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.responseType="json";
+      xhr.onload=()=>{
+        if(xhr.status>=200 && xhr.status<300 || xhr.status===0){
+          if(xhr.response!==null) resolve(xhr.response);
+          else{
+            try{ resolve(JSON.parse(xhr.responseText)); }
+            catch{ resolve(null); }
+          }
+        }else{
+          resolve(null);
+        }
+      };
+      xhr.onerror=xhr.onabort=()=>resolve(null);
+      xhr.send();
+    }catch{ resolve(null); }
+  });
+}
+
+async function fetchJSON(url){
+  if(typeof fetch==="function"){
+    try{
+      const response=await fetch(url,{cache:"no-store"});
+      if(response && response.ok){
+        return await response.json();
+      }
+    }catch{}
+  }
+  return await xhrJSON(url);
+}
+
+async function loadJSON(file){
+  const urls=candidateUrls(file);
+  for(const url of urls){
+    const data=await fetchJSON(url);
+    if(data!==null && data!==undefined){
+      return data;
+    }
+  }
+  return null;
+}
 const todayISO = (()=>{ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; })();
 const DEMO_QUESTIONS=[{id:"demo1",level:4,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
 
@@ -298,6 +386,7 @@ let REV_DATA={semesters:[]};
 let activeQuizMode="normal";
 let revisionHistory=[];
 let normalDataFallback=false;
+let normalDataError="";
 
 function cloneQuestionList(list){
   if(!Array.isArray(list)) return [];
@@ -312,7 +401,7 @@ function cloneQuestionList(list){
       };
     }
     const levelValue = Number(item.level);
-    const safeLevel = Number.isFinite(levelValue) ? Math.max(1, levelValue) : 1;
+    const safeLevel = Number.isFinite(levelValue) ? Math.max(LEVEL_MIN, levelValue) : LEVEL_MIN;
     const clonedChoices = Array.isArray(item.choices)
       ? item.choices.map(choice=>choice && typeof choice==="object" ? ({...choice}) : {text:String(choice==null?"":choice)})
       : [];
@@ -339,17 +428,18 @@ function sanitizeNormalQuestions(payload){
 
 async function loadData(){
   if(loaded) return;
-  const normalRaw = await tryFetch("./data/questions_normal.json");
+  const normalRaw = await loadJSON("data/questions_normal.json");
   const sanitizedNormal = sanitizeNormalQuestions(normalRaw);
   normalDataFallback = !sanitizedNormal.length;
+  normalDataError = normalDataFallback && normalRaw===null ? "Impossible de charger data/questions_normal.json. Vérifie le chemin ou héberge le dossier via un serveur web." : "";
   if(normalDataFallback){
     console.warn("Impossible de charger data/questions_normal.json, utilisation du jeu de démo.");
   }
   QUESTIONS_NORMAL = normalDataFallback ? cloneQuestionList(DEMO_QUESTIONS) : sanitizedNormal;
   QUESTIONS = [...QUESTIONS_NORMAL];
-  const daily = await tryFetch("./data/pedantix_daily.json") || [{date:todayISO,target:"Chloroplaste",text:DEMO_QUESTIONS[0].explanation||"Texte."}];
+  const daily = await loadJSON("data/pedantix_daily.json") || [{date:todayISO,target:"Chloroplaste",text:DEMO_QUESTIONS[0].explanation||"Texte."}];
   PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:"Chloroplaste",text:"Texte démo."};
-  const rev = await tryFetch("./data/questions_revision.json");
+  const rev = await loadJSON("data/questions_revision.json");
   REV_DATA = (rev && Array.isArray(rev.semesters)) ? rev : {semesters:[]};
   fillProfMatter();
   loaded=true;
@@ -426,15 +516,16 @@ function restoreNormalQuestions(){
 
 /* ========= MODE NORMAL — Elo ========= */
 const MAX_LEVEL=12;
+const LEVEL_MIN=1;
 const MIN_RATING=0;
 const LEVEL_STEP=100;
 const levelToRating = l => {
-  const clamped = Math.min(MAX_LEVEL, Math.max(1, l));
+  const clamped = Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
   return MIN_RATING + (clamped - 1) * LEVEL_STEP;
 };
 const MAX_RATING = levelToRating(MAX_LEVEL);
 const eloToLevelFloat = e => ((Math.max(MIN_RATING, e) - MIN_RATING) / LEVEL_STEP) + 1;
-const clampLevel = l => Math.min(MAX_LEVEL, Math.max(1, l));
+const clampLevel = l => Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
 const eloToLevel    = e => clampLevel(Math.round(eloToLevelFloat(e)));
 
 let elo=MIN_RATING, level=eloToLevel(elo);
@@ -694,9 +785,11 @@ function updateMeta(){
   if(quizSubtitle){
     quizSubtitle.textContent = activeQuizMode==="revision"
       ? "Révise les UE sélectionnées sans Elo ni difficulté adaptative."
-      : normalDataFallback
-        ? "⚠️ Jeu de démo : vérifie data/questions_normal.json pour charger toutes les questions."
-        : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
+      : normalDataError
+        ? `⚠️ ${normalDataError}`
+        : normalDataFallback
+          ? "⚠️ Jeu de démo : vérifie data/questions_normal.json pour charger toutes les questions."
+          : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
   }
   $("eloPill2").textContent=elo;
   $("qPill2").textContent=qCount;
