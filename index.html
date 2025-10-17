@@ -135,7 +135,7 @@
       <hr style="margin:12px 0"/>
       <article>
         <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:6px">
-          <span id="eloWrap" class="pill">Elo: <b id="eloPill2">1000</b></span>
+          <span id="eloWrap" class="pill">Elo: <b id="eloPill2">0</b></span>
           <button id="setEloBtn" class="btn outline" title="Régler manuellement ton Elo">↕️ Régler Elo</button>
           <span class="pill">Q: <b id="qPill2">0</b></span>
           <span class="pill">Bonnes: <b id="goodPill2">0</b></span>
@@ -382,12 +382,18 @@ function restoreNormalQuestions(){
 
 /* ========= MODE NORMAL — Elo ========= */
 const MAX_LEVEL=12;
-const levelToRating = l => 700 + (l-1)*100;
-const eloToLevelFloat = e => ((e-700)/100) + 1;
+const MIN_RATING=0;
+const LEVEL_STEP=100;
+const levelToRating = l => {
+  const clamped = Math.min(MAX_LEVEL, Math.max(1, l));
+  return MIN_RATING + (clamped - 1) * LEVEL_STEP;
+};
+const MAX_RATING = levelToRating(MAX_LEVEL);
+const eloToLevelFloat = e => ((Math.max(MIN_RATING, e) - MIN_RATING) / LEVEL_STEP) + 1;
 const clampLevel = l => Math.min(MAX_LEVEL, Math.max(1, l));
 const eloToLevel    = e => clampLevel(Math.round(eloToLevelFloat(e)));
 
-let elo=1000, level=eloToLevel(elo);
+let elo=MIN_RATING, level=eloToLevel(elo);
 let levelAnchor=eloToLevelFloat(elo);
 let qCount=0, goodCount=0, streak=0, wrongStreak=0, answeredTotal=0;
 
@@ -410,6 +416,8 @@ function applyElo(win, qLevel){
   const ex = expected(elo, rq);
   const K = kFactor();
   elo = Math.round(elo + K * ((win?1:0) - ex));
+  if(!Number.isFinite(elo)) elo = MIN_RATING;
+  if(elo < MIN_RATING) elo = MIN_RATING;
   const instantLevel = clampLevel(eloToLevelFloat(elo));
   blendAnchor(instantLevel);
 }
@@ -420,7 +428,7 @@ const ERROR_REASK_DELAY=2;
 const CALIBRATION_SEQUENCE=[4,6,3,7,5,8];
 const CALIBRATION_LENGTH=CALIBRATION_SEQUENCE.length;
 
-const STATS_KEY="plantquiz.stats.v1";
+const STATS_KEY="plantquiz.stats.v2";
 const questionStats=new Map();
 let statsSaveTimer=null;
 
@@ -829,7 +837,7 @@ function renderQuestion(){
 $("nextBtn").onclick=renderQuestion;
 
 function resetQuizState(){
-  elo=1000; level=eloToLevel(elo); levelAnchor=eloToLevelFloat(elo);
+  elo=MIN_RATING; level=eloToLevel(elo); levelAnchor=eloToLevelFloat(elo);
   qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0;
   recentIds.length=0; errorQueue.length=0;
   selectedChoiceIds.clear();
@@ -843,11 +851,11 @@ function resetQuizState(){
 /* ====== Bouton Elo ====== */
 $("setEloBtn").onclick = () => {
   alert("⚠️ Attention : n'utilise pas ce réglage pour tricher ! 🐮");
-  const v = prompt("Entre ton Elo souhaité (ex: 1000). Conseillé: 700–1800");
+  const v = prompt("Entre ton Elo souhaité (ex: 0). Conseillé: 0–1200");
   if(v===null) return;
   const n = Math.round(Number(v));
   if(Number.isNaN(n)) { alert("Valeur invalide."); return; }
-  const clamped = Math.max(400, Math.min(2400, n));
+  const clamped = Math.max(MIN_RATING, Math.min(MAX_RATING + 400, n));
   elo = clamped;
   level = eloToLevel(elo);
   levelAnchor = eloToLevelFloat(elo);
