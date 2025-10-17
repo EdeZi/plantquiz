@@ -297,12 +297,56 @@ let QUESTIONS_NORMAL=[], QUESTIONS=[], PED_DAILY=null;
 let REV_DATA={semesters:[]};
 let activeQuizMode="normal";
 let revisionHistory=[];
+let normalDataFallback=false;
+
+function cloneQuestionList(list){
+  if(!Array.isArray(list)) return [];
+  return list.map((item, idx)=>{
+    if(!item || typeof item!=="object"){
+      return {
+        id: `normal_${idx}`,
+        level: 1,
+        prompt: "Question",
+        choices: [],
+        explanation: "",
+      };
+    }
+    const levelValue = Number(item.level);
+    const safeLevel = Number.isFinite(levelValue) ? Math.max(1, levelValue) : 1;
+    const clonedChoices = Array.isArray(item.choices)
+      ? item.choices.map(choice=>choice && typeof choice==="object" ? ({...choice}) : {text:String(choice==null?"":choice)})
+      : [];
+    return {
+      ...item,
+      id: item.id || `normal_${idx}`,
+      level: safeLevel,
+      prompt: item.prompt || "Question",
+      choices: clonedChoices,
+      explanation: item.explanation || "",
+    };
+  });
+}
+
+function sanitizeNormalQuestions(payload){
+  if(payload && typeof payload==="object" && !Array.isArray(payload) && Array.isArray(payload.questions)){
+    return cloneQuestionList(payload.questions);
+  }
+  if(Array.isArray(payload)){
+    return cloneQuestionList(payload);
+  }
+  return [];
+}
 
 async function loadData(){
   if(loaded) return;
-  const normal = await tryFetch("./data/questions_normal.json") || DEMO_QUESTIONS;
-  QUESTIONS_NORMAL = Array.isArray(normal) ? normal : DEMO_QUESTIONS;
-  QUESTIONS = QUESTIONS_NORMAL;
+  const normalRaw = await tryFetch("./data/questions_normal.json");
+  const sanitizedNormal = sanitizeNormalQuestions(normalRaw);
+  normalDataFallback = !sanitizedNormal.length;
+  if(normalDataFallback){
+    console.warn("Impossible de charger data/questions_normal.json, utilisation du jeu de démo.");
+  }
+  QUESTIONS_NORMAL = normalDataFallback ? cloneQuestionList(DEMO_QUESTIONS) : sanitizedNormal;
+  QUESTIONS = [...QUESTIONS_NORMAL];
   const daily = await tryFetch("./data/pedantix_daily.json") || [{date:todayISO,target:"Chloroplaste",text:DEMO_QUESTIONS[0].explanation||"Texte."}];
   PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:"Chloroplaste",text:"Texte démo."};
   const rev = await tryFetch("./data/questions_revision.json");
@@ -374,7 +418,7 @@ function updateHistoryUI(){
 }
 
 function restoreNormalQuestions(){
-  QUESTIONS = QUESTIONS_NORMAL;
+  QUESTIONS = [...QUESTIONS_NORMAL];
   activeQuizMode="normal";
   resetRevisionHistory();
   resetQuizState();
@@ -650,7 +694,9 @@ function updateMeta(){
   if(quizSubtitle){
     quizSubtitle.textContent = activeQuizMode==="revision"
       ? "Révise les UE sélectionnées sans Elo ni difficulté adaptative."
-      : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
+      : normalDataFallback
+        ? "⚠️ Jeu de démo : vérifie data/questions_normal.json pour charger toutes les questions."
+        : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
   }
   $("eloPill2").textContent=elo;
   $("qPill2").textContent=qCount;
