@@ -437,7 +437,6 @@ async function loadData(){
   }
   QUESTIONS_NORMAL = normalDataFallback ? cloneQuestionList(DEMO_QUESTIONS) : sanitizedNormal;
   QUESTIONS = [...QUESTIONS_NORMAL];
-  prepareLevelBuckets(QUESTIONS_NORMAL);
   const daily = await loadJSON("data/pedantix_daily.json") || [{date:todayISO,target:"Chloroplaste",text:DEMO_QUESTIONS[0].explanation||"Texte."}];
   PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:"Chloroplaste",text:"Texte démo."};
   const rev = await loadJSON("data/questions_revision.json");
@@ -516,55 +515,112 @@ function restoreNormalQuestions(){
   resetQuizState();
 }
 
-/* ========= MODE NORMAL — Progression ========= */
-const LEVEL_MIN = 1;
-const ELO_START = 0;
-const ELO_PER_LEVEL = 10;
-const BASE_GAIN = 1;
-const EARLY_BOOST_LIMIT = 5;
-const EARLY_MULTIPLIER = 2;
-const LOSS_PENALTY = 1;
+/* ========= MODE NORMAL — Elo ========= */
+const MAX_LEVEL=12;
+const LEVEL_MIN=1;
+const MIN_RATING=0;
+const LEVEL_STEP=100;
+const levelToRating = l => {
+  const clamped = Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
+  return MIN_RATING + (clamped - 1) * LEVEL_STEP;
+};
+const MAX_RATING = levelToRating(MAX_LEVEL);
+const eloToLevelFloat = e => ((Math.max(MIN_RATING, e) - MIN_RATING) / LEVEL_STEP) + 1;
+const clampLevel = l => Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
+const eloToLevel    = e => clampLevel(Math.round(eloToLevelFloat(e)));
 
-let elo = ELO_START;
-let level = 1;
-let qCount = 0;
-let goodCount = 0;
-let streak = 0;
-let answeredTotal = 0;
+let elo=MIN_RATING, level=eloToLevel(elo);
+let levelAnchor=eloToLevelFloat(elo);
+let qCount=0, goodCount=0, streak=0, wrongStreak=0, answeredTotal=0;
 
-let availableLevels = [];
-let levelBuckets = new Map();
-const recentIds = [];
-const RECENT_MAX = 20;
-
-function normalizeLevel(raw){
-  const n = Number(raw);
-  if(!Number.isFinite(n) || n < 1) return 1;
-  return Math.floor(n);
+const BASE_K=22, CALIB_K=32;
+const STREAK_STEP=0.05, STREAK_MAX=1.2, WRONG_STEP=0.05, WRONG_MAX=0.15;
+function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
+function kFactor(){
+  const base = (answeredTotal<CALIBRATION_LENGTH) ? CALIB_K : BASE_K;
+  const streakMult = 1 + Math.min(STREAK_MAX-1, Math.max(0, streak*STREAK_STEP));
+  const wrongMult = 1 - Math.min(WRONG_MAX, Math.max(0, wrongStreak*WRONG_STEP));
+  return Math.round(base * streakMult * wrongMult);
+}
+function blendAnchor(nextLevel){
+  levelAnchor = (0.75*levelAnchor) + (0.25*nextLevel);
+  levelAnchor = clampLevel(levelAnchor);
+  level = eloToLevel(levelToRating(levelAnchor));
+}
+function applyElo(win, qLevel){
+  const rq = levelToRating(qLevel);
+  const ex = expected(elo, rq);
+  const K = kFactor();
+  elo = Math.round(elo + K * ((win?1:0) - ex));
+  if(!Number.isFinite(elo)) elo = MIN_RATING;
+  if(elo < MIN_RATING) elo = MIN_RATING;
+  const instantLevel = clampLevel(eloToLevelFloat(elo));
+  blendAnchor(instantLevel);
 }
 
-function prepareLevelBuckets(list){
-  levelBuckets = new Map();
-  const levelSet = new Set();
-  (Array.isArray(list)?list:[]).forEach(q=>{
-    if(!q) return;
-    const lvl = normalizeLevel(q.level);
-    if(!levelBuckets.has(lvl)) levelBuckets.set(lvl, []);
-    levelBuckets.get(lvl).push(q);
-    levelSet.add(lvl);
-  });
-  availableLevels = [...levelSet].sort((a,b)=>a-b);
+const recentIds=[]; const RECENT_MAX=40;
+const errorQueue=[];
+const ERROR_REASK_DELAY=2;
+const CALIBRATION_SEQUENCE=[4,6,3,7,5,8];
+const CALIBRATION_LENGTH=CALIBRATION_SEQUENCE.length;
+
+const STATS_KEY="plantquiz.stats.v2";
+const questionStats=new Map();
+let statsSaveTimer=null;
+
+function remember(id){
+  if(!id) return;
+  recentIds.push(id);
+  if(recentIds.length>RECENT_MAX) recentIds.shift();
+}
+function forgetRecent(id){
+  const idx = recentIds.indexOf(id);
+  if(idx>=0) recentIds.splice(idx,1);
+}
+function notRecentlyAsked(q){ return !recentIds.includes(q.id); }
+
+function loadQuestionStats(){
+  if(typeof localStorage==="undefined") return;
+  try{
+    const raw=localStorage.getItem(STATS_KEY);
+    if(!raw) return;
+    const parsed=JSON.parse(raw);
+    if(parsed && typeof parsed==="object"){
+      Object.keys(parsed).forEach(id=>{
+        const entry=parsed[id];
+        if(entry && typeof entry==="object") questionStats.set(id,{...entry});
+      });
+    }
+  }catch{}
+}
+function saveQuestionStats(){
+  if(typeof localStorage==="undefined") return;
+  try{
+    const payload={};
+    questionStats.forEach((val,id)=>{ payload[id]=val; });
+    localStorage.setItem(STATS_KEY, JSON.stringify(payload));
+  }catch{}
+}
+function scheduleStatsSave(){
+  if(statsSaveTimer) return;
+  statsSaveTimer=setTimeout(()=>{ statsSaveTimer=null; saveQuestionStats(); }, 600);
+}
+loadQuestionStats();
+if(typeof window!=="undefined"){
+  window.addEventListener("beforeunload", saveQuestionStats);
+  window.addEventListener("pagehide", saveQuestionStats);
 }
 
-function clampToAvailableLevel(target){
-  if(!availableLevels.length) return 1;
-  if(availableLevels.includes(target)) return target;
-  if(target <= availableLevels[0]) return availableLevels[0];
-  if(target >= availableLevels[availableLevels.length-1]) return availableLevels[availableLevels.length-1];
-  let lower = availableLevels[0];
-  for(const lvl of availableLevels){
-    if(lvl <= target) lower = lvl;
-    else break;
+function questionStatFor(id, baseLevel){
+  if(!id) return null;
+  if(!questionStats.has(id)){
+    questionStats.set(id,{
+      seen:0,
+      correct:0,
+      rating:levelToRating(baseLevel||LEVEL_MIN),
+      lastSeen:0,
+      lastWrong:-1,
+    });
   }
   const higher = availableLevels.find(lvl=>lvl>target);
   if(higher==null) return lower;
@@ -665,16 +721,13 @@ function updateMeta(){
     quizTitle.textContent = activeQuizMode==="revision" ? "Quiz révision" : "Quiz normal";
   }
   if(quizSubtitle){
-    if(activeQuizMode==="revision"){
-      quizSubtitle.textContent = "Révise les UE sélectionnées sans Elo ni difficulté adaptative.";
-    }else if(normalDataError){
-      quizSubtitle.textContent = `⚠️ ${normalDataError}`;
-    }else if(normalDataFallback){
-      quizSubtitle.textContent = "⚠️ Jeu de démo : vérifie data/questions_normal.json pour charger toutes les questions.";
-    }else{
-      const baseLevel = availableLevels.length ? availableLevels[0] : 1;
-      quizSubtitle.textContent = `Niveau ${baseLevel} à Elo 0, +1 Elo par bonne réponse (x2 sur les 5 premières). ${ELO_PER_LEVEL} Elo gagnés = niveau supérieur.`;
-    }
+    quizSubtitle.textContent = activeQuizMode==="revision"
+      ? "Révise les UE sélectionnées sans Elo ni difficulté adaptative."
+      : normalDataError
+        ? `⚠️ ${normalDataError}`
+        : normalDataFallback
+          ? "⚠️ Jeu de démo : vérifie data/questions_normal.json pour charger toutes les questions."
+          : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
   }
   $("eloPill2").textContent = activeQuizMode==="normal" ? `${elo} · niv. ${level}` : "—";
   $("qPill2").textContent=qCount;
