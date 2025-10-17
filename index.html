@@ -1623,41 +1623,69 @@ if(historyPanelEl){
   historyPanelEl.addEventListener("click",evt=>{ if(evt.target===historyPanelEl) historyPanelEl.hidden=true; });
 }
 
+function ensureDataLoaded(){
+  if(loaded) return Promise.resolve(true);
+  return loadData().then(()=>true).catch(err=>{
+    console.error("Échec du chargement des données du quiz :", err);
+    if(!QUESTIONS_NORMAL.length){
+      QUESTIONS_NORMAL = cloneQuestionList(DEMO_QUESTIONS);
+      QUESTIONS = [...QUESTIONS_NORMAL];
+      prepareLevelBuckets(QUESTIONS_NORMAL);
+    }
+    normalDataFallback = true;
+    if(!normalDataError){
+      normalDataError = "Impossible de charger data/questions_normal.json. Jeu de démo utilisé.";
+    }
+    return false;
+  });
+}
+
+function launchMode(mode){
+  if(mode==="normal"){
+    restoreNormalQuestions();
+    go("normal");
+    updateMeta();
+    renderQuestion();
+  } else if(mode==="revision"){
+    go("revision");
+    fillUEsForSem((selSem && selSem.value) || "S5");
+  } else if(mode==="pedantix"){
+    go("pedantix");
+    pickDaily();
+  } else if(mode==="prof"){
+    go("prof");
+    fillProfMatter();
+    if(profPrompt) profPrompt.focus();
+  }
+}
+
 /* ========= Handlers d’accueil ========= */
 document.querySelectorAll("[data-go]").forEach(b=>{
-  b.addEventListener("click", async () => {
-    await loadData();
-    const m=b.dataset.go;
-    if(m==="normal"){
-      restoreNormalQuestions();
-      go("normal"); updateMeta(); renderQuestion();
-    } else if(m==="revision"){
-      go("revision"); fillUEsForSem(selSem.value || "S5");
-    } else if(m==="pedantix"){
-      go("pedantix"); pickDaily();
-    } else if(m==="prof"){
-      go("prof"); fillProfMatter(); if(profPrompt) profPrompt.focus();
-    }
+  b.addEventListener("click",()=>{
+    const m=b.dataset.go || "home";
+    ensureDataLoaded().then(()=>{
+      launchMode(m);
+    });
   });
 });
 
 /* ========= Boot ========= */
 const urlMode = new URLSearchParams(location.search).get("mode") || "home";
-(async function boot(){
+(function boot(){
   if(urlMode==="home"){ go("home"); return; }
-  await loadData();
-  if(urlMode==="normal"){
-    restoreNormalQuestions();
-    go("normal"); updateMeta(); renderQuestion();
-  } else if(urlMode==="revision"){
-    go("revision"); fillUEsForSem(selSem.value || "S5");
-  } else if(urlMode==="pedantix"){
-    go("pedantix"); pickDaily();
-  } else if(urlMode==="prof"){
-    go("prof"); fillProfMatter(); if(profPrompt) profPrompt.focus();
-  } else {
-    go("home");
-  }
+  ensureDataLoaded().then(()=>{
+    if(urlMode==="normal"){
+      launchMode("normal");
+    } else if(urlMode==="revision"){
+      launchMode("revision");
+    } else if(urlMode==="pedantix"){
+      launchMode("pedantix");
+    } else if(urlMode==="prof"){
+      launchMode("prof");
+    } else {
+      go("home");
+    }
+  });
 })();
 </script>
 </body>
