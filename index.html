@@ -377,7 +377,7 @@ async function loadJSON(file){
   return null;
 }
 const todayISO = (()=>{ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; })();
-const DEMO_QUESTIONS=[{id:"demo1",level:4,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
+const DEMO_QUESTIONS=[{id:"demo1",level:1,prompt:"Quelle partie réalise la photosynthèse ?",choices:[{id:"a",text:"Racines"},{id:"b",text:"Feuilles",correct:true},{id:"c",text:"Fleurs"},{id:"d",text:"Graines"}],explanation:"Les feuilles contiennent des chloroplastes."}];
 
 let loaded=false;
 /* IMPORTANT: on distingue les questions normales originales de la liste active. */
@@ -510,6 +510,7 @@ function updateHistoryUI(){
 function restoreNormalQuestions(){
   QUESTIONS = [...QUESTIONS_NORMAL];
   activeQuizMode="normal";
+  prepareLevelBuckets(QUESTIONS_NORMAL);
   resetRevisionHistory();
   resetQuizState();
 }
@@ -621,159 +622,96 @@ function questionStatFor(id, baseLevel){
       lastWrong:-1,
     });
   }
-  return questionStats.get(id);
+  const higher = availableLevels.find(lvl=>lvl>target);
+  if(higher==null) return lower;
+  return Math.abs(target-higher) < Math.abs(target-lower) ? higher : lower;
 }
 
-function recordQuestionResult(q, win, qLevel){
-  if(!q || !q.id) return;
-  const baseLevel=q.level||LEVEL_MIN;
-  const stat=questionStatFor(q.id, baseLevel);
-  if(typeof stat.rating!=="number") stat.rating=levelToRating(baseLevel);
-  stat.seen = (stat.seen||0) + 1;
+function levelFromElo(value){
+  const raw = Math.floor(Math.max(0, value) / ELO_PER_LEVEL) + 1;
+  return clampToAvailableLevel(raw);
+}
+
+function currentGain(){
+  const boostActive = answeredTotal < EARLY_BOOST_LIMIT;
+  return BASE_GAIN * (boostActive ? EARLY_MULTIPLIER : 1);
+}
+
+function applyProgress(win){
+  const gain = currentGain();
   if(win){
-    stat.correct = (stat.correct||0) + 1;
+    elo += gain;
+  }else{
+    elo = Math.max(ELO_START, elo - LOSS_PENALTY);
   }
-  stat.lastSeen = answeredTotal;
-  if(!win){
-    stat.lastWrong = answeredTotal;
-  }
-  const currentRating = typeof stat.rating==="number" ? stat.rating : levelToRating(baseLevel);
-  const target = win ? 1 : 0;
-  const playerRating = levelToRating(qLevel);
-  const expectedScore = expected(currentRating, playerRating);
-  const questionK = win ? 8 : 12;
-  stat.rating = Math.round(currentRating + questionK * (target - expectedScore));
-  scheduleStatsSave();
+  answeredTotal++;
+  level = levelFromElo(elo);
 }
 
-function questionDifficulty(q){
-  if(!q) return 1;
-  const base=Number(q.level)||LEVEL_MIN;
-  const stat = q.id ? questionStats.get(q.id) : null;
-  if(!stat) return base;
-  const seen = stat.seen||0;
-  const success = seen>0 ? (stat.correct||0)/seen : null;
-  let adjust = 0;
-  if(success!==null && seen>=3){
-    if(success>=0.85) adjust-=0.7;
-    else if(success>=0.7) adjust-=0.4;
-    else if(success<=0.3) adjust+=0.8;
-    else if(success<=0.5) adjust+=0.4;
-  }
-  const ratingLevel = clampLevel(eloToLevelFloat(stat.rating||levelToRating(base)));
-  const blended = (0.6*base)+(0.4*ratingLevel)+adjust;
-  return clampLevel(blended);
-}
-
-function desiredLevel(){
-  if(answeredTotal<CALIBRATION_LENGTH){
-    return CALIBRATION_SEQUENCE[answeredTotal] || 4;
-  }
-  return clampLevel(levelAnchor);
-}
-
-function minActiveLevel(){
-  if(!Array.isArray(QUESTIONS) || !QUESTIONS.length) return LEVEL_MIN;
-  let min = MAX_LEVEL;
-  let found = false;
-  for(const q of QUESTIONS){
-    if(!q) continue;
-    const raw = Number(q.level);
-    if(Number.isFinite(raw)){
-      const clamped = Math.max(LEVEL_MIN, Math.min(MAX_LEVEL, raw));
-      if(clamped < min) min = clamped;
-      found = true;
-    }
-  }
-  return found ? min : LEVEL_MIN;
-}
-
-function sampleLevelAround(lstar){
-  const floor = minActiveLevel();
-  const r = Math.random();
-  if(r<0.55) return Math.max(floor, lstar);
-  if(r<0.80) return Math.max(floor, Math.min(MAX_LEVEL, lstar+0.7));
-  return Math.max(floor, Math.max(LEVEL_MIN, lstar-0.7));
-}
-
-function enqueueError(id){
+function remember(id){
   if(!id) return;
-  if(errorQueue.some(entry=>entry && entry.id===id)) return;
-  errorQueue.push({id, at: answeredTotal});
+  recentIds.push(id);
+  if(recentIds.length>RECENT_MAX) recentIds.shift();
 }
 
-function clearError(id){
-  if(!id) return;
-  const idx = errorQueue.findIndex(entry=>entry && entry.id===id);
-  if(idx>=0) errorQueue.splice(idx,1);
+function notRecentlyAsked(q){
+  if(!q) return false;
+  if(!q.id) return true;
+  return !recentIds.includes(q.id);
 }
 
-function takeErrorCandidate(){
-  while(errorQueue.length){
-    const entry = errorQueue[0];
-    if(!entry){ errorQueue.shift(); continue; }
-    if(answeredTotal - entry.at < ERROR_REASK_DELAY){
-      break;
-    }
-    const q = QUESTIONS.find(item=>item.id===entry.id);
-    errorQueue.shift();
-    if(q){
-      forgetRecent(entry.id);
-      return q;
-    }
+function orderLevelsByProximity(target){
+  const sorted = [...availableLevels];
+  sorted.sort((a,b)=>{
+    const da=Math.abs(a-target);
+    const db=Math.abs(b-target);
+    if(da===db) return a-b;
+    return da-db;
+  });
+  return sorted;
+}
+
+function pickFromLevels(list){
+  for(const lvl of list){
+    const bucket = levelBuckets.get(lvl) || [];
+    const fresh = bucket.filter(notRecentlyAsked);
+    if(fresh.length) return fresh[Math.floor(Math.random()*fresh.length)];
+  }
+  for(const lvl of list){
+    const bucket = levelBuckets.get(lvl) || [];
+    if(bucket.length) return bucket[Math.floor(Math.random()*bucket.length)];
   }
   return null;
 }
-function filteredChoicesForLevel(choices, lvl){
-  if(!Array.isArray(choices)) return [];
-  const arr = [...choices].sort(()=>Math.random()-0.5);
-  if(lvl>=8){
-    const keep = arr.filter(c=>!c.joke || c.correct);
-    return keep.length? keep : arr;
-  }else{
-    let seenJoke=false;
-    const keep=[];
-    for(const c of arr){
-      if(c.correct){ keep.push(c); continue; }
-      if(c.joke===true){
-        if(!seenJoke){ keep.push(c); seenJoke=true; }
-      }else{
-        keep.push(c);
-      }
-    }
-    return keep;
-  }
+
+function pickNormalQuestion(){
+  if(!availableLevels.length) return null;
+  const desired = levelFromElo(elo);
+  const levelOrder = orderLevelsByProximity(desired);
+  if(!levelOrder.includes(desired)) levelOrder.unshift(desired);
+  const unique=[];
+  levelOrder.forEach(lvl=>{ if(!unique.includes(lvl)) unique.push(lvl); });
+  return pickFromLevels(unique);
 }
+
+function filteredChoicesForLevel(choices){
+  if(!Array.isArray(choices)) return [];
+  const clone = choices.map(choice=>choice && typeof choice==="object" ? ({...choice}) : {text:String(choice||"")});
+  return clone.sort(()=>Math.random()-0.5);
+}
+
 function pickQuestion(){
   if(!QUESTIONS || !QUESTIONS.length) return null;
-
   if(activeQuizMode==="normal"){
-    const revisit = takeErrorCandidate();
-    if(revisit) return revisit;
+    return pickNormalQuestion();
   }
-
-  const anchor = desiredLevel();
-  const target = sampleLevelAround(anchor);
-
-  const scored = QUESTIONS.map(q=>({
-    q,
-    eff: questionDifficulty(q),
-  }));
-
-  const selectWithWindow=(window)=>{
-    const eligible = scored.filter(entry=>Math.abs(entry.eff - target)<=window).map(entry=>entry.q).filter(notRecentlyAsked);
-    if(eligible.length) return eligible[Math.floor(Math.random()*eligible.length)];
-    const fallback = scored.filter(entry=>Math.abs(entry.eff - target)<=window);
-    if(fallback.length) return fallback[Math.floor(Math.random()*fallback.length)].q;
-    return null;
-  };
-
-  return selectWithWindow(0.6) || selectWithWindow(1.2) || selectWithWindow(2.5) || QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+  const pool = QUESTIONS.filter(notRecentlyAsked);
+  if(pool.length) return pool[Math.floor(Math.random()*pool.length)];
+  return QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
 }
 
 let currentQ=null, locked=false;
 let multiSelect=false;
-let currentQuestionLevel=1;
 const selectedChoiceIds=new Set();
 let choiceButtons=[];
 let choiceById=new Map();
@@ -791,11 +729,14 @@ function updateMeta(){
           ? "⚠️ Jeu de démo : vérifie data/questions_normal.json pour charger toutes les questions."
           : "Plus tu réponds juste, plus ton Elo monte et la difficulté augmente.";
   }
-  $("eloPill2").textContent=elo;
+  $("eloPill2").textContent = activeQuizMode==="normal" ? `${elo} · niv. ${level}` : "—";
   $("qPill2").textContent=qCount;
   $("goodPill2").textContent=goodCount;
   $("streakPill2").textContent=streak;
-  $("streakNote2").textContent = (streak>=7?"🥵 bouillant":streak>=4?"🔥 en feu":streak>=2?"😎 ça progresse":streak===1?"🙂 bien joué":streak===0?"":"🧊 va réviser");
+  const streakLabel = (streak>=7?"🥵 bouillant":streak>=4?"🔥 en feu":streak>=2?"😎 ça progresse":streak===1?"🙂 bien joué":streak===0?"":"🧊 va réviser");
+  const boostLabel = (activeQuizMode==="normal" && answeredTotal < EARLY_BOOST_LIMIT) ? "⚡ boost x2" : "";
+  const noteParts=[streakLabel, boostLabel].filter(Boolean);
+  $("streakNote2").textContent = noteParts.join(" · ");
   const showElo = activeQuizMode==="normal";
   const eloWrap=$("eloWrap"), streakWrap=$("streakWrap"), setEloBtn=$("setEloBtn"), historyBtn=$("historyBtn");
   if(eloWrap) eloWrap.hidden=!showElo;
@@ -818,7 +759,7 @@ function updateCheckButton(){
     checkBtn.disabled=true;
   }
 }
-function handleChoiceClick(choiceId, btn, qLevel){
+function handleChoiceClick(choiceId, btn){
   if(locked) return;
   if(multiSelect){
     const key=String(choiceId);
@@ -837,10 +778,10 @@ function handleChoiceClick(choiceId, btn, qLevel){
       if(b===btn) b.classList.add("selected");
       else b.classList.remove("selected");
     });
-    evaluateAnswer(new Set(selectedChoiceIds), qLevel);
+    evaluateAnswer(new Set(selectedChoiceIds));
   }
 }
-function evaluateAnswer(selectedIds, qLevel){
+function evaluateAnswer(selectedIds){
   if(locked) return;
   locked=true;
   const checkBtn=$("checkBtn");
@@ -863,21 +804,16 @@ function evaluateAnswer(selectedIds, qLevel){
     updateCheckButton();
     return;
   }
-  qCount++; answeredTotal++;
+  qCount++;
   const correctIds=new Set(correctEntries.map(([id])=>String(id)));
   const win = normalizedSelected.size===correctIds.size && [...normalizedSelected].every(id=>correctIds.has(id));
   if(win){
     goodCount++;
-    if(activeQuizMode==="normal"){ streak++; wrongStreak=0; }
-    else { streak=0; wrongStreak=0; }
-    if(activeQuizMode==="normal") clearError(currentQ.id);
+    streak++;
   }else{
-    if(activeQuizMode==="normal"){ streak=0; wrongStreak++; }
-    else { streak=0; wrongStreak=0; }
-    if(activeQuizMode==="normal") enqueueError(currentQ.id);
+    streak=0;
   }
-  const effectiveLevel=Math.round(questionDifficulty(currentQ));
-  recordQuestionResult(currentQ, win, effectiveLevel);
+  const effectiveLevel=normalizeLevel(currentQ.level);
 
   choiceButtons.forEach(btn=>{
     const id=btn.dataset.id;
@@ -896,7 +832,7 @@ function evaluateAnswer(selectedIds, qLevel){
     }
   });
 
-  if(activeQuizMode==="normal"){ applyElo(win, effectiveLevel); }
+  if(activeQuizMode==="normal"){ applyProgress(win); }
   const explanationText=currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"";
   $("explain").hidden=false;
   $("explain").innerHTML=(win?"✅ Correct.":"❌ Incorrect.")+explanationText;
@@ -931,14 +867,22 @@ function renderQuestion(){
     return;
   }
   currentQ = pickQuestion();
+  if(!currentQ){
+    $("qPrompt").textContent="Aucune question disponible pour ce niveau.";
+    $("choices").innerHTML="";
+    $("explain").hidden=false;
+    $("explain").textContent="Ajoute davantage de questions dans la banque pour continuer.";
+    $("nextBtn").disabled=true;
+    const checkBtn=$("checkBtn");
+    if(checkBtn){ checkBtn.hidden=true; checkBtn.disabled=true; }
+    return;
+  }
   locked=false;
   selectedChoiceIds.clear();
   choiceButtons=[];
   choiceById=new Map();
 
-  const lvl = Math.round(questionDifficulty(currentQ));
-  currentQuestionLevel=lvl;
-  let choices = filteredChoicesForLevel(currentQ.choices||[], lvl);
+  let choices = filteredChoicesForLevel(currentQ.choices||[]);
   if(!choices.some(c=>c && c.correct) && (currentQ.choices||[]).some(c=>c && c.correct)){
     const correct = (currentQ.choices||[]).find(c=>c && c.correct);
     if(correct){
@@ -958,7 +902,7 @@ function renderQuestion(){
     const choiceId=(c && c.id!==undefined && c.id!==null) ? String(c.id) : String(idx);
     b.dataset.id=choiceId;
     choiceById.set(choiceId, c);
-    b.onclick=()=>handleChoiceClick(choiceId, b, lvl);
+    b.onclick=()=>handleChoiceClick(choiceId, b);
     container.appendChild(b);
     choiceButtons.push(b);
   });
@@ -968,7 +912,7 @@ function renderQuestion(){
     checkBtn.onclick = () => {
       if(locked) return;
       if(!selectedChoiceIds.size) return;
-      evaluateAnswer(new Set(selectedChoiceIds), currentQuestionLevel);
+      evaluateAnswer(new Set(selectedChoiceIds));
     };
   }
   updateCheckButton();
@@ -976,9 +920,13 @@ function renderQuestion(){
 $("nextBtn").onclick=renderQuestion;
 
 function resetQuizState(){
-  elo=MIN_RATING; level=eloToLevel(elo); levelAnchor=eloToLevelFloat(elo);
-  qCount=0; goodCount=0; streak=0; wrongStreak=0; answeredTotal=0;
-  recentIds.length=0; errorQueue.length=0;
+  elo=ELO_START;
+  level=levelFromElo(elo);
+  qCount=0;
+  goodCount=0;
+  streak=0;
+  answeredTotal=0;
+  recentIds.length=0;
   selectedChoiceIds.clear();
   choiceButtons=[];
   choiceById=new Map();
@@ -990,14 +938,15 @@ function resetQuizState(){
 /* ====== Bouton Elo ====== */
 $("setEloBtn").onclick = () => {
   alert("⚠️ Attention : n'utilise pas ce réglage pour tricher ! 🐮");
-  const v = prompt("Entre ton Elo souhaité (ex: 0). Conseillé: 0–1200");
+  const v = prompt("Entre ton Elo souhaité (ex: 0). Conseillé: 0–200");
   if(v===null) return;
   const n = Math.round(Number(v));
   if(Number.isNaN(n)) { alert("Valeur invalide."); return; }
-  const clamped = Math.max(MIN_RATING, Math.min(MAX_RATING + 400, n));
+  const maxLevel = availableLevels.length ? availableLevels[availableLevels.length-1] : 1;
+  const maxElo = maxLevel * ELO_PER_LEVEL;
+  const clamped = Math.max(ELO_START, Math.min(maxElo, n));
   elo = clamped;
-  level = eloToLevel(elo);
-  levelAnchor = eloToLevelFloat(elo);
+  level = levelFromElo(elo);
   updateMeta();
 };
 
