@@ -79,6 +79,14 @@
           <select id="profMatter"></select>
         </label>
         <label class="field">
+          <span class="muted">Identifiant de question</span>
+          <input id="profId" type="text" placeholder="S6_autotrophie_q1" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span class="muted">Niveau (1 à 5)</span>
+          <input id="profLevel" type="number" min="1" max="5" value="1" />
+        </label>
+        <label class="field">
           <span class="muted">Énoncé</span>
           <textarea id="profPrompt" placeholder="Saisir la question" spellcheck="false"></textarea>
         </label>
@@ -1195,13 +1203,44 @@ $("revLaunch").onclick=()=>{
 
 /* ========= Outil prof ========= */
 const profMatter=$("profMatter"), profPrompt=$("profPrompt"), profExplain=$("profExplain"), profOutput=$("profOutput");
+const profId=$("profId"), profLevel=$("profLevel");
 const profChoicesWrap=$("profChoices");
 const profChoiceAdd=$("profChoiceAdd");
 const profChoiceRemove=$("profChoiceRemove");
 const MIN_PROF_CHOICES=2;
 const MAX_PROF_CHOICES=5;
+const PROF_LEVEL_MIN=1;
+const PROF_LEVEL_MAX=5;
 let profChoiceItems=[];
-let profCounter=1;
+
+if(profLevel && !profLevel.value) profLevel.value="1";
+
+function profDefaultId(){
+  const matter=profMatter && profMatter.value ? profMatter.value : "";
+  return matter ? `${matter}_` : "";
+}
+
+function sanitizeProfLevel(value){
+  const parsed=parseInt(value,10);
+  const level=Number.isFinite(parsed) ? Math.min(PROF_LEVEL_MAX, Math.max(PROF_LEVEL_MIN, parsed)) : PROF_LEVEL_MIN;
+  if(profLevel) profLevel.value=String(level);
+  return level;
+}
+
+function nextProfId(current,matter){
+  const trimmed=(current||"").trim();
+  if(!trimmed){
+    return matter ? `${matter}_` : "";
+  }
+  const match=trimmed.match(/^(.*?)(\d+)$/);
+  if(match){
+    const prefix=match[1];
+    const num=match[2];
+    const next=(parseInt(num,10)+1).toString().padStart(num.length,'0');
+    return `${prefix}${next}`;
+  }
+  return trimmed;
+}
 
 function profChoiceLabel(idx){
   return String.fromCharCode(65 + idx);
@@ -1257,6 +1296,7 @@ function fillProfMatter(){
   }
   profMatter.innerHTML = list.map(item=>`<option value="${item.id}">${item.label}</option>`).join("");
   profMatter.value = list.some(item=>item.id===current) ? current : list[0].id;
+  if(profId) profId.value=profDefaultId();
 }
 fillProfMatter();
 
@@ -1271,41 +1311,57 @@ function initProfChoices(){
 initProfChoices();
 if(profChoiceAdd) profChoiceAdd.onclick=()=>{ addProfChoice(); };
 if(profChoiceRemove) profChoiceRemove.onclick=()=>{ removeProfChoice(); };
+resetProfFields();
+if(profMatter) profMatter.addEventListener("change",()=>{
+  if(profId) profId.value=profDefaultId();
+});
+if(profLevel) profLevel.addEventListener("change",()=>{
+  sanitizeProfLevel(profLevel.value);
+});
 
-function resetProfFields(){
-  profPrompt.value="";
-  profExplain.value="";
+function resetProfFields(options={}){
+  const {keepId=false, keepLevel=false}=options;
+  if(profPrompt) profPrompt.value="";
+  if(profExplain) profExplain.value="";
   profChoiceItems.forEach(item=>{
     if(item.input) item.input.value="";
     if(item.checkbox) item.checkbox.checked=false;
   });
+  if(!keepId && profId) profId.value=profDefaultId();
+  if(!keepLevel && profLevel) profLevel.value=String(PROF_LEVEL_MIN);
 }
 
 function addRevisionQuestion(){
   const matter=profMatter.value;
+  const rawId=profId ? profId.value : "";
   const prompt=profPrompt.value.trim();
   const explanation=profExplain.value.trim();
   const answers=profChoiceItems.map(item=>item && item.input ? item.input.value.trim() : "");
   const correctSelections=profChoiceItems.filter(item=>item && item.checkbox && item.checkbox.checked);
 
   if(!matter){ alert("Choisissez une matière."); return; }
+  const sanitizedId=(rawId||"").replace(/[^A-Za-z0-9_]+/g,"_").trim();
+  if(!sanitizedId){ alert("Ajoutez un identifiant de question."); if(profId) profId.focus(); return; }
   if(!prompt){ alert("Ajoutez un énoncé."); profPrompt.focus(); return; }
   if(answers.some(a=>!a)){ alert("Toutes les réponses doivent être renseignées."); return; }
   if(!correctSelections.length){ alert("Sélectionnez au moins une réponse correcte."); return; }
 
-  const idBase=matter.replace(/[^a-z0-9_]+/gi,"_");
-  const questionId=`${idBase}_${Date.now().toString(36)}_${profCounter++}`;
+  const level=sanitizeProfLevel(profLevel ? profLevel.value : PROF_LEVEL_MIN);
+  if(profId) profId.value=sanitizedId;
   const choices=answers.map((text,idx)=>{
-    const choice={id:`${idBase}_c${idx+1}`,text};
+    const choiceId=String.fromCharCode(97 + idx);
+    const choice={id:choiceId,text};
     const item=profChoiceItems[idx];
     if(item && item.checkbox && item.checkbox.checked) choice.correct=true;
     return choice;
   });
-  const payload={id:questionId,level:5,prompt,choices,explanation:explanation||""};
+  const payload={id:sanitizedId,level,prompt,choices,explanation:explanation||""};
   const line=JSON.stringify(payload);
   profOutput.value = profOutput.value ? `${profOutput.value}\n${line}` : line;
   profOutput.scrollTop = profOutput.scrollHeight;
-  resetProfFields();
+  const nextIdSuggestion=nextProfId(sanitizedId, matter);
+  resetProfFields({keepId:true, keepLevel:true});
+  if(profId) profId.value=nextIdSuggestion;
   profPrompt.focus();
 }
 
