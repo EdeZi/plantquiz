@@ -160,13 +160,7 @@
       <div class="rowL">
         <label class="field" style="min-width:220px">
           <span class="muted">Semestre</span>
-          <select id="selSem">
-            <option value="S5">S5</option>
-            <option value="S6">S6</option>
-            <option value="S7">S7</option>
-            <option value="S8">S8</option>
-            <option value="S9">S9</option>
-          </select>
+          <select id="selSem"></select>
         </label>
       </div>
       <div class="row" style="gap:8px;margin:10px 0">
@@ -441,6 +435,7 @@ async function loadData(){
   PED_DAILY = (Array.isArray(daily) ? daily.find(x=>x.date===todayISO) : null) || (Array.isArray(daily)?daily[0]:null) || {date:todayISO,target:"Chloroplaste",text:"Texte démo."};
   const rev = await loadJSON("data/questions_revision.json");
   REV_DATA = (rev && Array.isArray(rev.semesters)) ? rev : {semesters:[]};
+  updateSemesterOptions();
   fillProfMatter();
   loaded=true;
 }
@@ -1032,7 +1027,7 @@ $("setEloBtn").onclick = () => {
   updateMeta();
 };
 
-/* ========= MODE RÉVISION (S5..S9) ========= */
+/* ========= MODE RÉVISION ========= */
 const selSem = $("selSem"), ueCore=$("ueCore"), ueOpt=$("ueOpt");
 function label(id,lbl){ return `<label class="pill"><input type="checkbox" data-id="${id}"> ${lbl}</label>`; }
 function updateRevLaunchState(){
@@ -1053,6 +1048,27 @@ function findSemesterEntry(sem){
     const keys=[entry.sem, entry.id, entry.code, entry.semester].filter(Boolean);
     return keys.includes(sem);
   }) || null;
+}
+function availableSemesters(){
+  const result=[];
+  const seen=new Set();
+  for(const entry of REV_DATA.semesters||[]){
+    if(!entry || typeof entry!=="object") continue;
+    const keys=[entry.sem, entry.id, entry.code, entry.semester]
+      .map(key=>typeof key==="string"?key.trim():key)
+      .filter(key=>key!==undefined && key!==null && String(key).trim()!=="");
+    if(!keys.length) continue;
+    const id=String(keys[0]).trim();
+    if(!id || seen.has(id)) continue;
+    seen.add(id);
+    const label=entry.label || entry.name || entry.title || id;
+    result.push({id, label});
+  }
+  return result;
+}
+function defaultSemesterId(){
+  const list=availableSemesters();
+  return list.length ? list[0].id : "";
 }
 function sanitizeSubjects(list, entry){
   let source = Array.isArray(list) ? list : null;
@@ -1090,7 +1106,31 @@ function fillUEsForSem(sem){
     i.onchange=updateRevLaunchState;
   });
 }
-selSem.onchange = () => fillUEsForSem(selSem.value);
+function updateSemesterOptions(){
+  if(!selSem) return;
+  const previous=selSem.value;
+  selSem.innerHTML="";
+  const semesters=availableSemesters();
+  if(!semesters.length){
+    const opt=document.createElement("option");
+    opt.value="";
+    opt.textContent="—";
+    selSem.appendChild(opt);
+    fillUEsForSem("");
+    return;
+  }
+  semesters.forEach(sem=>{
+    const opt=document.createElement("option");
+    opt.value=sem.id;
+    opt.textContent=sem.label;
+    selSem.appendChild(opt);
+  });
+  const hasPrevious=semesters.some(sem=>sem.id===previous);
+  const nextValue=hasPrevious ? previous : semesters[0].id;
+  selSem.value=nextValue;
+  fillUEsForSem(nextValue);
+}
+selSem.onchange = () => fillUEsForSem(selSem.value || defaultSemesterId());
 $("btnAllCore").onclick=()=>{ const inputs=ueCore.querySelectorAll("input"); inputs.forEach(i=>i.checked=true); updateRevLaunchState(); };
 $("btnAllOpt").onclick=()=>{ const inputs=ueOpt.querySelectorAll("input"); inputs.forEach(i=>i.checked=true); updateRevLaunchState(); };
 $("btnClear").onclick=()=>{ document.querySelectorAll("#revision input[type=checkbox]").forEach(i=>i.checked=false); updateRevLaunchState(); };
@@ -1730,7 +1770,13 @@ function launchMode(mode){
     renderQuestion();
   } else if(mode==="revision"){
     go("revision");
-    fillUEsForSem((selSem && selSem.value) || "S5");
+    if(selSem){
+      if(!selSem.options.length){
+        updateSemesterOptions();
+      }else{
+        fillUEsForSem(selSem.value || defaultSemesterId());
+      }
+    }
   } else if(mode==="pedantix"){
     go("pedantix");
     pickDaily();
