@@ -516,16 +516,29 @@ function restoreNormalQuestions(){
 }
 
 /* ========= MODE NORMAL — Elo ========= */
-const MAX_LEVEL=12;
-const LEVEL_MIN=1;
-const MIN_RATING=0;
-const LEVEL_STEP=100;
+/*
+  Paramètres centralisés : ajustez-les pour modifier la progression.
+  - ratingStep : Elo à franchir pour passer un niveau (≈ 15–20 bonnes réponses sans erreur).
+  - baseGain : gain Elo par bonne réponse (hors boost).
+  - earlyBoost : boost appliqué sur les premières questions pour lancer la partie.
+  - lossPenalty : malus qui augmente avec le niveau de la question (niveau 5-6 plus punitif).
+*/
+const LEVEL_CONFIG = {
+  maxLevel: 6,
+  ratingStep: 120,
+  baseGain: 8,
+  earlyBoost: { limit: 12, multiplier: 1.5 },
+  lossPenalty: { base: 10, perLevel: 3, max: 28 },
+};
+const MAX_LEVEL = LEVEL_CONFIG.maxLevel;
+const LEVEL_MIN = 1;
+const MIN_RATING = 0;
+const LEVEL_STEP = LEVEL_CONFIG.ratingStep;
 const ELO_PER_LEVEL = LEVEL_STEP;
 const ELO_START = MIN_RATING;
-const BASE_GAIN = 24;
-const EARLY_BOOST_LIMIT = 10;
-const EARLY_MULTIPLIER = 2;
-const LOSS_PENALTY = 16;
+const BASE_GAIN = LEVEL_CONFIG.baseGain;
+const EARLY_BOOST_LIMIT = LEVEL_CONFIG.earlyBoost.limit;
+const EARLY_MULTIPLIER = LEVEL_CONFIG.earlyBoost.multiplier;
 let availableLevels = [];
 const levelBuckets = new Map();
 const levelToRating = l => {
@@ -537,10 +550,38 @@ const eloToLevelFloat = e => ((Math.max(MIN_RATING, e) - MIN_RATING) / LEVEL_STE
 const clampLevel = l => Math.min(MAX_LEVEL, Math.max(LEVEL_MIN, l));
 const eloToLevel    = e => clampLevel(Math.round(eloToLevelFloat(e)));
 
+function lossPenaltyForLevel(levelValue){
+  const cfg = LEVEL_CONFIG.lossPenalty;
+  const normalized = clampLevel(Number.isFinite(levelValue) ? Math.round(levelValue) : LEVEL_MIN);
+  const penalty = cfg.base + (normalized - LEVEL_MIN) * cfg.perLevel;
+  return Math.max(0, Math.min(cfg.max, penalty));
+}
+
 let elo=MIN_RATING, level=eloToLevel(elo);
 let levelAnchor=eloToLevelFloat(elo);
 let qCount=0, goodCount=0, streak=0, wrongStreak=0, answeredTotal=0;
 
+function buildCalibrationSequence(maxLevel){
+  const ordered=[];
+  const seen=new Set();
+  const midpoint=Math.round((LEVEL_MIN + maxLevel)/2);
+  const push=lvl=>{
+    if(lvl<LEVEL_MIN || lvl>maxLevel || seen.has(lvl)) return;
+    ordered.push(lvl);
+    seen.add(lvl);
+  };
+  push(midpoint);
+  push(maxLevel);
+  push(LEVEL_MIN);
+  for(let offset=1; ordered.length<maxLevel; offset++){
+    push(midpoint + offset);
+    push(midpoint - offset);
+  }
+  return ordered;
+}
+
+const CALIBRATION_SEQUENCE = buildCalibrationSequence(MAX_LEVEL);
+const CALIBRATION_LENGTH = CALIBRATION_SEQUENCE.length;
 const BASE_K=22, CALIB_K=32;
 const STREAK_STEP=0.05, STREAK_MAX=1.2, WRONG_STEP=0.05, WRONG_MAX=0.15;
 function expected(eloA, eloB){ return 1/(1+Math.pow(10,(eloB-eloA)/400)); }
@@ -569,8 +610,6 @@ function applyElo(win, qLevel){
 const recentIds=[]; const RECENT_MAX=40;
 const errorQueue=[];
 const ERROR_REASK_DELAY=2;
-const CALIBRATION_SEQUENCE=[4,6,3,7,5,8];
-const CALIBRATION_LENGTH=CALIBRATION_SEQUENCE.length;
 
 const STATS_KEY="plantquiz.stats.v2";
 const questionStats=new Map();
@@ -689,13 +728,14 @@ function currentGain(){
   return BASE_GAIN * (boostActive ? EARLY_MULTIPLIER : 1);
 }
 
-function applyProgress(win){
+function applyProgress(win, questionLevel){
   const gain = currentGain();
   if(win){
     elo += gain;
     wrongStreak = 0;
   }else{
-    elo = Math.max(ELO_START, elo - LOSS_PENALTY);
+    const penaltyLevel = Number.isFinite(questionLevel) ? questionLevel : level;
+    elo = Math.max(ELO_START, elo - lossPenaltyForLevel(penaltyLevel));
     wrongStreak++;
   }
   answeredTotal++;
@@ -874,7 +914,7 @@ function evaluateAnswer(selectedIds){
     }
   });
 
-  if(activeQuizMode==="normal"){ applyProgress(win); }
+  if(activeQuizMode==="normal"){ applyProgress(win, effectiveLevel); }
   const explanationText=currentQ.explanation?`<br>💡 ${currentQ.explanation}`:"";
   $("explain").hidden=false;
   $("explain").innerHTML=(win?"✅ Correct.":"❌ Incorrect.")+explanationText;
