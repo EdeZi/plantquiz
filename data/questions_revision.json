@@ -57,11 +57,455 @@
           ]
         },
         {
-          "id": "S7_nutrition_plantes",
+           "id": "S7_nutrition_plantes",
           "label": "Nutrition des plantes",
+          "id": "S7_nutrition_plantes_intro",
+          "label": "Introduction à la nutrition des plantes",
           "questions": [
             {"id":"S7_nutrition_plantes_test1","level":1,"prompt":"Question test 1 pour Nutrition des plantes ?","choices":[{"id":"a","text":"Réponse 1","correct":true},{"id":"b","text":"Réponse 2"},{"id":"c","text":"Réponse 3"},{"id":"d","text":"Réponse 4"}],"explanation":"Explication factice."},
             {"id":"S7_nutrition_plantes_test2","level":2,"prompt":"Question test 2 pour Nutrition des plantes ?","choices":[{"id":"a","text":"Option 1"},{"id":"b","text":"Option 2","correct":true},{"id":"c","text":"Option 3"},{"id":"d","text":"Option 4"}],"explanation":"Explication factice."}
+            {
+              "id": "S7_nutrition_plantes_intro_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Introduction à la nutrition des plantes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_intro_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Introduction à la nutrition des plantes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes_carbone",
+          "label": "Assimilation du carbone / Photosynthèse",
+          "questions": [
+            {
+              "id": "S7_nutrition_plantes_carbone_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Assimilation du carbone / Photosynthèse ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_carbone_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Assimilation du carbone / Photosynthèse ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes_azote",
+          "label": "Assimilation de l’azote",
+          "questions": [
+            {
+              "id": "S7_nutrition_plantes_azote_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Assimilation de l’azote ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_azote_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Assimilation de l’azote ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes_nitrate",
+          "label": "Transport du nitrate",
+          "questions": [
+            {
+              "id": "S7_nutrition_plantes_nitrate_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Transport du nitrate ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_nitrate_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Transport du nitrate ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes_soufre",
+          "label": "Assimilation du soufre",
+          "questions": [
+            {
+              "id": "S7_nutrition_plantes_soufre_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Assimilation du soufre ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_soufre_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Assimilation du soufre ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes_potassium",
+          "label": "Nutrition en potassium",
+          "questions": [
+            {
+              "id": "S7_nutrition_plantes_potassium_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Nutrition en potassium ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_potassium_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Nutrition en potassium ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes_fer",
+          "label": "Nutrition en fer",
+          "questions": [
+            {
+              "id": "S7_nutrition_plantes_fer_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Nutrition en fer ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_fer_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Nutrition en fer ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
+          ]
+        },
+        {
+          "id": "S7_nutrition_plantes_integration",
+          "label": "Couplages métaboliques et intégration",
+          "questions": [
+            {
+              "id": "S7_nutrition_plantes_integration_test1",
+              "level": 1,
+              "prompt": "Question test 1 pour Couplages métaboliques et intégration ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_integration_test2",
+              "level": 2,
+              "prompt": "Question test 2 pour Couplages métaboliques et intégration ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
           ]
         }
       ]
