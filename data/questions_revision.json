@@ -8,110 +8,16 @@
           "id": "S5_dev_plantes",
           "label": "Développement des plantes",
           "questions": [
-            {
-              "id": "S5_dev_plantes_test1",
-              "prompt": "Question test 1 pour Développement des plantes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Réponse 1",
-                  "correct": true
-                },
-                {
-                  "id": "b",
-                  "text": "Réponse 2"
-                },
-                {
-                  "id": "c",
-                  "text": "Réponse 3",
-                  "correct": true
-                },
-                {
-                  "id": "d",
-                  "text": "Réponse 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            },
-            {
-              "id": "S5_dev_plantes_test2",
-              "prompt": "Question test 2 pour Développement des plantes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Option 1"
-                },
-                {
-                  "id": "b",
-                  "text": "Option 2",
-                  "correct": true
-                },
-                {
-                  "id": "c",
-                  "text": "Option 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Option 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            }
+            {"id": "S5_dev_plantes_test1", "prompt": "Question test 1 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3", "correct": true}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
+            {"id": "S5_dev_plantes_test2", "prompt": "Question test 2 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
           ]
         },
         {
           "id": "S5_TOTO",
           "label": "TOTO",
           "questions": [
-            {
-              "id": "S5_TOTO_test1",
-              "prompt": "Question test 1 pour TOTO ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Réponse 1",
-                  "correct": true
-                },
-                {
-                  "id": "b",
-                  "text": "Réponse 2"
-                },
-                {
-                  "id": "c",
-                  "text": "Réponse 3",
-                  "correct": true
-                },
-                {
-                  "id": "d",
-                  "text": "Réponse 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            },
-            {
-              "id": "S5_TOTO_test2",
-              "prompt": "Question test 2 pour TOTO ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Option 1"
-                },
-                {
-                  "id": "b",
-                  "text": "Option 2",
-                  "correct": true
-                },
-                {
-                  "id": "c",
-                  "text": "Option 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Option 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            }
+            {"id": "S5_TOTO_test1", "prompt": "Question test 1 pour TOTO ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3", "correct": true}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
+            {"id": "S5_TOTO_test2", "prompt": "Question test 2 pour TOTO ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
           ]
         }
       ]
@@ -124,54 +30,8 @@
           "id": "S6_autotrophie",
           "label": "Autotrophie",
           "questions": [
-            {
-              "id": "S6_autotrophie_test1",
-              "prompt": "Question test 1 pour Autotrophie ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Réponse 1",
-                  "correct": true
-                },
-                {
-                  "id": "b",
-                  "text": "Réponse 2"
-                },
-                {
-                  "id": "c",
-                  "text": "Réponse 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Réponse 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            },
-            {
-              "id": "S6_autotrophie_test2",
-              "prompt": "Question test 2 pour Autotrophie ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Option 1"
-                },
-                {
-                  "id": "b",
-                  "text": "Option 2",
-                  "correct": true
-                },
-                {
-                  "id": "c",
-                  "text": "Option 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Option 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            }
+            {"id": "S6_autotrophie_test1", "prompt": "Question test 1 pour Autotrophie ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
+            {"id": "S6_autotrophie_test2", "prompt": "Question test 2 pour Autotrophie ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
           ]
         }
       ]
@@ -184,216 +44,32 @@
           "id": "S7_dev_plantes",
           "label": "Développement des plantes",
           "questions": [
-            {
-              "id": "S7_dev_plantes_test1",
-              "prompt": "Question test 1 pour Développement des plantes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Réponse 1",
-                  "correct": true
-                },
-                {
-                  "id": "b",
-                  "text": "Réponse 2"
-                },
-                {
-                  "id": "c",
-                  "text": "Réponse 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Réponse 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            },
-            {
-              "id": "S7_dev_plantes_test2",
-              "prompt": "Question test 2 pour Développement des plantes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Option 1"
-                },
-                {
-                  "id": "b",
-                  "text": "Option 2",
-                  "correct": true
-                },
-                {
-                  "id": "c",
-                  "text": "Option 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Option 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            }
+            {"id": "S7_dev_plantes_test1", "prompt": "Question test 1 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
+            {"id": "S7_dev_plantes_test2", "prompt": "Question test 2 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
           ]
         },
         {
           "id": "S7_interactions_pm",
           "label": "Interactions plantes–microorganismes",
           "questions": [
-            {
-              "id": "S7_interactions_pm_test1",
-              "prompt": "Question test 1 pour Interactions plantes–microorganismes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Réponse 1",
-                  "correct": true
-                },
-                {
-                  "id": "b",
-                  "text": "Réponse 2"
-                },
-                {
-                  "id": "c",
-                  "text": "Réponse 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Réponse 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            },
-            {
-              "id": "S7_interactions_pm_test2",
-              "prompt": "Question test 2 pour Interactions plantes–microorganismes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Option 1"
-                },
-                {
-                  "id": "b",
-                  "text": "Option 2",
-                  "correct": true
-                },
-                {
-                  "id": "c",
-                  "text": "Option 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Option 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            }
+            {"id": "S7_interactions_pm_test1", "prompt": "Question test 1 pour Interactions plantes–microorganismes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
+            {"id": "S7_interactions_pm_test2", "prompt": "Question test 2 pour Interactions plantes–microorganismes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
           ]
         },
         {
           "id": "S7_genetique_moleculaire",
           "label": "Génétique moléculaire végétale",
           "questions": [
-            {
-              "id": "S7_genetique_moleculaire_test1",
-              "prompt": "Question test 1 pour Génétique moléculaire végétale ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Réponse 1",
-                  "correct": true
-                },
-                {
-                  "id": "b",
-                  "text": "Réponse 2"
-                },
-                {
-                  "id": "c",
-                  "text": "Réponse 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Réponse 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            },
-            {
-              "id": "S7_genetique_moleculaire_test2",
-              "prompt": "Question test 2 pour Génétique moléculaire végétale ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Option 1"
-                },
-                {
-                  "id": "b",
-                  "text": "Option 2",
-                  "correct": true
-                },
-                {
-                  "id": "c",
-                  "text": "Option 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Option 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            }
+            {"id": "S7_genetique_moleculaire_test1", "prompt": "Question test 1 pour Génétique moléculaire végétale ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
+            {"id": "S7_genetique_moleculaire_test2", "prompt": "Question test 2 pour Génétique moléculaire végétale ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
           ]
         },
         {
           "id": "S7_nutrition_plantes_intro",
           "label": "Nutrition des plantes",
           "questions": [
-            {
-              "id": "S7_nutrition_plantes_test1",
-              "prompt": "Question test 1 pour Nutrition des plantes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Réponse 1",
-                  "correct": true
-                },
-                {
-                  "id": "b",
-                  "text": "Réponse 2"
-                },
-                {
-                  "id": "c",
-                  "text": "Réponse 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Réponse 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            },
-            {
-              "id": "S7_nutrition_plantes_test2",
-              "prompt": "Question test 2 pour Nutrition des plantes ?",
-              "choices": [
-                {
-                  "id": "a",
-                  "text": "Option 1"
-                },
-                {
-                  "id": "b",
-                  "text": "Option 2",
-                  "correct": true
-                },
-                {
-                  "id": "c",
-                  "text": "Option 3"
-                },
-                {
-                  "id": "d",
-                  "text": "Option 4"
-                }
-              ],
-              "explanation": "Explication factice."
-            }
+            {"id": "S7_nutrition_plantes_test1", "prompt": "Question test 1 pour Nutrition des plantes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
+            {"id": "S7_nutrition_plantes_test2", "prompt": "Question test 2 pour Nutrition des plantes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
           ]
         }
       ]
