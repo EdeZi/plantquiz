@@ -18,6 +18,8 @@
           "questions": [
             {"id": "S5_TOTO_test1", "prompt": "Question test 1 pour TOTO ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3", "correct": true}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
             {"id": "S5_TOTO_test2", "prompt": "Question test 2 pour TOTO ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {"id":"S5_TOTO_","prompt":"Je suis une licorne","choices":[{"id":"a","text":"oui"},{"id":"b","text":"non"},{"id":"c","text":"je sais pas"},{"id":"d","text":"j'aime l'idée","correct":true}],"explanation":"La licorne est une petite joie de vie"},
+{"id":"S5_TOTO_","prompt":"ma tante","choices":[{"id":"a","text":"Vrai","correct":true},{"id":"b","text":"Faux"}],"explanation":"zz"}
           ]
         }
       ]
