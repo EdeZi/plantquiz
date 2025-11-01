@@ -102,10 +102,13 @@
           <button id="profAdd" class="btn" type="button">Ajouter</button>
           <button id="profReset" class="btn outline" type="button">Réinitialiser</button>
         </div>
-        <label class="field">
+        <div class="field">
           <span class="muted">Sortie JSON (une ligne par question)</span>
           <textarea id="profOutput" readonly spellcheck="false"></textarea>
-        </label>
+          <div class="row" style="justify-content:flex-start">
+            <button id="profOutputClear" class="btn outline" type="button">🧹 Vider la sortie</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1196,7 +1199,7 @@ $("revLaunch").onclick=()=>{
 };
 
 /* ========= Outil prof ========= */
-const profMatter=$("profMatter"), profPrompt=$("profPrompt"), profExplain=$("profExplain"), profOutput=$("profOutput");
+const profMatter=$("profMatter"), profPrompt=$("profPrompt"), profExplain=$("profExplain"), profOutput=$("profOutput"), profOutputClear=$("profOutputClear");
 const profId=$("profId");
 const profChoicesWrap=$("profChoices");
 const profChoiceAdd=$("profChoiceAdd");
@@ -1344,6 +1347,19 @@ function addRevisionQuestion(){
 
 $("profAdd").onclick=addRevisionQuestion;
 $("profReset").onclick=()=>{ resetProfFields(); profOutput.value=""; };
+if(profOutputClear){
+  profOutputClear.onclick=()=>{
+    if(!profOutput) return;
+    if(!profOutput.value){
+      profOutput.focus();
+      return;
+    }
+    if(window.confirm("Voulez-vous vraiment supprimer le contenu de la sortie code ?")){
+      profOutput.value="";
+      profOutput.focus();
+    }
+  };
+}
 
 /* ========= PÉDANTIX (daily) — lemmatisation FR renforcée ========= */
 const wordRe = /[A-Za-zÀ-ÖØ-öø-ÿ'-]+|[^A-Za-zÀ-ÖØ-öø-ÿ'-]+/g;
