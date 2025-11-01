@@ -1152,7 +1152,6 @@ function collectRevisionQuestions(ids){
         const choices = Array.isArray(q.choices) ? q.choices.map(choice=>({...choice})) : [];
         out.push({
           id: q.id || `${subject.id}_${idx}`,
-          level: (q.level !== undefined && q.level !== null) ? q.level : 1,
           prompt: q.prompt || "Question",
           choices,
           explanation: q.explanation || "",
@@ -1186,7 +1185,6 @@ $("revLaunch").onclick=()=>{
   }
   QUESTIONS = selectedQuestions.map(q=>({
     id: q.id,
-    level: q.level,
     prompt: q.prompt,
     choices: Array.isArray(q.choices)?q.choices.map(c=>({...c})) : [],
     explanation: q.explanation,
@@ -1335,7 +1333,7 @@ function addRevisionQuestion(){
     return choice;
   });
   const payload={id:sanitizedId,prompt,choices,explanation:explanation||""};
-  const line=JSON.stringify(payload);
+  const line=`${JSON.stringify(payload)},`;
   profOutput.value = profOutput.value ? `${profOutput.value}\n${line}` : line;
   profOutput.scrollTop = profOutput.scrollHeight;
   const nextIdSuggestion=nextProfId(sanitizedId, matter);
