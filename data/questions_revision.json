@@ -8,8 +8,55 @@
           "id": "S5_dev_plantes",
           "label": "Développement des plantes",
           "questions": [
-            {"id": "S5_dev_plantes_test1", "prompt": "Question test 1 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3", "correct": true}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
-            {"id": "S5_dev_plantes_test2", "prompt": "Question test 2 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {
+              "id": "S5_dev_plantes_test1",
+              "prompt": "Question test 1 pour Développement des plantes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3",
+                  "correct": true
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S5_dev_plantes_test2",
+              "prompt": "Question test 2 pour Développement des plantes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
           ]
         }
       ]
@@ -22,20 +69,192 @@
           "id": "S6_autotrophie",
           "label": "Autotrophie",
           "questions": [
-            {"id": "S6_autotrophie_test1", "prompt": "Question test 1 pour Autotrophie ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
-            {"id":"S6_autotrophie_","prompt":"Combien il a de dada chez moi ?","choices":[{"id":"a","text":"1"},{"id":"b","text":"2","correct":true},{"id":"c","text":"3","correct":true},{"id":"d","text":"522","correct":true}],"explanation":"je suis"},
-{"id":"S6_autotrophie_","prompt":"J'aime les chiens","choices":[{"id":"a","text":"Vrai","correct":true},{"id":"b","text":"Faux"}],"explanation":"c'est cool"},
-            {"id": "S6_autotrophie_test2", "prompt": "Question test 2 pour Autotrophie ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {
+              "id": "S6_autotrophie_test1",
+              "prompt": "Question test 1 pour Autotrophie ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S6_autotrophie_",
+              "prompt": "Combien il a de dada chez moi ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "1"
+                },
+                {
+                  "id": "b",
+                  "text": "2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "3",
+                  "correct": true
+                },
+                {
+                  "id": "d",
+                  "text": "522",
+                  "correct": true
+                }
+              ],
+              "explanation": "je suis"
+            },
+            {
+              "id": "S6_autotrophie_",
+              "prompt": "J'aime les chiens",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Vrai",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Faux"
+                }
+              ],
+              "explanation": "c'est cool"
+            },
+            {
+              "id": "S6_autotrophie_test2",
+              "prompt": "Question test 2 pour Autotrophie ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
           ]
         },
         {
           "id": "S6_Cheval",
           "label": "Cheval",
           "questions": [
-            {"id": "S6_autotrophie_test1", "prompt": "Question test 1 pour Autotrophie ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
-            {"id":"S6_autotrophie_","prompt":"Combien il a de dada chez moi ?","choices":[{"id":"a","text":"1"},{"id":"b","text":"2","correct":true},{"id":"c","text":"3","correct":true},{"id":"d","text":"522","correct":true}],"explanation":"je suis"},
-{"id":"S6_autotrophie_","prompt":"J'aime les chiens","choices":[{"id":"a","text":"Vrai","correct":true},{"id":"b","text":"Faux"}],"explanation":"c'est cool"},
-            {"id": "S6_autotrophie_test2", "prompt": "Question test 2 pour Autotrophie ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {
+              "id": "S6_autotrophie_test1",
+              "prompt": "Question test 1 pour Autotrophie ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S6_autotrophie_",
+              "prompt": "Combien il a de dada chez moi ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "1"
+                },
+                {
+                  "id": "b",
+                  "text": "2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "3",
+                  "correct": true
+                },
+                {
+                  "id": "d",
+                  "text": "522",
+                  "correct": true
+                }
+              ],
+              "explanation": "je suis"
+            },
+            {
+              "id": "S6_autotrophie_",
+              "prompt": "J'aime les chiens",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Vrai",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Faux"
+                }
+              ],
+              "explanation": "c'est cool"
+            },
+            {
+              "id": "S6_autotrophie_test2",
+              "prompt": "Question test 2 pour Autotrophie ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
           ]
         }
       ]
@@ -48,130 +267,345 @@
           "id": "S7_dev_plantes",
           "label": "Développement des plantes",
           "questions": [
-{"id": "S7_dev_plantes", "prompt": "Quel sont les fonctions de l’ABA ? Promeut la dormance des bourgeons Mettre en place les ressources nutritives dans la graine Empêche la sortie de la radicule. Induit l’expression de FLC et réprime FT", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Quelle sont les forme inactive de l’ABA ? ABA-GE ABA-libre ABA-glucosides PA/DPA", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Lors d’un stress qui entraine une fermeture des stomates qu’induit l’ABA ? Une vague calcique L’expression de ROS La sortie d’amidon L’entrée de malate dans la vacuole", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Sur qu’elle gène l’ABA agit directement : PIK PLC PIP IP3 SphK", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Quelle est la/ les bonne voie de signalisation pour l’ouverture des stomates : Calcium  CDPKs  anion chanel -| ouverture stomate Calcium  CDPKs  CIPK23  AKT1 Calcium  CBL1/9  CIPK23  AKT1 Calcium  CDPKs  CBL1/9  anion chanel", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Quelle est le phénotype du mutant abi1 et abi2 ? Résistance à la sécheresse Insensibilité à l’ABA Hypersensibilité à l’ABA Insensibilité à la sécheresse", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La famille des PYR/PYL sont des récepteurs à l’ABA ?", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "En présence de ABA PP2C inhibe SnRK2s ?", "choices": [{"id": "a", "text": "Vrai"}, {"id": "b", "text": "Faux", "correct": true}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L'ABA est essentiellement produite dans l'albumen ?", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "ABA interagit avec PP2C et ABAR pour activer SnRK2 qui va réguler les autres gènes ?", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Qu’elle est la définition d’une hormone ? Substance chimique élaborée par un groupe de cellule ou une glande endocrine qui exerce une action sur le fonctionnement d’un organe. Substance chimique élaborée par un groupe de cellule ou une glande exocrine agissant sur l’organe émetteur. Signal strictement local (jamais transporté) synthétisé par un groupe de cellules et actif uniquement par contact direct sur l’organe voisin. Molécule sécrétée par un tissu spécialisé et efficace uniquement à haute dose (≥ 1 mM), sans effet à faibles concentrations.", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Qu’elle acide aminé est présent dans la voie de biosynthèse de l’auxine ? Tryptophane Méthionine Phénylalanine Glutamate", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Qu’elle est le rôle du NPA ? Inhibiteur du transport de l’auxine Augmente le flux d’auxine Stimule synthèse de l’auxine N’a pas d’effet sur l’auxine", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La molécule TIBA inhibe le recyclage des protéines PIN entre endosome et membrane plasmique.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les flavonoïdes peuvent moduler la localisation des PIN in vivo.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le recyclage des PIN repose principalement sur la dynamique des microtubules.", "choices": [{"id": "a", "text": "Vrai"}, {"id": "b", "text": "Faux", "correct": true}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les effets de la mutation GNOM sont comparables à ceux de la BFA.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les protéines PIN sont adressées à la membrane plasmique par la voie sécrétoire.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’auxine stimule l’expansion cellulaire à travers un phénomène de croissance acide ?", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’auxine doit être perçue par les récepteurs TIR1/AFB pour inhiber l’élongation cellulaire.", "choices": [{"id": "a", "text": "Vrai"}, {"id": "b", "text": "Faux", "correct": true}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La voie MAX1–MAX3–MAX4 agit comme régulateur positif du transport polarisé d’IAA, favorisant ainsi le débourrement des bourgeons axillaires.", "choices": [{"id": "a", "text": "Vrai"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Question", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Question", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Question", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les gènes SAUR, GH3 et Aux/IAA sont des gènes induits rapidement et transitoirement par l’auxine, et possèdent tous un élément AuxRE (TGTCTC) dans leur promoteur.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les protéines GH3 activent l’auxine libre (IAA) en la transformant sous forme conjuguée pour amplifier le signal hormonal.", "choices": [{"id": "a", "text": "Vrai"}, {"id": "b", "text": "Faux", "correct": true}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les protéines ARF (Auxin Response Factor) et Aux/IAA peuvent former des hétérodimères via leurs domaines III et IV, ce qui inhibe l’activité transcriptionnelle des ARF.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Dans la voie de signalisation de l’auxine, le récepteur TIR1 est une protéine F-box qui reconnaît les Aux/IAA en l’absence d’auxine, entraînant leur ubiquitination et dégradation par le protéasome 26S.", "choices": [{"id": "a", "text": "Vrai"}, {"id": "b", "text": "Faux", "correct": true}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[F] Les gènes SAUR induits par l’auxine : Sont exprimés en 2 à 5 minutes après perception de l’IAA Codent de petites protéines à durée de vie très longue Participent à la régulation rapide du signal auxinique Font partie de la même famille que les GH3 Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[I] Les gènes GH3 : Codent des enzymes d’adénylation qui conjuguent l’IAA à des acides aminés Participent à l’activation du jasmonate (JA) Font partie du complexe SCF-TIR1 Ont pour rôle d’amplifier le signal de l’IAA Bonnes réponses : a, b", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[I] Les gènes Aux/IAA : Codent des répresseurs de transcription à demi-vie courte Sont dégradés via le protéasome 26S Activent directement les gènes de réponse à l’auxine Interagissent avec les ARF pour inhiber leur activité Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[A] Les gènes SAUR, GH3 et Aux/IAA : Partagent un même élément régulateur, l’AuxRE Présentent la séquence consensus TGTCTC dans leur promoteur Sont insensibles à la perception d’auxine par TIR1 Sont des gènes précoces de réponse à l’auxine Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[I] Concernant les ARF (Auxin Response Factors) : Certains sont activateurs, d’autres répresseurs Peuvent former des hétérodimères avec les Aux/IAA via leurs domaines III–IV Sont ubiquitinés directement par TIR1 Se lient aux séquences AuxRE dans les promoteurs cibles Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[A] Le récepteur TIR1 : Est une protéine F-box composant d’un complexe SCF (Skp–Cullin–F-box) Se lie directement à l’auxine Recrute les protéines Aux/IAA pour les ubiquitiner en présence d’IAA Active la transcription en se fixant sur les promoteurs DR5 Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[I] Dans la signalisation auxinique : L’auxine agit comme une colle moléculaire entre TIR1 et Aux/IAA La dégradation des Aux/IAA libère les ARF et active la transcription L’auxine modifie directement la séquence d’ADN des gènes cibles L’ubiquitination est un mécanisme post-traductionnel de régulation Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "[A] Dans la cascade de dégradation protéique : L’enzyme E1 active l’ubiquitine L’enzyme E2 transfère l’ubiquitine vers la cible via l’enzyme E3 Une seule molécule d’ubiquitine est suffisante pour déclencher la dégradation La polyubiquitination est requise pour la reconnaissance par le protéasome 26S Bonnes réponses : a, b, d Brassinosteroides", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La synthèse de brassinostéroides commence à partir de campestérol et de cycloarténol.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les brassinostéroïdes (BR) sont principalement impliqués dans : L’élongation et la division cellulaire La fixation de l’azote atmosphérique La croissance des tiges et des racines La sénescence foliaire immédiate Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Concernant la résistance au stress, les BR : Augmentent la tolérance à la chaleur, au froid, à la salinité et à la sécheresse Inhibent l’expression des protéines de stress (HSP) Activent des mécanismes de défense physiologiques et moléculaires Affaiblissent la réponse immunitaire de la plante Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les brassinostéroïdes participent à la reproduction végétale en : Favorisant la transition florale Induisant la formation de fleurs et le rendement en graines Supprimant la floraison pour privilégier la croissance végétative Agissant en synergie avec les cytokinines uniquement Bonnes réponses : a, b", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Dans la photomorphogenèse, les BR : Facilitent la skotomorphogenèse (croissance en obscurité) Induisent une tige courte et des feuilles larges dans le noir Régulent la morphologie foliaire à la lumière Empêchent toute réponse de la plante à la lumière Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Un déficit en brassinostéroïdes pourrait provoquer : Un nanisme marqué Une inhibition de l’élongation cellulaire Une meilleure résistance à la sécheresse Une réduction du développement vasculaire Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Lorsqu’une plante pousse en présence de BR dans l’obscurité : Les tiges s’allongent davantage Les feuilles sont réduites et pâles Le phénomène est appelé photomorphogenèse On parle de skotomorphogenèse Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les BR, en coordination avec d’autres hormones, contribuent à : Ajuster la croissance selon les conditions lumineuses et environnementales Maintenir un équilibre entre division, différenciation et défense Réprimer l’expression des gènes de stress Intégrer les signaux hormonaux pour une croissance harmonieuse Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le mutant det2 (deetiolated 2) est : Un mutant de biosynthèse des brassinostéroïdes Un mutant insensible aux brassinostéroïdes Restauré par application de brassinolide exogène Déficient en gibbérellines Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La protéine BRI1 est : Un récepteur membranaire à domaine LRR kinase Localisée au cytoplasme Activée par la liaison du brassinolide (BL) Nécessaire pour la transduction du signal BR Bonnes réponses : a, c, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le complexe BRI1–BAK1 activé entraîne : La phosphorylation des protéines BSK L’activation de la phosphatase BSU1 L’inhibition directe de BZR1 L’activation d’un signal cytoplasmique en cascade Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Dans la cascade BR, la protéine BSU1 : Est une phosphatase activée par BSK Inhibe BIN2 en le déphosphorylant Active directement BZR1 dans le noyau Est un régulateur positif de la voie BR Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les protéines BZR1/BES1 : Sont des facteurs de transcription régulés par phosphorylation Sont dégradées quand elles sont phosphorylées par BIN2 S’accumulent dans le noyau quand BR ↑ Sont exportées vers le cytoplasme après activation Bonnes réponses : a, b, c Cytokinine", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les cytokinines (CK) sont dérivées : De l’adénine Du tryptophane Des caroténoïdes De la méthionine", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’enzyme IPT (isopentényltransférase) : Catalyse la première étape de la biosynthèse des CK à partir d’ATP ou d’ADP Hydrolyse les CK actives en ribosides inactifs Est principalement active dans les racines et embryons Produit des CK uniquement dans la tige Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les principaux rôles physiologiques des CK sont : Stimuler la division cellulaire et l’expansion foliaire Retarder la sénescence en maintenant la chlorophylle Fermer les stomates pour limiter la transpiration Favoriser la formation de bourgeons latéraux Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "En culture in vitro : Les CK favorisent la caulogenèse (formation de tiges et feuilles) Une absence totale de CK conduit à la rhizogenèse Des mutants surproducteurs de CK développent des structures buissonnantes Les CK inhibent toute division méristématique Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’interaction CK/auxine implique que : L’auxine stimule la dégradation des CK via la CKX L’auxine inhibe la conjugaison des CK Les deux hormones agissent en antagonisme partiel Les CK favorisent le bourgeonnement, que l’auxine supprime Bonnes réponses : a, c, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les CK favorisent la division cellulaire en : Induisant l’expression de la cyclin D3 (CycD3) Activant la transition G1/S du cycle cellulaire Inhibant la phosphatase Cdc25 Agissant aussi à la transition G2/M par déphosphorylation d’une Cdk Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les CK favorisent la différenciation des plastes en : Chromoplastes Chloroplastes Amyloplastes Statolithes", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le retard de sénescence induit par les CK s’explique par : Le maintien de la chlorophylle et des chloroplastes La stimulation de la dégradation des protéines foliaires L’activation de la respiration mitochondriale L’inhibition des gènes de catabolisme chlorophyllien Bonnes réponses : a, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La galle du collet résulte de : Une activation constitutive du gène ipt Une surproduction simultanée de CK et d’auxine Une inhibition du transport de CK vers les feuilles Une absence de brassinostéroïdes Bonnes réponses : a, b", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le facteur WUSCHEL (WUS) : Est activé par la signalisation cytokinine via AHK4 Maintient les cellules du SAM dans un état indifférencié Active directement STM (Shoot Meristemless) Est inhibé par la voie CLV1–CLV3 Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La boucle WUS–CLV3 permet : De limiter la prolifération excessive des cellules souches D’inhiber WUS via CLV1 pour ajuster la taille du méristème D’activer STM lorsque WUS est réprimé De stimuler l’auxine pour maintenir la différenciation Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Dans le méristème apical racinaire (RAM) : Les CK réduisent la taille de la zone proliférative Les CK ont un effet opposé à celui observé dans le SAM Les CK favorisent la croissance racinaire Les CK stimulent la croissance foliaire Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La triple réponse observée chez les plantules exposées à l’éthylène comprend : Un raccourcissement de la tige Une réduction du diamètre de la tige Une perte de l’orientation de croissance (hook / courbure de l’apex) Un allongement marqué des entre-nœuds Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’ACC (1-aminocyclopropane-1-carboxylique) est un précurseur direct de l’éthylène.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Concernant la biosynthèse de l’éthylène : L’étape limitante est catalysée par l’ACS (ACC synthase). L’ACO (ACC oxydase) intervient en amont de l’ACS. La famille ACS comprend plusieurs isoformes régulées post-traductionnellement. L’éthylène est directement dérivé de la méthionine sans intermédiaire. Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Dans le schéma du cycle de Yang (bilan de biosynthèse) : La méthionine est convertie en S-adénosyl-méthionine (SAM). MTA et MTR sont des intermédiaires du cycle du soufre. L’éthylène provient directement de l’oxydation du méthanol. KMB (2-céto-4-méthylthiobutyrate) fait partie du cycle métabolique. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La production d’éthylène est constante tout au long du développement.", "choices": [{"id": "a", "text": "Vrai"}, {"id": "b", "text": "Faux", "correct": true}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Concernant la régulation de la biosynthèse d’éthylène : L’éthylène peut s’auto-induire dans certains fruits climactériques. L’éthylène provoque toujours la dégradation de toutes les ACS. Le mutant eto1 est un surproducteur d’éthylène. Le système ubiquitine/protéasome contrôle la stabilité de l’ACS. Bonnes réponses : a, c, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’éthylène joue plusieurs rôles physiologiques, notamment : La maturation climactérique des fruits. La formation d’aérénchyme en conditions d’hypoxie. L’inhibition de la sénescence florale. La régulation de l’ouverture stomatique en stress hydrique. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le mutant ctr1 présente : Une activation constitutive de la réponse à l’éthylène. Une perte de sensibilité à l’éthylène. Une mutation gain-de-fonction du récepteur ETR1. Un défaut de transport de cuivre.", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les récepteurs ETR1/ERS1/ETR2/EIN4/ERS2 agissent comme des répresseurs de la voie en absence d’éthylène.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Concernant EIN2 et EIN3 : EIN2 est un régulateur positif localisé au réticulum endoplasmique. EIN3 est un facteur de transcription activant les gènes ERF1. EIN3 est dégradé via le complexe SCF^EBF1/EBF2 en absence de signal. EIN2 est une kinase MAPKKK activant directement CTR1. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Dans la voie de signalisation de l’éthylène : ETR1 est un récepteur à domaine histidine-kinase. CTR1 est un régulateur négatif interagissant avec ETR1. RAN1 est un transporteur de cuivre indispensable à l’activité des récepteurs. EBF1/EBF2 sont des phosphatases activant EIN3. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les mutations dominantes etr1-1 maintiennent le récepteur en conformation répressive, entraînant une insensibilité à l’éthylène.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les mutants présentant une activation constitutive de la réponse à l’éthylène sont : ctr1 mutant perte de fonction. eto1 surproducteur d’éthylène. ein2 mutant perte de fonction. Double mutant récepteurs etr1 ers1. Bonnes réponses : a, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le traitement par C₂H₄ induit une boucle autocatalytique de production d’éthylène dans certains fruits.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Sous anoxie racinaire, la séquence d’événements est : Synthèse d’ACC dans les racines → transport vers les feuilles → conversion en éthylène → épinastie. Synthèse d’ACC dans les racines → accumulation d’éthylène dans les racines sans transport. Inhibition de la formation d’aérénchyme par l’éthylène. Absence de relation entre racine et feuille, accumulation d’éthylène dans les racines.", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’abondance du facteur EIN3 est contrôlée par : La dégradation par le complexe SCF^EBF1/2. La phosphorylation stabilisante par CTR1. Une régulation post-transcriptionnelle impliquant XRN4. La transcription induite par ERF1. Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’inhibiteur d’action de l’éthylène mentionné dans le cours est : Le STS (silver thiosulfate). L’ACC oxydase. Le cuivre. Le 1-MCP (1-méthylcyclopropène).", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Associez les gènes et leurs phénotypes : eto1 → surproduction d’éthylène par dérégulation d’ACS. ran1 → perte d’activité des récepteurs (défaut de transport de cuivre). ein3 → activation constitutive du signal. etr1-1 → insensibilité dominante à l’éthylène. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les rôles biologiques de l’éthylène incluent : L’abscission foliaire couplée à la baisse d’auxine. La stimulation de racines adventives et de poils racinaires. L’inhibition générale de la sénescence. L’activation de gènes de défense comme les chitinases. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Le contrôle de l’émission d’éthylène est influencé par la voie de signalisation elle-même (boucle de rétrocontrôle).", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La microsporogenèse correspond à : La formation des microspores à partir de microsporocytes diploïdes. Deux divisions mitotiques successives. Une méiose aboutissant à quatre cellules haploïdes. Une différenciation directe des grains de pollen. Bonnes réponses : a, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La microgamétogenèse comprend : Deux mitoses successives. La formation d’un grain de pollen bicellulaire puis tricellulaire. Une étape méiotique finale. La différenciation des gamètes mâles. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Chez Arabidopsis, la majorité des grains de pollen sont : Bicellulaires à maturité. Tricellulaires à maturité. Arrêtés après la mitose I. Dépourvus de cellule générative.", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Concernant le rôle des cellules du grain de pollen : La cellule végétative forme le tube pollinique. Les gamètes mâles assurent la fusion avec les cellules femelles. Les gamètes mâles contiennent un cytoplasme riche en organites. La cellule végétative ne contient pas de réserves. Bonnes réponses : a, b", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Durant la mégasporogenèse : Une cellule mère (mégasporocyte) subit une méiose. Quatre mégaspores haploïdes se forment et persistent toutes. Trois mégaspores dégénèrent. Une seule mégaspore fonctionnelle subsiste. Bonnes réponses : a, c, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La mégagamétogenèse se caractérise par : Trois divisions mitotiques successives sans cytokinèse. La formation d’un syncytium à 8 noyaux. Une absence de migration nucléaire. La cellularisation et la différenciation des cellules du sac embryonnaire. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Dans le sac embryonnaire d’Arabidopsis : On trouve une oosphère, deux synergides, une cellule centrale et trois antipodes. Les antipodes participent à la nutrition embryonnaire. Les synergides guident le tube pollinique. La cellule centrale résulte de la fusion de deux noyaux polaires. Bonnes réponses : a, b, c, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’entrée du tube pollinique dans l’ovule : Se fait par le micropyle. Implique une décharge explosive du contenu du tube. Nécessite l’intégrité des deux synergides. Résulte d’un guidage par signaux sporophytiques et gamétophytiques. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La double fécondation aboutit à : La formation d’un embryon diploïde. La formation d’un albumen triploïde. La transformation des téguments en téguments de la graine. Une fusion des gamètes mâles uniquement avec l’oosphère. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "D’identifier des mutants affectés dans la méiose. De détecter des altérations de développement du sac embryonnaire. De sélectionner des mutants surproduisant des gamètes mâles. De repérer des anomalies dans la transmission gamétique. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les approches « omiques » permettent : D’obtenir un transcriptome de cellules uniques. D’identifier des gènes spécifiquement exprimés dans les gamètes. D’analyser la dynamique du développement cellulaire. D’observer directement la double fécondation sans marquage. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "L’isolement des cellules reproductrices peut se faire par : Cytométrie en flux (FACS). Microdissection laser. Hybridation in situ. Purification des noyaux marqués par fluorescence. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La biologie évolutive du développement (Evo-Devo) permet de : Comprendre la conservation des réseaux de régulation du développement. Identifier des duplications géniques et leurs effets fonctionnels. Étudier des mécanismes ancestraux de la reproduction. Supprimer l’étude des gènes redondants. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les gènes RKD chez Arabidopsis : S’expriment spécifiquement dans l’oosphère. Présentent une forte redondance fonctionnelle. Leur surexpression bloque la différenciation de l’oosphère. Ne sont pas présents chez Marchantia. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les gènes BONOBO (BNB) : Sont des facteurs de transcription conservés chez les plantes terrestres. Contrôlent la spécification des gamètes. Sont redondants chez Arabidopsis. Leur double mutation n’affecte que la transmission maternelle. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "La protéine FERONIA : Est localisée dans les synergides au niveau de l’appareil filiforme. Contrôle la réception du tube pollinique. Est exprimée exclusivement dans le tube pollinique. Son absence empêche la décharge des gamètes mâles. Bonnes réponses : a, b, d", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les récepteurs ANXUR : Sont exprimés dans le tube pollinique. Contrôlent la stabilité du tube pollinique avant la décharge. Interagissent avec les peptides RALF4/19. Sont localisés dans les téguments de l’ovule. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Les peptides RALF jouent un rôle dans : Le maintien de la croissance du tube pollinique (RALF4/19). L’induction de la décharge dans les synergides (RALF34). La communication entre tube pollinique et ovule. L’inhibition de la fécondation. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."},
-{"id": "S7_dev_plantes", "prompt": "Durant la double fécondation : La migration des gamètes mâles dépend de l’actine. Le blocage de la polyspermie est assuré par la dégénérescence de la synergide persistante. Une triple fusion (double fécondation + fusion synergide/albumen) est observée. L’actine n’intervient pas dans le transport des gamètes. Bonnes réponses : a, b, c", "choices": [], "explanation": "Voir cours de développement des plantes."}
+            { "id": "S7_dev_plantes_q001", "prompt": "Combien de grands systèmes tissulaires distingue-t-on classiquement chez les Angiospermes (organisation histologique primaire) ?", "choices": [ { "id": "a", "text": "Deux, seulement tissus conducteur et protecteur." }, { "id": "b", "text": "Trois, conducteur, fondamental (ou parenchyme) et protecteur." }, { "id": "c", "text": "Quatre, méristématique, conducteur (xylème/phloème), fondamental (parenchyme/collenchyme/sclerenchyme), protecteur (épiderme).", "correct": true }, { "id": "d", "text": "Cinq, ajout d’un tissu reproducteur distinct (ovaire/fruit considéré séparément)." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q002", "prompt": "Le xylème transporte principalement :", "choices": [ { "id": "a", "text": "Des assimilats (sucres) des feuilles vers les puits de stockage." }, { "id": "b", "text": "Des signaux peptidiques exclusivement (peptides mobiles)." }, { "id": "c", "text": "La sève brute.", "correct": true }, { "id": "d", "text": "La sève élaborée." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q003", "prompt": "Les méristèmes latéraux (p. ex. cambium vasculaire) assurent :", "choices": [ { "id": "a", "text": "L’organogenèse florale." }, { "id": "b", "text": "La croissance en épaisseur.", "correct": true }, { "id": "c", "text": "La croissance en longueur primaire." }, { "id": "d", "text": "Le maintien de la dormance des bourgeons axillaires." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q004", "prompt": "Les plasmodesmes relèvent d’une connectivité :", "choices": [ { "id": "a", "text": "Symplastique — continuité du cytoplasme entre cellules via plasmodesmes.", "correct": true }, { "id": "b", "text": "Apoplastique — circulation via paroi cellulaire et espace extracellulaire." }, { "id": "c", "text": "Vacuolaire — échanges exclusivement entre vacuoles." }, { "id": "d", "text": "Mitochondriale — connexion des compartiments énergétiques." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q005", "prompt": "La plasticité phénotypique végétale découle notamment de :", "choices": [ { "id": "a", "text": "Migration cellulaire extensive." }, { "id": "b", "text": "Croissance indéterminée et position-dépendance du destin cellulaire.", "correct": true }, { "id": "c", "text": "Présence de centrioles actifs guidant la migration des cellules." }, { "id": "d", "text": "Absence de paroi cellulaire permettant la réorganisation tissulaire." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q006", "prompt": "Les cellules de collenchyme se caractérisent par :", "choices": [ { "id": "a", "text": "Parois secondaires lignifiées, cellules mortes à maturité (comme le xylème), fournissant rigidité." }, { "id": "b", "text": "Mortes à maturité et rôle mécanique (sclérenchyme typique)." }, { "id": "c", "text": "Parois primaires épaissies (souvent localement), cellules vivantes, fournissant soutien flexible aux organes verts en croissance.", "correct": true }, { "id": "d", "text": "Rôle principal de conduction hydraulique (fonction xylémienne)." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q007", "prompt": "Le quiescent centre (QC) du méristème racinaire (RAM) comprend typiquement :", "choices": [ { "id": "a", "text": "Une seule cellule centrale définie." }, { "id": "b", "text": "Un petit groupe (≈4–8) de cellules faiblement mitotiques, définissant la zone QC.", "correct": true }, { "id": "c", "text": "20–30 cellules très divisantes assurant la production continue de tissus." }, { "id": "d", "text": "Aucune cellule identifiable." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q008", "prompt": "Fonction principale du QC dans le RAM :", "choices": [ { "id": "a", "text": "Déclencher l’abscission de racines latérales au moment approprié." }, { "id": "b", "text": "Organiser et maintenir la niche de cellules souches environnantes (initiales), via signaux positionnels.", "correct": true }, { "id": "c", "text": "Initier la formation de la coiffe par apoptose programmée." }, { "id": "d", "text": "Transporter activement le saccharose vers l’apex racinaire." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q009", "prompt": "Le rapporteur transcriptionnel DR5::GUS/DR5::GFP révèle :", "choices": [ { "id": "a", "text": "La distribution spatiale et relative des cytokinines endogènes." }, { "id": "b", "text": "Les maxima de réponse/transcription auxinique.", "correct": true }, { "id": "c", "text": "La répartition des gibbérellines bioactives." }, { "id": "d", "text": "L’expression des gènes impliqués dans la lignification secondaire." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q010", "prompt": "L’inhibition du transport polarisé d’IAA (par NPA ou mutations PIN) dans la racine entraîne :", "choices": [ { "id": "a", "text": "Aucun effet morphologique majeur tant que les molécules internes compensent." }, { "id": "b", "text": "Désorganisation du RAM.", "correct": true }, { "id": "c", "text": "Augmentation de l’angle de phyllotaxie au niveau du SAM en raison d’une redistribution d’auxine à distance." }, { "id": "d", "text": "Fermeture des stomates via signal transitoire systémique." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q011", "prompt": "Après ablation laser du QC, quelle réponse est observée au niveau cellulaire ?", "choices": [ { "id": "a", "text": "Aucun changement." }, { "id": "b", "text": "Re-spécification positionnelle, les cellules à coter devient des cellules du QC.", "correct": true }, { "id": "c", "text": "Lignification généralisée du méristème en réponse à la perte de signal." }, { "id": "d", "text": "Disparition définitive des racines latérales initiées." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q012", "prompt": "La spécification cellulaire dans le RAM est majoritairement :", "choices": [ { "id": "a", "text": "Déterminée de manière linéaire par lignée cellulaire." }, { "id": "b", "text": "Dépendante de la position relative dans le méristème.", "correct": true }, { "id": "c", "text": "Aléatoire selon des fluctuations stochastiques indépendantes du microenvironnement." }, { "id": "d", "text": "Contrôlée uniquement par le cycle circadien." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q013", "prompt": "Sous blocage du transport polarisé d’auxine (NPA), l’orientation des plans de division cellulaire dans le RAM devient :", "choices": [ { "id": "a", "text": "Inchangée." }, { "id": "b", "text": "Altérée.", "correct": true }, { "id": "c", "text": "Parfaitement perpendiculaire à l’axe racinaire par compensation." }, { "id": "d", "text": "Alignée strictement à l’axe vasculaire via mécanismes indépendants d’auxine." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q014", "prompt": "Les protéines STM / KN1 appartiennent à quelle famille de facteurs de transcription ?", "choices": [ { "id": "a", "text": "bZIP." }, { "id": "b", "text": "MYB." }, { "id": "c", "text": "TALE.", "correct": true }, { "id": "d", "text": "MADS-box." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q015", "prompt": "La perte d’expression de STM/KN1 en marge du SAM (zone périphérique) signifie généralement :", "choices": [ { "id": "a", "text": "Un signal de vieillissement des cellules apicales." }, { "id": "b", "text": "Le recrutement de ces cellules méristématiques vers l’organogenèse.", "correct": true }, { "id": "c", "text": "Une dé-différenciation vers un état totipotent plus primitif." }, { "id": "d", "text": "Une lyse cellulaire liée au stress oxydatif local." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q016", "prompt": "Dans le SAM, comment STM module-t-il l’équilibre hormonal ?", "choices": [ { "id": "a", "text": "En induisant l’expression d’enzymes de biosynthèse des cytokinines.", "correct": true }, { "id": "b", "text": "En induisant directement GA20ox et augmentant la synthèse de GA actives." }, { "id": "c", "text": "En réprimant LOG uniquement." }, { "id": "d", "text": "En activant directement l’expression de transporteurs d’auxine PIN1." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q017", "prompt": "Relation KNOX ↔ GA (synthèse & effet) :", "choices": [ { "id": "a", "text": "KNOX réprime la biosynthèse des gibbérellines et favorise l’accumulation de CK.", "correct": true }, { "id": "b", "text": "KNOX active GA3ox pour produire GA bioactives." }, { "id": "c", "text": "Les cytokinines stimulent l’expression de GA20ox." }, { "id": "d", "text": "KNOX augmente activement le transport des GA via transporteurs membranaires." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q018", "prompt": "La zone centrale (central zone) du SAM joue essentiellement le rôle de :", "choices": [ { "id": "a", "text": "Simple histogène sans rôle fonctionnel." }, { "id": "b", "text": "Réservoir de cellules souches et région de maintenance apicale.", "correct": true }, { "id": "c", "text": "Origine exclusive du rib meristem." }, { "id": "d", "text": "Zone de lignification précoce pour soutien mécanique." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q019", "prompt": "Quel est le phénotype d’un mutant perte-de-fonction de STM chez Arabidopsis ?", "choices": [ { "id": "a", "text": "Perte du méristème caulinaire embryonnaire.", "correct": true }, { "id": "b", "text": "Hyperphyllotaxie due à excès de primordia foliaires." }, { "id": "c", "text": "Excès de GA4 et sur-élongation systémique." }, { "id": "d", "text": "Conversion du SAM en méristème racinaire via induction de WOX5." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q020", "prompt": "Les domaines protéiques KNOX1 / KNOX2 / ELK / HD caractérisent :", "choices": [ { "id": "a", "text": "Des facteurs de la famille MADS." }, { "id": "b", "text": "L’architecture modulaire des facteurs KNOX.", "correct": true }, { "id": "c", "text": "Des transporteurs de la famille NPF." }, { "id": "d", "text": "Des récepteurs de type LRR-RLK." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q021", "prompt": "L’auxine endogène majoritaire chez les embryophytes supérieurs est :", "choices": [ { "id": "a", "text": "NAA." }, { "id": "b", "text": "2,4-D." }, { "id": "c", "text": "IAA.", "correct": true }, { "id": "d", "text": "IBA." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q022", "prompt": "La voie tryptophane-dépendante dominante de biosynthèse d’IAA chez Arabidopsis implique (commande principale) :", "choices": [ { "id": "a", "text": "GA20ox." }, { "id": "b", "text": "YUCCA.", "correct": true }, { "id": "c", "text": "CKX." }, { "id": "d", "text": "BRI1." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q023", "prompt": "Rapport approximatif IAA libre vs conjugué (souches modèle comme Arabidopsis) :", "choices": [ { "id": "a", "text": "50/50." }, { "id": "b", "text": "30/70." }, { "id": "c", "text": "1 /99.", "correct": true }, { "id": "d", "text": "90/10." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q024", "prompt": "Les protéines AUX1 / LAX correspondent à :", "choices": [ { "id": "a", "text": "Transporteurs d’influx d’auxine.", "correct": true }, { "id": "b", "text": "Kinases associées au récepteur BR (BRI1)." }, { "id": "c", "text": "Hydrolases de la famille GH3." }, { "id": "d", "text": "Récepteurs ubiquitine-ligase TIR1." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q025", "prompt": "L’allongement cellulaire racinaire sous IAA endogène est principalement :", "choices": [ { "id": "a", "text": "Uniquement inhibé par l’auxine." }, { "id": "b", "text": "Régulé finement via acidification apoplastique.", "correct": true }, { "id": "c", "text": "Indépendant du pH apoplastique." }, { "id": "d", "text": "Strictement identique au mécanisme d’allongement de la tige." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q026", "prompt": "Quelle est la forme généralement active des cytokinines dans la cellule végétale ?", "choices": [ { "id": "a", "text": "Ribosides uniquement." }, { "id": "b", "text": "Bases libres.", "correct": true }, { "id": "c", "text": "Conjugués N-glucosides." }, { "id": "d", "text": "O-glucosides." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q027", "prompt": "Quelles enzymes constituent la voie principale de biosynthèse et activation des CK chez Arabidopsis ?", "choices": [ { "id": "a", "text": "IPT → tZ-ribotides → LOG.", "correct": true }, { "id": "b", "text": "GA3ox puis GAMT (enzymes GA)." }, { "id": "c", "text": "PIN1 puis AUX1." }, { "id": "d", "text": "BRI1 puis BIN2." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q028", "prompt": "Comment la nutrition minérale (nitrate, sulfate, phosphate) affecte-t-elle la biosynthèse CK ?", "choices": [ { "id": "a", "text": "Ces ions inhibent IPT3 et réduisent CK." }, { "id": "b", "text": "L’augmentation des nitrates augmente la production de CK.", "correct": true }, { "id": "c", "text": "Ils dégradent directement la trans-zéatine (tZ)." }, { "id": "d", "text": "Ils n’affectent pas la synthèse de CK." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q029", "prompt": "L’effet majeur des CK sur le cycle cellulaire est :", "choices": [ { "id": "a", "text": "Bloquer la transition G1/S." }, { "id": "b", "text": "Induire l’expression de CycD3 et favoriser aussi la transition G2/M.", "correct": true }, { "id": "c", "text": "Activer PP2C phosphatases ABA-dépendantes." }, { "id": "d", "text": "Inhiber directement CDKA." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q030", "prompt": "Où se localisent principalement les cytokinines dans la plante et comment sont-elles transportées ?", "choices": [ { "id": "a", "text": "Uniquement dans les bourgeons apicaux." }, { "id": "b", "text": "Dans quasiment tous les tissus.", "correct": true }, { "id": "c", "text": "Concentration élevée exclusivement dans les feuilles âgées." }, { "id": "d", "text": "Uniquement dans les graines" } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q031", "prompt": "Quelles sont les gibbérellines (GA) bioactives majeures chez les plantes modèle ?", "choices": [ { "id": "a", "text": "GA2, GA5." }, { "id": "b", "text": "GA1, GA3, GA4, GA7.", "correct": true }, { "id": "c", "text": "GA9 uniquement." }, { "id": "d", "text": "GA12 et GA7." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q032", "prompt": "Où ont lieu les grandes étapes cellulaires de la biosynthèse des GA (ent-kaurène → GA bioactives) ?", "choices": [ { "id": "a", "text": "Tout intégralement dans le chloroplaste." }, { "id": "b", "text": "Initiation dans les plastes, puis dans le cytosol.", "correct": true }, { "id": "c", "text": "Exclusivement à la membrane plasmique." }, { "id": "d", "text": "Dans la vacuole, puis dans le RE." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q033", "prompt": "Quel rôle joue la molécule GA12 dans la physiologie ?", "choices": [ { "id": "a", "text": "C’est une GA bioactive majeure à longue distance." }, { "id": "b", "text": "Plutôt un précurseur inactif transportable (R↔S).", "correct": true }, { "id": "c", "text": "Un conjugué d’IAA (auxine) via liaison covalente." }, { "id": "d", "text": "Une forme de stockage dans le tonoplaste." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q034", "prompt": "Les protéines DELLA (ex. RGA, GAI) sont :", "choices": [ { "id": "a", "text": "Des répresseurs nucléaires de facteurs de croissance régulés par GA.", "correct": true }, { "id": "b", "text": "Des récepteurs CK membranaires." }, { "id": "c", "text": "Des transporteurs de la famille NPF." }, { "id": "d", "text": "Des facteurs de la famille MADS." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q035", "prompt": "Les familles NPF / SWEET correspondent à :", "choices": [ { "id": "a", "text": "Familles de transporteurs membranaires.", "correct": true }, { "id": "b", "text": "Récepteurs nbLRR de brassinostéroïdes." }, { "id": "c", "text": "Exporteurs d’ABA exclusivement." }, { "id": "d", "text": "Pompes H⁺ (ATPases) assurant gradient de pH." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q036", "prompt": "L’interaction auxine → GA se manifeste le plus souvent par :", "choices": [ { "id": "a", "text": "Absence d’effet sur l’expression de GA20ox." }, { "id": "b", "text": " Auxine pouvant stimuler l’expression de GA20ox.", "correct": true }, { "id": "c", "text": " Auxine inhibe la CPS et la dégradation de GA12." }, { "id": "d", "text": " Auxine épuise les pools de GA12 par conversion accélérée." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q037", "prompt": "Quel phénotype est attendu pour un mutant perte-de-fonction dwf4 (déficit en biosynthèse BR) ?", "choices": [ { "id": "a", "text": "Feuilles géantes et allongées." }, { "id": "b", "text": "Nanisme, hypocotyle court, cellules réduites en taille.", "correct": true }, { "id": "c", "text": "Sur-élongation et sensibilité accrue aux GA." }, { "id": "d", "text": "Chlorose sévère uniquement due à modulation CK." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q038", "prompt": "BRI1 (BRASSINOSTEROID INSENSITIVE 1) se définit comme :", "choices": [ { "id": "a", "text": "Un facteur de transcription nucléaire régulant l’expression des gènes de croissance." }, { "id": "b", "text": "Un récepteur membranaire de la famille LRR-RLK reconnaissant les brassinostéroïdes.", "correct": true }, { "id": "c", "text": "Un transporteur membranaire de BR activer par phosphorylation." }, { "id": "d", "text": "Une protéase spécifique du phloème." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q039", "prompt": "BAK1 (BRI1-ASSOCIATED KINASE 1) :", "choices": [ { "id": "a", "text": "Corécepteur kinase.", "correct": true }, { "id": "b", "text": "Hydrolase GH3." }, { "id": "c", "text": "Membre de la famille Aux/IAA." }, { "id": "d", "text": "PP2C." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q040", "prompt": "La transphosphorylation BRI1/BAK1 initiée par la perception de BR déclenche :", "choices": [ { "id": "a", "text": "Inactivation des BSK par phosphorylation." }, { "id": "b", "text": "Activation de BSK (BR signalling kinases).", "correct": true }, { "id": "c", "text": "Clivage de PIN1 régulant polarité de l’auxine." }, { "id": "d", "text": "Activation de GA2ox." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q041", "prompt": "Concernant les mutants bri1 (récepteur insensible) vs mutants déficients en biosynthèse de BR :", "choices": [ { "id": "a", "text": "L’application de brassinolide (BL) restaure les mutants de biosynthèse.", "correct": true }, { "id": "b", "text": "BL restaure tout type de mutant." }, { "id": "c", "text": "GA3 peut compenser bri1 dans tous les aspects." }, { "id": "d", "text": "CK restaure bri1." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q042", "prompt": "Le gène STM (SHOOT MERISTEMLESS) chez Arabidopsis :", "choices": [ { "id": "a", "text": "Spécifie les poils absorbants racinaires." }, { "id": "b", "text": "Contrôle directement la transition florale." }, { "id": "c", "text": "Maintient l’identité des cellules souches du SAM.", "correct": true }, { "id": "d", "text": "Active directement l’élongation cellulaire." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q043", "prompt": "Les gènes KNOX I (STM/KN1) répriment principalement :", "choices": [ { "id": "a", "text": "La biosynthèse de gibbérellines.", "correct": true }, { "id": "b", "text": "La production de cytokinines." }, { "id": "c", "text": "Les gènes floraux ABC." }, { "id": "d", "text": "L’activité du QC." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q044", "prompt": "Les gènes KNOX activent entre autres :", "choices": [ { "id": "a", "text": "La biosynthèse de GA." }, { "id": "b", "text": "La biosynthèse de cytokinines.", "correct": true }, { "id": "c", "text": "L’expression des récepteurs BRI1." }, { "id": "d", "text": "L’activation directe des gènes de la classe A." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q045", "prompt": "Interaction fonctionnelle clé dans le SAM :", "choices": [ { "id": "a", "text": "KNOX ↔ CK.", "correct": true }, { "id": "b", "text": "STM → WUS → LFY." }, { "id": "c", "text": "CLV active WUS." }, { "id": "d", "text": " Auxine réprime STM." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q046", "prompt": "Les gènes CLV1 / CLV3 ont pour rôle principal :", "choices": [ { "id": "a", "text": "Limiter le domaine d’expression et l’action de WUS.", "correct": true }, { "id": "b", "text": "Activer LFY directement." }, { "id": "c", "text": "Induire la floraison." }, { "id": "d", "text": "Rendre le méristème indifférencié en permanence." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q047", "prompt": "WUSCHEL (WUS) est principalement impliqué dans :", "choices": [ { "id": "a", "text": "Le maintien de l’identité des cellules souches au centre du SAM.", "correct": true }, { "id": "b", "text": "Être exprimé principalement dans la coiffe racinaire." }, { "id": "c", "text": "Réprimer CLV3 directement." }, { "id": "d", "text": "Induire la formation du QC." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q048", "prompt": "La boucle WUS–CLV3 constitue :", "choices": [ { "id": "a", "text": "Une régulation négative réciproque stabilisant la taille du méristème.", "correct": true }, { "id": "b", "text": "Une boucle positive." }, { "id": "c", "text": "Un dispositif sans effet biologique majeur." }, { "id": "d", "text": "Une boucle dépendante strictement de la photopériode." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q049", "prompt": "Les gènes PLT1 / PLT2 (PLETHORA) participent à :", "choices": [ { "id": "a", "text": "Réguler la floraison." }, { "id": "b", "text": "Établir le gradient de spécification du RAM", "correct": true }, { "id": "c", "text": "Déterminer les trichomes." }, { "id": "d", "text": "Activer la biosynthèse de cutine." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q050", "prompt": "WOX5 dans la racine agit pour :", "choices": [ { "id": "a", "text": "Activer LFY." }, { "id": "b", "text": "Maintenir la niche de cellules souches du QC.", "correct": true }, { "id": "c", "text": "Réguler la synthèse de cutine (non principal)." }, { "id": "d", "text": "Supprimer WUS ." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q051", "prompt": "Interaction SHR (SHORT ROOT) –SCR (SCARECROW):", "choices": [ { "id": "a", "text": "SHR (SHORT ROOT) migre depuis le stele vers SCR", "correct": true }, { "id": "b", "text": "SHR reste immobile." }, { "id": "c", "text": "SCR dégrade SHR." }, { "id": "d", "text": "Les deux sont uniquement cytosoliques sans action transcriptionnelle." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q052", "prompt": "Interaction Auxine → PLT :", "choices": [ { "id": "a", "text": "L’auxine contrôle la transcription de PLT.", "correct": true }, { "id": "b", "text": "PLT contrôle IAA par GA." }, { "id": "c", "text": "WOX5 active TIR1." }, { "id": "d", "text": "SCR dégrade PLT." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q053", "prompt": "CKX1 code :", "choices": [ { "id": "a", "text": "Un récepteur membranaire." }, { "id": "b", "text": "Une enzyme catalysant la dégradation des CK.", "correct": true }, { "id": "c", "text": "Une enzyme transformante GA12." }, { "id": "d", "text": "Un inducteur de BRI1." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q054", "prompt": "GA20ox est :", "choices": [ { "id": "a", "text": "Une enzyme dégradant GA." }, { "id": "b", "text": "Une enzyme produisant des précurseurs menant aux GA.", "correct": true }, { "id": "c", "text": "Un récepteur GID1." }, { "id": "d", "text": "Une phosphatase." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q055", "prompt": "BRI1 code pour :", "choices": [ { "id": "a", "text": "Un récepteur membranaire (LRR-RLK).", "correct": true }, { "id": "b", "text": "Une enzyme de dégradation des BR." }, { "id": "c", "text": "Un activateur direct de GA2ox." }, { "id": "d", "text": "Une enzyme de transformation des cytokinines." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q056", "prompt": "BIN2 exerce :", "choices": [ { "id": "a", "text": "Une phosphorylation de BZR1/BES1.", "correct": true }, { "id": "b", "text": "Un rôle de récepteur." }, { "id": "c", "text": "Une dégradation des BR." }, { "id": "d", "text": "Une activation directe de LFY." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q057", "prompt": "AP1 appartient à quelle classe du modèle ABCDE ?", "choices": [ { "id": "a", "text": "Classe A.", "correct": true }, { "id": "b", "text": "Classe B." }, { "id": "c", "text": "Classe C." }, { "id": "d", "text": "Classe E." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q058", "prompt": "AGAMOUS (AG) correspond à :", "choices": [ { "id": "a", "text": "Classe C.", "correct": true }, { "id": "b", "text": "Classe A." }, { "id": "c", "text": "Classe B." }, { "id": "d", "text": "Classe E." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q059", "prompt": "Interaction WUS–AG pendant le développement floral :", "choices": [ { "id": "a", "text": "AG réprime WUS.", "correct": true }, { "id": "b", "text": "WUS active AG indéfiniment (relation non illimitée)." }, { "id": "c", "text": "WUS détruit AG." }, { "id": "d", "text": "AG active LFY." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q060", "prompt": "Les gènes SEP1–4 (SEPALLATA) jouent quel rôle ?", "choices": [ { "id": "a", "text": "Cofacteurs nécessaires pour former complexes quaternaires MADS (.", "correct": true }, { "id": "b", "text": "Codent des transporteurs membranaires." }, { "id": "c", "text": "Contrôlent directement le pool de CK." }, { "id": "d", "text": "Spécifient la racine." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q061", "prompt": "Un mutant KNOX (gain-of-function KNAT1 sur-exprimé) montre typiquement :", "choices": [ { "id": "a", "text": "Nanisme généralisé (non typique)." }, { "id": "b", "text": "Absence de SAM." }, { "id": "c", "text": "Feuilles profondément lobées, parfois indéterminées, avec gain de traits méristématiques à la marge foliaire.", "correct": true }, { "id": "d", "text": "Perte de phototropisme." } ], "explanation": "Bonne réponse : c" },
+            { "id": "S7_dev_plantes_q062", "prompt": "Le double mutant clv3-10 / wus (combinaison perte CLV3 + perte WUS) présente :", "choices": [ { "id": "a", "text": "Un méristème de taille intermédiaire (phénotype modéré possible).", "correct": true }, { "id": "b", "text": "Méristème inexistant (si WUS perte dominante)." }, { "id": "c", "text": "Hyperprolifération indéfinie (si CLV perte dominante)." }, { "id": "d", "text": "Arrêt complet du développement embryonnaire." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q063", "prompt": "Un mutant rev (REVOLUTA) montre :", "choices": [ { "id": "a", "text": "Défauts d’orientation adaxiale/abaxiale des feuilles, altération de polarité foliaire et architecture.", "correct": true }, { "id": "b", "text": "Incapacité à former des racines latérales." }, { "id": "c", "text": "Accumulation de cytokinines." }, { "id": "d", "text": "Insensibilité à la lumière rouge." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q064", "prompt": "Le mutant wol (wooden leg) présente :", "choices": [ { "id": "a", "text": "Perte du protoxylème fonctionnel et anomalies du prix de différenciation vasculaire.", "correct": true }, { "id": "b", "text": "Racine spiralée." }, { "id": "c", "text": "Hypocotyle violet." }, { "id": "d", "text": "Nanisme généralisé." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q065", "prompt": "Le double mutant shr / scr :", "choices": [ { "id": "a", "text": "Absence totale d’endoderme (SHR non fonctionnel empêche spécification) et désorganisation corticale.", "correct": true }, { "id": "b", "text": "Trop de trichoblastes." }, { "id": "c", "text": "Racine sans poils absorbants." }, { "id": "d", "text": "Développement vasculaire accru." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q066", "prompt": "Le mutant bodenlos (bdl) présente :", "choices": [ { "id": "a", "text": "Phénotype semblable à mp (monopteros), perte d’établissement d’axes embryonnaires et défaut de formation de la racine embryonnaire.", "correct": true }, { "id": "b", "text": "Absence de coiffe racinaire, perte d’établissement d’axes embryonnaires." }, { "id": "c", "text": "Racine hypertrophiée et défaut de formation de la racine embryonnaire." }, { "id": "d", "text": "Surproduction de CK." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q067", "prompt": "Le double mutant max1–max4 (strigolactone biosynthesis/signalling) :", "choices": [ { "id": "a", "text": "Branchements axillaires excessifs.", "correct": true }, { "id": "b", "text": "Nanisme." }, { "id": "c", "text": "Manque de GA." }, { "id": "d", "text": "Stérilité." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q068", "prompt": "Le mutant aba2 (déficience biosynthèse ABA) se caractérise par :", "choices": [ { "id": "a", "text": "Incapacité à accumuler ABA.", "correct": true }, { "id": "b", "text": "Nanisme." }, { "id": "c", "text": "Hypersensibilité au froid (possible mais non caractère principal)." }, { "id": "d", "text": "Défaut floral." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q069", "prompt": "Le mutant abi1-1 (mutation dominante négative PP2C) :", "choices": [ { "id": "a", "text": "Insensibilité à l’ABA.", "correct": true }, { "id": "b", "text": "Excès d’ABA." }, { "id": "c", "text": "Bloque la floraison." }, { "id": "d", "text": "Surproduction de CK." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q070", "prompt": "Le mutant det2 (déficit biosynthèse BR) :", "choices": [ { "id": "a", "text": "Floraison immédiate." }, { "id": "b", "text": "Défaut de biosynthèse des brassinostéroïdes.", "correct": true }, { "id": "c", "text": "Manque de GA." }, { "id": "d", "text": "Blocage de la formation de racine." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q071", "prompt": "Le mutant brx (brevis radix) présente :", "choices": [ { "id": "a", "text": "Altération de la croissance radiculaire et du patron vasculaire.", "correct": true }, { "id": "b", "text": "Absence de poils absorbants." }, { "id": "c", "text": "Excès de GA." }, { "id": "d", "text": "Floraison bloquée." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q072", "prompt": "Le double mutant ap1 / cal :", "choices": [ { "id": "a", "text": "Remplacement des fleurs par structures feuillées indéterminées.", "correct": true }, { "id": "b", "text": "Fleurs doubles." }, { "id": "c", "text": "Fleurs mâles stériles." }, { "id": "d", "text": "Nanisme." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q073", "prompt": "Le mutant ag sep (triple/quadruple selon combinaison) :", "choices": [ { "id": "a", "text": "Absence d’étamines et de carpelles — répétition de sépales/pétales.", "correct": true }, { "id": "b", "text": "Fleurs doubles (description plus large)." }, { "id": "c", "text": "Floraison précoce ." }, { "id": "d", "text": "Inflorescence terminale ." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q074", "prompt": "Le mutant crc (crabs-claw) :", "choices": [ { "id": "a", "text": "Carpelles ouverts et anomalies du style/stigmate.", "correct": true }, { "id": "b", "text": "Fleurs doubles." }, { "id": "c", "text": "Manque de sépales" }, { "id": "d", "text": "Pétales fusionnés." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q075", "prompt": "Le mutant jagged (jag) présente :", "choices": [ { "id": "a", "text": "Racine raccourcie." }, { "id": "b", "text": "Feuilles à bordures.", "correct": true }, { "id": "c", "text": "Fleurs doubles." }, { "id": "d", "text": "Perte de poils absorbants." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q076", "prompt": "Le mutant ddm1 (decrease in DNA methylation 1) :", "choices": [ { "id": "a", "text": "Réactivation des transposons, instabilité épigénétique et variabilité phénotypique due à perte de méthylation de l’ADN.", "correct": true }, { "id": "b", "text": "Nanisme systématique." }, { "id": "c", "text": "Floraison bloquée." }, { "id": "d", "text": "Insensibilité à l’ABA." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q077", "prompt": "Dans quel tissus et organes l’ABA n’est pas présent :", "choices": [ { "id": "a", "text": "Les tissus conducteurs des parties aériennes" }, { "id": "b", "text": "Les tissus conducteurs des racines" }, { "id": "c", "text": "Dans toute la graine." }, { "id": "d", "text": "Méristèmes apicaux", "correct": true } ], "explanation": "Bonne réponse d)" },
+            { "id": "S7_dev_plantes_q078", "prompt": "Quel sont les fonctions de l’ABA ?", "choices": [ { "id": "a", "text": "Promeut la dormance des bourgeons", "correct": true }, { "id": "b", "text": "Mettre en place les ressources nutritives dans la graine", "correct": true }, { "id": "c", "text": "Empêche la sortie de la radicule.", "correct": true }, { "id": "d", "text": "Induit l’expression de FLC et réprime FT", "correct": true } ], "explanation": "Bonne réponse a) b) c) et d)" },
+            { "id": "S7_dev_plantes_q079", "prompt": "Quelle sont les forme inactive de l’ABA ?", "choices": [ { "id": "a", "text": "ABA-GE", "correct": true }, { "id": "b", "text": "ABA-libre" }, { "id": "c", "text": "ABA-glucosides", "correct": true }, { "id": "d", "text": "PA/DPA", "correct": true } ], "explanation": "Bonne réponse a) c) et d)" },
+            { "id": "S7_dev_plantes_q080", "prompt": "Lors d’un stress qui entraine une fermeture des stomates qu’induit l’ABA ?", "choices": [ { "id": "a", "text": "Une vague calcique", "correct": true }, { "id": "b", "text": "L’expression de ROS" }, { "id": "c", "text": "La sortie d’amidon" }, { "id": "d", "text": "L’entrée de malate dans la vacuole" } ], "explanation": "Bonne réponse a)" },
+            { "id": "S7_dev_plantes_q081", "prompt": "Sur qu’elle gène l’ABA agit directement :", "choices": [ { "id": "a", "text": "PIK", "correct": true }, { "id": "b", "text": "PLC", "correct": true }, { "id": "c", "text": "PIP" }, { "id": "d", "text": "IP3" }, { "id": "e", "text": "SphK", "correct": true } ], "explanation": "Bonne réponse a) b) et e)" },
+            { "id": "S7_dev_plantes_q082", "prompt": "Quelle est la/ les bonne voie de signalisation pour l’ouverture des stomates :", "choices": [ { "id": "a", "text": "Calcium → CDPKs → anion chanel -| ouverture stomate", "correct": true }, { "id": "b", "text": "Calcium → CDPKs → CIPK23 → AKT1" }, { "id": "c", "text": "Calcium → CBL1/9 → CIPK23 → AKT1", "correct": true }, { "id": "d", "text": "Calcium → CDPKs → CBL1/9 → anion chanel" } ], "explanation": "Bonne réponse : a) et c)" },
+            { "id": "S7_dev_plantes_q083", "prompt": "Quelle est le phénotype du mutant abi1 et abi2 ?", "choices": [ { "id": "a", "text": "Résistance à la sécheresse" }, { "id": "b", "text": "Insensibilité à l’ABA", "correct": true }, { "id": "c", "text": "Hypersensibilité à l’ABA" }, { "id": "d", "text": "Insensibilité à la sécheresse", "correct": true } ], "explanation": "Bonne réponse : b) et d)" },
+            { "id": "S7_dev_plantes_q084", "prompt": "La famille des PYR/PYL sont des récepteurs à l’ABA ?", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q085", "prompt": "En présence de ABA PP2C inhibe SnRK2s ?", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q086", "prompt": "L'ABA est essentiellement produite dans l'albumen ?", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q087", "prompt": "ABA interagit avec PP2C et ABAR pour activer SnRK2 qui va réguler les autres gènes ?", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q088", "prompt": "Qu’elle est la définition d’une hormone ?", "choices": [ { "id": "a", "text": "Substance chimique élaborée par un groupe de cellule ou une glande endocrine qui exerce une action sur le fonctionnement d’un organe.", "correct": true }, { "id": "b", "text": "Substance chimique élaborée par un groupe de cellule ou une glande exocrine agissant sur l’organe émetteur." }, { "id": "c", "text": "Signal strictement local (jamais transporté) synthétisé par un groupe de cellules et actif uniquement par contact direct sur l’organe voisin." }, { "id": "d", "text": "Molécule sécrétée par un tissu spécialisé et efficace uniquement à haute dose (≥ 1 mM), sans effet à faibles concentrations." } ], "explanation": "Bonne réponse : a)" },
+            { "id": "S7_dev_plantes_q089", "prompt": "Qu’elle acide aminé est présent dans la voie de biosynthèse de l’auxine ?", "choices": [ { "id": "a", "text": "Tryptophane", "correct": true }, { "id": "b", "text": "Méthionine" }, { "id": "c", "text": "Phénylalanine" }, { "id": "d", "text": "Glutamate" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q090", "prompt": "Qu’elle est le rôle du NPA ?", "choices": [ { "id": "a", "text": "Inhibiteur du transport de l’auxine", "correct": true }, { "id": "b", "text": "Augmente le flux d’auxine" }, { "id": "c", "text": "Stimule synthèse de l’auxine" }, { "id": "d", "text": "N’a pas d’effet sur l’auxine" } ], "explanation": "Bonne réponse : a)" },
+            { "id": "S7_dev_plantes_q091", "prompt": "La molécule TIBA inhibe le recyclage des protéines PIN entre endosome et membrane plasmique.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q092", "prompt": "Les flavonoïdes peuvent moduler la localisation des PIN in vivo.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q093", "prompt": "Le recyclage des PIN repose principalement sur la dynamique des microtubules.", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q094", "prompt": "Les effets de la mutation GNOM sont comparables à ceux de la BFA.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q095", "prompt": "Les protéines PIN sont adressées à la membrane plasmique par la voie sécrétoire.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q096", "prompt": "L’auxine stimule l’expansion cellulaire à travers un phénomène de croissance acide ?", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q097", "prompt": "L’auxine doit être perçue par les récepteurs TIR1/AFB pour inhiber l’élongation cellulaire.", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q098", "prompt": "La voie MAX1–MAX3–MAX4 agit comme régulateur positif du transport polarisé d’IAA, favorisant ainsi le débourrement des bourgeons axillaires.", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q099", "prompt": "Le gène MAX2, codant une protéine F-box, agit localement dans la tige en aval de MAX1/3/4 et participe à la dominance apicale.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q100", "prompt": "Le transport polarisé d’auxine dans le SAM est essentiel à la phyllotaxie, car il permet la création de maxima d’IAA dans les primordia foliaires via la protéine PIN1.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q101", "prompt": "Lorsqu’un inhibiteur de transport d’auxine (comme le NPA) est appliqué, on observe une diminution du développement vasculaire dans les jeunes feuilles.", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q102", "prompt": "Les gènes SAUR, GH3 et Aux/IAA sont des gènes induits rapidement et transitoirement par l’auxine, et possèdent tous un élément AuxRE (TGTCTC) dans leur promoteur.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q103", "prompt": "Les protéines GH3 activent l’auxine libre (IAA) en la transformant sous forme conjuguée pour amplifier le signal hormonal.", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q104", "prompt": "Les protéines ARF (Auxin Response Factor) et Aux/IAA peuvent former des hétérodimères via leurs domaines III et IV, ce qui inhibe l’activité transcriptionnelle des ARF.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q105", "prompt": "Dans la voie de signalisation de l’auxine, le récepteur TIR1 est une protéine F-box qui reconnaît les Aux/IAA en l’absence d’auxine, entraînant leur ubiquitination et dégradation par le protéasome 26S.", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q106", "prompt": "[F] Les gènes SAUR induits par l’auxine :", "choices": [ { "id": "a", "text": "Sont exprimés en 2 à 5 minutes après perception de l’IAA", "correct": true }, { "id": "b", "text": "Codent de petites protéines à durée de vie très longue" }, { "id": "c", "text": "Participent à la régulation rapide du signal auxinique", "correct": true }, { "id": "d", "text": "Font partie de la même famille que les GH3" } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q107", "prompt": "[I] Les gènes GH3 :", "choices": [ { "id": "a", "text": "Codent des enzymes d’adénylation qui conjuguent l’IAA à des acides aminés", "correct": true }, { "id": "b", "text": "Participent à l’activation du jasmonate (JA)", "correct": true }, { "id": "c", "text": "Font partie du complexe SCF-TIR1" }, { "id": "d", "text": "Ont pour rôle d’amplifier le signal de l’IAA" } ], "explanation": "Bonnes réponses : a, b" },
+            { "id": "S7_dev_plantes_q108", "prompt": "[I] Les gènes Aux/IAA :", "choices": [ { "id": "a", "text": "Codent des répresseurs de transcription à demi-vie courte", "correct": true }, { "id": "b", "text": "Sont dégradés via le protéasome 26S", "correct": true }, { "id": "c", "text": "Activent directement les gènes de réponse à l’auxine" }, { "id": "d", "text": "Interagissent avec les ARF pour inhiber leur activité", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q109", "prompt": "[A] Les gènes SAUR, GH3 et Aux/IAA :", "choices": [ { "id": "a", "text": "Partagent un même élément régulateur, l’AuxRE", "correct": true }, { "id": "b", "text": "Présentent la séquence consensus TGTCTC dans leur promoteur", "correct": true }, { "id": "c", "text": "Sont insensibles à la perception d’auxine par TIR1" }, { "id": "d", "text": "Sont des gènes précoces de réponse à l’auxine", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q110", "prompt": "[I] Concernant les ARF (Auxin Response Factors) :", "choices": [ { "id": "a", "text": "Certains sont activateurs, d’autres répresseurs", "correct": true }, { "id": "b", "text": "Peuvent former des hétérodimères avec les Aux/IAA via leurs domaines III–IV", "correct": true }, { "id": "c", "text": "Sont ubiquitinés directement par TIR1" }, { "id": "d", "text": "Se lient aux séquences AuxRE dans les promoteurs cibles", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q111", "prompt": "[A] Le récepteur TIR1 :", "choices": [ { "id": "a", "text": "Est une protéine F-box composant d’un complexe SCF (Skp–Cullin–F-box)", "correct": true }, { "id": "b", "text": "Se lie directement à l’auxine", "correct": true }, { "id": "c", "text": "Recrute les protéines Aux/IAA pour les ubiquitiner en présence d’IAA", "correct": true }, { "id": "d", "text": "Active la transcription en se fixant sur les promoteurs DR5" } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q112", "prompt": "[I] Dans la signalisation auxinique :", "choices": [ { "id": "a", "text": "L’auxine agit comme une colle moléculaire entre TIR1 et Aux/IAA", "correct": true }, { "id": "b", "text": "La dégradation des Aux/IAA libère les ARF et active la transcription", "correct": true }, { "id": "c", "text": "L’auxine modifie directement la séquence d’ADN des gènes cibles" }, { "id": "d", "text": "L’ubiquitination est un mécanisme post-traductionnel de régulation", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q113", "prompt": "[A] Dans la cascade de dégradation protéique :", "choices": [ { "id": "a", "text": "L’enzyme E1 active l’ubiquitine", "correct": true }, { "id": "b", "text": "L’enzyme E2 transfère l’ubiquitine vers la cible via l’enzyme E3", "correct": true }, { "id": "c", "text": "Une seule molécule d’ubiquitine est suffisante pour déclencher la dégradation" }, { "id": "d", "text": "La polyubiquitination est requise pour la reconnaissance par le protéasome 26S", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q114", "prompt": "La synthèse de brassinostéroides commence à partir de campestérol et de cycloarténol.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q115", "prompt": "Les brassinostéroïdes (BR) sont principalement impliqués dans :", "choices": [ { "id": "a", "text": "L’élongation et la division cellulaire", "correct": true }, { "id": "b", "text": "La fixation de l’azote atmosphérique" }, { "id": "c", "text": "La croissance des tiges et des racines", "correct": true }, { "id": "d", "text": "La sénescence foliaire immédiate" } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q116", "prompt": "Concernant la résistance au stress, les BR :", "choices": [ { "id": "a", "text": "Augmentent la tolérance à la chaleur, au froid, à la salinité et à la sécheresse", "correct": true }, { "id": "b", "text": "Inhibent l’expression des protéines de stress (HSP)" }, { "id": "c", "text": "Activent des mécanismes de défense physiologiques et moléculaires", "correct": true }, { "id": "d", "text": "Affaiblissent la réponse immunitaire de la plante" } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q117", "prompt": "Les brassinostéroïdes participent à la reproduction végétale en :", "choices": [ { "id": "a", "text": "Favorisant la transition florale", "correct": true }, { "id": "b", "text": "Induisant la formation de fleurs et le rendement en graines", "correct": true }, { "id": "c", "text": "Supprimant la floraison pour privilégier la croissance végétative" }, { "id": "d", "text": "Agissant en synergie avec les cytokinines uniquement" } ], "explanation": "Bonnes réponses : a, b" },
+            { "id": "S7_dev_plantes_q118", "prompt": "Dans la photomorphogenèse, les BR :", "choices": [ { "id": "a", "text": "Facilitent la skotomorphogenèse (croissance en obscurité)", "correct": true }, { "id": "b", "text": "Induisent une tige courte et des feuilles larges dans le noir" }, { "id": "c", "text": "Régulent la morphologie foliaire à la lumière", "correct": true }, { "id": "d", "text": "Empêchent toute réponse de la plante à la lumière" } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q119", "prompt": "Un déficit en brassinostéroïdes pourrait provoquer :", "choices": [ { "id": "a", "text": "Un nanisme marqué", "correct": true }, { "id": "b", "text": "Une inhibition de l’élongation cellulaire", "correct": true }, { "id": "c", "text": "Une meilleure résistance à la sécheresse" }, { "id": "d", "text": "Une réduction du développement vasculaire", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q120", "prompt": "Lorsqu’une plante pousse en présence de BR dans l’obscurité :", "choices": [ { "id": "a", "text": "Les tiges s’allongent davantage", "correct": true }, { "id": "b", "text": "Les feuilles sont réduites et pâles", "correct": true }, { "id": "c", "text": "Le phénomène est appelé photomorphogenèse" }, { "id": "d", "text": "On parle de skotomorphogenèse", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q121", "prompt": "Les BR, en coordination avec d’autres hormones, contribuent à :", "choices": [ { "id": "a", "text": "Ajuster la croissance selon les conditions lumineuses et environnementales", "correct": true }, { "id": "b", "text": "Maintenir un équilibre entre division, différenciation et défense", "correct": true }, { "id": "c", "text": "Réprimer l’expression des gènes de stress" }, { "id": "d", "text": "Intégrer les signaux hormonaux pour une croissance harmonieuse", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q122", "prompt": "Le mutant det2 (deetiolated 2) est :", "choices": [ { "id": "a", "text": "Un mutant de biosynthèse des brassinostéroïdes", "correct": true }, { "id": "b", "text": "Un mutant insensible aux brassinostéroïdes" }, { "id": "c", "text": "Restauré par application de brassinolide exogène", "correct": true }, { "id": "d", "text": "Déficient en gibbérellines" } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q123", "prompt": "La protéine BRI1 est :", "choices": [ { "id": "a", "text": "Un récepteur membranaire à domaine LRR kinase", "correct": true }, { "id": "b", "text": "Localisée au cytoplasme" }, { "id": "c", "text": "Activée par la liaison du brassinolide (BL)", "correct": true }, { "id": "d", "text": "Nécessaire pour la transduction du signal BR", "correct": true } ], "explanation": "Bonnes réponses : a, c, d" },
+            { "id": "S7_dev_plantes_q124", "prompt": "Le complexe BRI1–BAK1 activé entraîne :", "choices": [ { "id": "a", "text": "La phosphorylation des protéines BSK", "correct": true }, { "id": "b", "text": "L’activation de la phosphatase BSU1", "correct": true }, { "id": "c", "text": "L’inhibition directe de BZR1" }, { "id": "d", "text": "L’activation d’un signal cytoplasmique en cascade", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q125", "prompt": "Dans la cascade BR, la protéine BSU1 :", "choices": [ { "id": "a", "text": "Est une phosphatase activée par BSK", "correct": true }, { "id": "b", "text": "Inhibe BIN2 en le déphosphorylant", "correct": true }, { "id": "c", "text": "Active directement BZR1 dans le noyau" }, { "id": "d", "text": "Est un régulateur positif de la voie BR", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q126", "prompt": "Les protéines BZR1/BES1 :", "choices": [ { "id": "a", "text": "Sont des facteurs de transcription régulés par phosphorylation", "correct": true }, { "id": "b", "text": "Sont dégradées quand elles sont phosphorylées par BIN2", "correct": true }, { "id": "c", "text": "S’accumulent dans le noyau quand BR ↑", "correct": true }, { "id": "d", "text": "Sont exportées vers le cytoplasme après activation" } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q127", "prompt": "Les cytokinines (CK) sont dérivées :", "choices": [ { "id": "a", "text": "De l’adénine", "correct": true }, { "id": "b", "text": "Du tryptophane" }, { "id": "c", "text": "Des caroténoïdes" }, { "id": "d", "text": "De la méthionine" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q128", "prompt": "L’enzyme IPT (isopentényltransférase) :", "choices": [ { "id": "a", "text": "Catalyse la première étape de la biosynthèse des CK à partir d’ATP ou d’ADP", "correct": true }, { "id": "b", "text": "Hydrolyse les CK actives en ribosides inactifs" }, { "id": "c", "text": "Est principalement active dans les racines et embryons", "correct": true }, { "id": "d", "text": "Produit des CK uniquement dans la tige" } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q129", "prompt": "Les principaux rôles physiologiques des CK sont :", "choices": [ { "id": "a", "text": "Stimuler la division cellulaire et l’expansion foliaire", "correct": true }, { "id": "b", "text": "Retarder la sénescence en maintenant la chlorophylle", "correct": true }, { "id": "c", "text": "Fermer les stomates pour limiter la transpiration" }, { "id": "d", "text": "Favoriser la formation de bourgeons latéraux", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q130", "prompt": "En culture in vitro :", "choices": [ { "id": "a", "text": "Les CK favorisent la caulogenèse (formation de tiges et feuilles)", "correct": true }, { "id": "b", "text": "Une absence totale de CK conduit à la rhizogenèse", "correct": true }, { "id": "c", "text": "Des mutants surproducteurs de CK développent des structures buissonnantes", "correct": true }, { "id": "d", "text": "Les CK inhibent toute division méristématique" } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q131", "prompt": "L’interaction CK/auxine implique que :", "choices": [ { "id": "a", "text": "L’auxine stimule la dégradation des CK via la CKX", "correct": true }, { "id": "b", "text": "L’auxine inhibe la conjugaison des CK" }, { "id": "c", "text": "Les deux hormones agissent en antagonisme partiel", "correct": true }, { "id": "d", "text": "Les CK favorisent le bourgeonnement, que l’auxine supprime", "correct": true } ], "explanation": "Bonnes réponses : a, c, d" },
+            { "id": "S7_dev_plantes_q132", "prompt": "Les CK favorisent la division cellulaire en :", "choices": [ { "id": "a", "text": "Induisant l’expression de la cyclin D3 (CycD3)", "correct": true }, { "id": "b", "text": "Activant la transition G1/S du cycle cellulaire", "correct": true }, { "id": "c", "text": "Inhibant la phosphatase Cdc25" }, { "id": "d", "text": "Agissant aussi à la transition G2/M par déphosphorylation d’une Cdk", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q133", "prompt": "Les CK favorisent la différenciation des plastes en :", "choices": [ { "id": "a", "text": "Chromoplastes" }, { "id": "b", "text": "Chloroplastes", "correct": true }, { "id": "c", "text": "Amyloplastes" }, { "id": "d", "text": "Statolithes" } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q134", "prompt": "Le retard de sénescence induit par les CK s’explique par :", "choices": [ { "id": "a", "text": "Le maintien de la chlorophylle et des chloroplastes", "correct": true }, { "id": "b", "text": "La stimulation de la dégradation des protéines foliaires" }, { "id": "c", "text": "L’activation de la respiration mitochondriale" }, { "id": "d", "text": "L’inhibition des gènes de catabolisme chlorophyllien", "correct": true } ], "explanation": "Bonnes réponses : a, d" },
+            { "id": "S7_dev_plantes_q135", "prompt": "La galle du collet résulte de :", "choices": [ { "id": "a", "text": "Une activation constitutive du gène ipt", "correct": true }, { "id": "b", "text": "Une surproduction simultanée de CK et d’auxine", "correct": true }, { "id": "c", "text": "Une inhibition du transport de CK vers les feuilles" }, { "id": "d", "text": "Une absence de brassinostéroïdes" } ], "explanation": "Bonnes réponses : a, b" },
+            { "id": "S7_dev_plantes_q136", "prompt": "Le facteur WUSCHEL (WUS) :", "choices": [ { "id": "a", "text": "Est activé par la signalisation cytokinine via AHK4", "correct": true }, { "id": "b", "text": "Maintient les cellules du SAM dans un état indifférencié", "correct": true }, { "id": "c", "text": "Active directement STM (Shoot Meristemless)" }, { "id": "d", "text": "Est inhibé par la voie CLV1–CLV3", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q137", "prompt": "La boucle WUS–CLV3 permet :", "choices": [ { "id": "a", "text": "De limiter la prolifération excessive des cellules souches", "correct": true }, { "id": "b", "text": "D’inhiber WUS via CLV1 pour ajuster la taille du méristème", "correct": true }, { "id": "c", "text": "D’activer STM lorsque WUS est réprimé", "correct": true }, { "id": "d", "text": "De stimuler l’auxine pour maintenir la différenciation" } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q138", "prompt": "Dans le méristème apical racinaire (RAM) :", "choices": [ { "id": "a", "text": "Les CK réduisent la taille de la zone proliférative", "correct": true }, { "id": "b", "text": "Les CK ont un effet opposé à celui observé dans le SAM", "correct": true }, { "id": "c", "text": "Les CK favorisent la croissance racinaire" }, { "id": "d", "text": "Les CK stimulent la croissance foliaire", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q139", "prompt": "La triple réponse observée chez les plantules exposées à l’éthylène comprend :", "choices": [ { "id": "a", "text": "Un raccourcissement de la tige", "correct": true }, { "id": "b", "text": "Une réduction du diamètre de la tige" }, { "id": "c", "text": "Une perte de l’orientation de croissance (hook / courbure de l’apex)", "correct": true }, { "id": "d", "text": "Un allongement marqué des entre-nœuds" } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q140", "prompt": "L’ACC (1-aminocyclopropane-1-carboxylique) est un précurseur direct de l’éthylène.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q141", "prompt": "Concernant la biosynthèse de l’éthylène :", "choices": [ { "id": "a", "text": "L’étape limitante est catalysée par l’ACS (ACC synthase).", "correct": true }, { "id": "b", "text": "L’ACO (ACC oxydase) intervient en amont de l’ACS." }, { "id": "c", "text": "La famille ACS comprend plusieurs isoformes régulées posttraductionnellement.", "correct": true }, { "id": "d", "text": "L’éthylène est directement dérivé de la méthionine sans intermédiaire." } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q142", "prompt": "Dans le schéma du cycle de Yang (bilan de biosynthèse) :", "choices": [ { "id": "a", "text": "La méthionine est convertie en S-adénosyl-méthionine (SAM).", "correct": true }, { "id": "b", "text": "MTA et MTR sont des intermédiaires du cycle du soufre.", "correct": true }, { "id": "c", "text": "L’éthylène provient directement de l’oxydation du méthanol." }, { "id": "d", "text": "KMB (2-céto-4-méthylthiobutyrate) fait partie du cycle métabolique.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q143", "prompt": "La production d’éthylène est constante tout au long du développement.", "choices": [ { "id": "a", "text": "Vrai" }, { "id": "b", "text": "Faux", "correct": true } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q144", "prompt": "Concernant la régulation de la biosynthèse d’éthylène :", "choices": [ { "id": "a", "text": "L’éthylène peut s’auto-induire dans certains fruits climactériques.", "correct": true }, { "id": "b", "text": "L’éthylène provoque toujours la dégradation de toutes les ACS." }, { "id": "c", "text": "Le mutant eto1 est un surproducteur d’éthylène.", "correct": true }, { "id": "d", "text": "Le système ubiquitine/protéasome contrôle la stabilité de l’ACS.", "correct": true } ], "explanation": "Bonnes réponses : a, c, d" },
+            { "id": "S7_dev_plantes_q145", "prompt": "L’éthylène joue plusieurs rôles physiologiques, notamment :", "choices": [ { "id": "a", "text": "La maturation climactérique des fruits.", "correct": true }, { "id": "b", "text": "La formation d’aérénchyme en conditions d’hypoxie.", "correct": true }, { "id": "c", "text": "L’inhibition de la sénescence florale." }, { "id": "d", "text": "La régulation de l’ouverture stomatique en stress hydrique.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q146", "prompt": "Le mutant ctr1 présente :", "choices": [ { "id": "a", "text": "Une activation constitutive de la réponse à l’éthylène.", "correct": true }, { "id": "b", "text": "Une perte de sensibilité à l’éthylène." }, { "id": "c", "text": "Une mutation gain-de-fonction du récepteur ETR1." }, { "id": "d", "text": "Un défaut de transport de cuivre." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q147", "prompt": "Les récepteurs ETR1/ERS1/ETR2/EIN4/ERS2 agissent comme des répresseurs de la voie en absence d’éthylène.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q148", "prompt": "Concernant EIN2 et EIN3 :", "choices": [ { "id": "a", "text": "EIN2 est un régulateur positif localisé au réticulum endoplasmique.", "correct": true }, { "id": "b", "text": "EIN3 est un facteur de transcription activant les gènes ERF1.", "correct": true }, { "id": "c", "text": "EIN3 est dégradé via le complexe SCF^EBF1/EBF2 en absence de signal.", "correct": true }, { "id": "d", "text": "EIN2 est une kinase MAPKKK activant directement CTR1." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q149", "prompt": "Dans la voie de signalisation de l’éthylène :", "choices": [ { "id": "a", "text": "ETR1 est un récepteur à domaine histidine-kinase.", "correct": true }, { "id": "b", "text": "CTR1 est un régulateur négatif interagissant avec ETR1.", "correct": true }, { "id": "c", "text": "RAN1 est un transporteur de cuivre indispensable à l’activité des récepteurs.", "correct": true }, { "id": "d", "text": "EBF1/EBF2 sont des phosphatases activant EIN3." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q150", "prompt": "Les mutations dominantes etr1-1 maintiennent le récepteur en conformation répressive, entraînant une insensibilité à l’éthylène.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q151", "prompt": "Les mutants présentant une activation constitutive de la réponse à l’éthylène sont :", "choices": [ { "id": "a", "text": "ctr1 mutant perte de fonction.", "correct": true }, { "id": "b", "text": "eto1 surproducteur d’éthylène." }, { "id": "c", "text": "ein2 mutant perte de fonction." }, { "id": "d", "text": "Double mutant récepteurs etr1 ers1.", "correct": true } ], "explanation": "Bonnes réponses : a, d" },
+            { "id": "S7_dev_plantes_q152", "prompt": "Le traitement par C₂H₄ induit une boucle autocatalytique de production d’éthylène dans certains fruits.", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q153", "prompt": "Sous anoxie racinaire, la séquence d’événements est :", "choices": [ { "id": "a", "text": "Synthèse d’ACC dans les racines → transport vers les feuilles → conversion en éthylène → épinastie.", "correct": true }, { "id": "b", "text": "Synthèse d’ACC dans les racines → accumulation d’éthylène dans les racines sans transport." }, { "id": "c", "text": "Inhibition de la formation d’aérénchyme par l’éthylène." }, { "id": "d", "text": "Absence de relation entre racine et feuille, accumulation d’éthylène dans les racines." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q154", "prompt": "L’abondance du facteur EIN3 est contrôlée par :", "choices": [ { "id": "a", "text": "La dégradation par le complexe SCF^EBF1/2.", "correct": true }, { "id": "b", "text": "La phosphorylation stabilisante par CTR1." }, { "id": "c", "text": "Une régulation post-transcriptionnelle impliquant XRN4.", "correct": true }, { "id": "d", "text": "La transcription induite par ERF1." } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q155", "prompt": "L’inhibiteur d’action de l’éthylène mentionné dans le cours est :", "choices": [ { "id": "a", "text": "Le STS (silver thiosulfate).", "correct": true }, { "id": "b", "text": "L’ACC oxydase." }, { "id": "c", "text": "Le cuivre." }, { "id": "d", "text": "Le 1-MCP (1-méthylcyclopropène)." } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q156", "prompt": "Associez les gènes et leurs phénotypes :", "choices": [ { "id": "a", "text": "eto1 → surproduction d’éthylène par dérégulation d’ACS.", "correct": true }, { "id": "b", "text": "ran1 → perte d’activité des récepteurs (défaut de transport de cuivre).", "correct": true }, { "id": "c", "text": "ein3 → activation constitutive du signal." }, { "id": "d", "text": "etr1-1 → insensibilité dominante à l’éthylène.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q157", "prompt": "Les rôles biologiques de l’éthylène incluent :", "choices": [ { "id": "a", "text": "L’abscission foliaire couplée à la baisse d’auxine.", "correct": true }, { "id": "b", "text": "La stimulation de racines adventives et de poils racinaires.", "correct": true }, { "id": "c", "text": "L’inhibition générale de la sénescence." }, { "id": "d", "text": "L’activation de gènes de défense comme les chitinases.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q158", "prompt": "Le contrôle de l’émission d’éthylène est influencé par la voie de signalisation elle-même (boucle de rétrocontrôle).", "choices": [ { "id": "a", "text": "Vrai", "correct": true }, { "id": "b", "text": "Faux" } ], "explanation": "Bonne réponse : a" },
+            { "id": "S7_dev_plantes_q159", "prompt": "La microsporogenèse correspond à :", "choices": [ { "id": "a", "text": "La formation des microspores à partir de microsporocytes diploïdes.", "correct": true }, { "id": "b", "text": "Deux divisions mitotiques successives." }, { "id": "c", "text": "Une méiose aboutissant à quatre cellules haploïdes.", "correct": true }, { "id": "d", "text": "Une différenciation directe des grains de pollen." } ], "explanation": "Bonnes réponses : a, c" },
+            { "id": "S7_dev_plantes_q160", "prompt": "La microgamétogenèse comprend :", "choices": [ { "id": "a", "text": "Deux mitoses successives.", "correct": true }, { "id": "b", "text": "La formation d’un grain de pollen bicellulaire puis tricellulaire.", "correct": true }, { "id": "c", "text": "Une étape méiotique finale." }, { "id": "d", "text": "La différenciation des gamètes mâles.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q161", "prompt": "Chez Arabidopsis, la majorité des grains de pollen sont :", "choices": [ { "id": "a", "text": "Bicellulaires à maturité." }, { "id": "b", "text": "Tricellulaires à maturité.", "correct": true }, { "id": "c", "text": "Arrêtés après la mitose I." }, { "id": "d", "text": "Dépourvus de cellule générative." } ], "explanation": "Bonne réponse : b" },
+            { "id": "S7_dev_plantes_q162", "prompt": "Concernant le rôle des cellules du grain de pollen :", "choices": [ { "id": "a", "text": "La cellule végétative forme le tube pollinique.", "correct": true }, { "id": "b", "text": "Les gamètes mâles assurent la fusion avec les cellules femelles.", "correct": true }, { "id": "c", "text": "Les gamètes mâles contiennent un cytoplasme riche en organites." }, { "id": "d", "text": "La cellule végétative ne contient pas de réserves." } ], "explanation": "Bonnes réponses : a, b" },
+            { "id": "S7_dev_plantes_q163", "prompt": "Durant la mégasporogenèse :", "choices": [ { "id": "a", "text": "Une cellule mère (mégasporocyte) subit une méiose.", "correct": true }, { "id": "b", "text": "Quatre mégaspores haploïdes se forment et persistent toutes." }, { "id": "c", "text": "Trois mégaspores dégénèrent.", "correct": true }, { "id": "d", "text": "Une seule mégaspore fonctionnelle subsiste.", "correct": true } ], "explanation": "Bonnes réponses : a, c, d" },
+            { "id": "S7_dev_plantes_q164", "prompt": "La mégagamétogenèse se caractérise par :", "choices": [ { "id": "a", "text": "Trois divisions mitotiques successives sans cytokinèse.", "correct": true }, { "id": "b", "text": "La formation d’un syncytium à 8 noyaux.", "correct": true }, { "id": "c", "text": "Une absence de migration nucléaire." }, { "id": "d", "text": "La cellularisation et la différenciation des cellules du sac embryonnaire.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q165", "prompt": "Dans le sac embryonnaire d’Arabidopsis :", "choices": [ { "id": "a", "text": "On trouve une oosphère, deux synergides, une cellule centrale et trois antipodes.", "correct": true }, { "id": "b", "text": "Les antipodes participent à la nutrition embryonnaire.", "correct": true }, { "id": "c", "text": "Les synergides guident le tube pollinique.", "correct": true }, { "id": "d", "text": "La cellule centrale résulte de la fusion de deux noyaux polaires.", "correct": true } ], "explanation": "Bonnes réponses : a, b, c, d" },
+            { "id": "S7_dev_plantes_q166", "prompt": "L’entrée du tube pollinique dans l’ovule :", "choices": [ { "id": "a", "text": "Se fait par le micropyle.", "correct": true }, { "id": "b", "text": "Implique une décharge explosive du contenu du tube.", "correct": true }, { "id": "c", "text": "Nécessite l’intégrité des deux synergides." }, { "id": "d", "text": "Résulte d’un guidage par signaux sporophytiques et gamétophytiques.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q167", "prompt": "La double fécondation aboutit à :", "choices": [ { "id": "a", "text": "La formation d’un embryon diploïde.", "correct": true }, { "id": "b", "text": "La formation d’un albumen triploïde.", "correct": true }, { "id": "c", "text": "La transformation des téguments en téguments de la graine.", "correct": true }, { "id": "d", "text": "Une fusion des gamètes mâles uniquement avec l’oosphère." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q168", "prompt": "Le crible génétique appliqué à la reproduction sexuée permet :", "choices": [ { "id": "a", "text": "D’identifier des mutants affectés dans la méiose.", "correct": true }, { "id": "b", "text": "De détecter des altérations de développement du sac embryonnaire.", "correct": true }, { "id": "c", "text": "De sélectionner des mutants surproduisant des gamètes mâles." }, { "id": "d", "text": "De repérer des anomalies dans la transmission gamétique.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q169", "prompt": "Les approches « omiques » permettent :", "choices": [ { "id": "a", "text": "D’obtenir un transcriptome de cellules uniques.", "correct": true }, { "id": "b", "text": "D’identifier des gènes spécifiquement exprimés dans les gamètes.", "correct": true }, { "id": "c", "text": "D’analyser la dynamique du développement cellulaire.", "correct": true }, { "id": "d", "text": "D’observer directement la double fécondation sans marquage." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q170", "prompt": "L’isolement des cellules reproductrices peut se faire par :", "choices": [ { "id": "a", "text": "Cytométrie en flux (FACS).", "correct": true }, { "id": "b", "text": "Microdissection laser.", "correct": true }, { "id": "c", "text": "Hybridation in situ." }, { "id": "d", "text": "Purification des noyaux marqués par fluorescence.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q171", "prompt": "La biologie évolutive du développement (Evo-Devo) permet de :", "choices": [ { "id": "a", "text": "Comprendre la conservation des réseaux de régulation du développement.", "correct": true }, { "id": "b", "text": "Identifier des duplications géniques et leurs effets fonctionnels.", "correct": true }, { "id": "c", "text": "Étudier des mécanismes ancestraux de la reproduction.", "correct": true }, { "id": "d", "text": "Supprimer l’étude des gènes redondants." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q172", "prompt": "Les gènes RKD chez Arabidopsis :", "choices": [ { "id": "a", "text": "S’expriment spécifiquement dans l’oosphère.", "correct": true }, { "id": "b", "text": "Présentent une forte redondance fonctionnelle.", "correct": true }, { "id": "c", "text": "Leur surexpression bloque la différenciation de l’oosphère.", "correct": true }, { "id": "d", "text": "Ne sont pas présents chez Marchantia." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q173", "prompt": "Les gènes BONOBO (BNB) :", "choices": [ { "id": "a", "text": "Sont des facteurs de transcription conservés chez les plantes terrestres.", "correct": true }, { "id": "b", "text": "Contrôlent la spécification des gamètes.", "correct": true }, { "id": "c", "text": "Sont redondants chez Arabidopsis.", "correct": true }, { "id": "d", "text": "Leur double mutation n’affecte que la transmission maternelle." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q174", "prompt": "La protéine FERONIA :", "choices": [ { "id": "a", "text": "Est localisée dans les synergides au niveau de l’appareil filiforme.", "correct": true }, { "id": "b", "text": "Contrôle la réception du tube pollinique.", "correct": true }, { "id": "c", "text": "Est exprimée exclusivement dans le tube pollinique." }, { "id": "d", "text": "Son absence empêche la décharge des gamètes mâles.", "correct": true } ], "explanation": "Bonnes réponses : a, b, d" },
+            { "id": "S7_dev_plantes_q175", "prompt": "Les récepteurs ANXUR :", "choices": [ { "id": "a", "text": "Sont exprimés dans le tube pollinique.", "correct": true }, { "id": "b", "text": "Contrôlent la stabilité du tube pollinique avant la décharge.", "correct": true }, { "id": "c", "text": "Interagissent avec les peptides RALF4/19.", "correct": true }, { "id": "d", "text": "Sont localisés dans les téguments de l’ovule." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q176", "prompt": "Les peptides RALF jouent un rôle dans :", "choices": [ { "id": "a", "text": "Le maintien de la croissance du tube pollinique (RALF4/19).", "correct": true }, { "id": "b", "text": "L’induction de la décharge dans les synergides (RALF34).", "correct": true }, { "id": "c", "text": "La communication entre tube pollinique et ovule.", "correct": true }, { "id": "d", "text": "L’inhibition de la fécondation." } ], "explanation": "Bonnes réponses : a, b, c" },
+            { "id": "S7_dev_plantes_q177", "prompt": "Durant la double fécondation :", "choices": [ { "id": "a", "text": "La migration des gamètes mâles dépend de l’actine.", "correct": true }, { "id": "b", "text": "Le blocage de la polyspermie est assuré par la dégénérescence de la synergide persistante.", "correct": true }, { "id": "c", "text": "Une triple fusion (double fécondation + fusion synergide/albumen) est observée.", "correct": true }, { "id": "d", "text": "L’actine n’intervient pas dans le transport des gamètes." } ], "explanation": "Bonnes réponses : a, b, c" }
           ]
         },
         {
           "id": "S7_interactions_pm",
           "label": "Interactions plantes–microorganismes",
           "questions": [
-            {"id": "S7_interactions_pm_test1", "prompt": "Question test 1 pour Interactions plantes–microorganismes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
-            {"id": "S7_interactions_pm_test2", "prompt": "Question test 2 pour Interactions plantes–microorganismes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {
+              "id": "S7_interactions_pm_test1",
+              "prompt": "Question test 1 pour Interactions plantes–microorganismes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_interactions_pm_test2",
+              "prompt": "Question test 2 pour Interactions plantes–microorganismes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
           ]
         },
         {
           "id": "S7_genetique_moleculaire",
           "label": "Génétique moléculaire végétale",
           "questions": [
-            {"id": "S7_genetique_moleculaire_test1", "prompt": "Question test 1 pour Génétique moléculaire végétale ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
-            {"id": "S7_genetique_moleculaire_test2", "prompt": "Question test 2 pour Génétique moléculaire végétale ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {
+              "id": "S7_genetique_moleculaire_test1",
+              "prompt": "Question test 1 pour Génétique moléculaire végétale ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_genetique_moleculaire_test2",
+              "prompt": "Question test 2 pour Génétique moléculaire végétale ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
           ]
         },
         {
           "id": "S7_nutrition_plantes_intro",
           "label": "Nutrition des plantes",
           "questions": [
-            {"id": "S7_nutrition_plantes_test1", "prompt": "Question test 1 pour Nutrition des plantes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
-            {"id": "S7_nutrition_plantes_test2", "prompt": "Question test 2 pour Nutrition des plantes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {
+              "id": "S7_nutrition_plantes_test1",
+              "prompt": "Question test 1 pour Nutrition des plantes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Réponse 1",
+                  "correct": true
+                },
+                {
+                  "id": "b",
+                  "text": "Réponse 2"
+                },
+                {
+                  "id": "c",
+                  "text": "Réponse 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Réponse 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            },
+            {
+              "id": "S7_nutrition_plantes_test2",
+              "prompt": "Question test 2 pour Nutrition des plantes ?",
+              "choices": [
+                {
+                  "id": "a",
+                  "text": "Option 1"
+                },
+                {
+                  "id": "b",
+                  "text": "Option 2",
+                  "correct": true
+                },
+                {
+                  "id": "c",
+                  "text": "Option 3"
+                },
+                {
+                  "id": "d",
+                  "text": "Option 4"
+                }
+              ],
+              "explanation": "Explication factice."
+            }
           ]
         }
       ]
