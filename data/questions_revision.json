@@ -23,9 +23,7 @@
           "label": "Autotrophie",
           "questions": [
             {"id": "S6_autotrophie_test1", "prompt": "Question test 1 pour Autotrophie ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
-            {"id":"S6_autotrophie_","prompt":"Combien il a de dada chez moi ?","choices":[{"id":"a","text":"1"},{"id":"b","text":"2","correct":true},{"id":"c","text":"3","correct":true},{"id":"d","text":"522","correct":true}],"explanation":"je suis"},
-{"id":"S6_autotrophie_","prompt":"J'aime les chiens","choices":[{"id":"a","text":"Vrai","correct":true},{"id":"b","text":"Faux"}],"explanation":"c'est cool"},
-            {"id": "S6_autotrophie_test2", "prompt": "Question test 2 pour Autotrophie ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
+            {"id":"S6_autotrophie_","prompt":"Combien il a de dada chez moi ?","choices":[{"id":"a","text":"1"},{"id":"b","text":"2","correct":true},{"id":"c","text":"3","correct":true},{"id":"d","text":"522","correct":true}],"explanation":"je suis"}
           ]
         },
         {
