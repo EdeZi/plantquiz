@@ -34,7 +34,7 @@
       "subjects": [
         {
           "id": "S7_interactions_pm",
-          "label": "Interactions plantes–microorganismes 🏗️ TRES BIENTOT",
+          "label": "Interactions plantes–microorganismes",
           "questions": [
             {"id": "S7_interactions_pm_q001", "prompt": "Quelle est le pourcentage de perte de récolte au niveau mondial causé par les pathogènes et ravageurs ?", "choices": [{"id": "a", "text": "25 %", "correct": true}, {"id": "b", "text": "40 %"}, {"id": "c", "text": "55 %"}, {"id": "d", "text": "60 %"}], "explanation": "Les pathogènes et ravageurs détruisent environ un quart de la production agricole mondiale, soit près de 25 % des récoltes perdues chaque année."},
             {"id": "S7_interactions_pm_q002", "prompt": "Le mildiou (Phytophthora) sur la pomme de terre a entraîné plus d’un million de morts dans les années 1840.", "choices": [{"id": "a", "text": "Vrai", "correct": true}, {"id": "b", "text": "Faux"}], "explanation": "Le mildiou de la pomme de terre a provoqué la grande famine en Irlande dans les années 1840, entraînant la mort de plus d’un million de personnes."},
