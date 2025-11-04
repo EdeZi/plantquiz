@@ -33,14 +33,14 @@
       "label": "Semestre 7",
       "subjects": [
         {
-          "id": "S7_dev_plantes",
-          "label": "Développement des plantes",
+          "id": "S7_interactions_pm",
+          "label": "Interactions plantes–microorganismes",
           "questions": [
           ]
         },
         {
-          "id": "S7_interactions_pm",
-          "label": "Interactions plantes–microorganismes",
+          "id": "S7_dev_plantes",
+          "label": "Développement des plantes",
           "questions": [
             {"id": "S7_dev_plantes_q001", "prompt": "Les Angiospermes (organisation primaire) comprennent classiquement combien de grands systèmes tissulaires ?", "choices": [{"id": "a", "text": "Deux, conducteur et protecteur."}, {"id": "b", "text": "Trois, conducteur, fondamental et protecteur."}, {"id": "c", "text": "Quatre, méristématique, conducteur, fondamental et protecteur.", "correct": true}, {"id": "d", "text": "Cinq, en ajoutant un “tissu reproducteur” distinct."}], "explanation": "On distingue quatre systèmes primaires : méristématique, conducteur (xylème/phloème), fondamental (parenchyme/collenchyme/sclérenchyme) et protecteur (épiderme)."},
             {"id": "S7_dev_plantes_q002", "prompt": "Le xylème transporte principalement :", "choices": [{"id": "a", "text": "Des assimilats (sucres) vers les puits."}, {"id": "b", "text": "Des peptides uniquement."}, {"id": "c", "text": "La sève brute.", "correct": true}, {"id": "d", "text": "La sève élaborée."}], "explanation": "La sève brute (eau et minéraux) monte des racines vers les parties aériennes via les éléments du xylème."},
