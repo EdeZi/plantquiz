@@ -131,7 +131,7 @@
         <div class="row"><button data-go="pedantix" class="btn">Jouer</button></div>
       </div>
     </div>
-    <p class="muted" style="text-align:center;margin-top:22px">Données dans <code>/data/</code> : <code>questions_normal.json</code>, <code>pedantix_daily.json</code>.</p>
+    <p class="muted" style="text-align:center;margin-top:22px">Projet M2 de Louis GRARD, Léo GIORNELLI, Alan GAUBERT, Steven CHARMANT et Mathieu DRUENNE</p>
   </section>
 
   <!-- NORMAL -->
@@ -143,7 +143,7 @@
       <article>
         <div class="rowL" style="justify-content:flex-start;gap:8px;margin-bottom:6px">
           <span id="eloWrap" class="pill">Elo: <b id="eloPill2">0</b></span>
-          <button id="setEloBtn" class="btn outline" title="Régler manuellement ton Elo">↕️ Régler Elo</button>
+          <button id="setEloBtn" class="btn outline" title="Régler manuellement ton Elo" hidden>↕️ Régler Elo</button>
           <span class="pill">Q: <b id="qPill2">0</b></span>
           <span class="pill">Bonnes: <b id="goodPill2">0</b></span>
           <span id="streakWrap" class="pill">Streak: <b id="streakPill2">0</b> <span id="streakNote2" class="muted"></span></span>
@@ -825,7 +825,7 @@ function updateMeta(){
   const eloWrap=$("eloWrap"), streakWrap=$("streakWrap"), setEloBtn=$("setEloBtn"), historyBtn=$("historyBtn");
   if(eloWrap) eloWrap.hidden=!showElo;
   if(streakWrap) streakWrap.hidden=!showElo;
-  if(setEloBtn) setEloBtn.hidden=!showElo;
+  if(setEloBtn) setEloBtn.hidden=true;
   if(historyBtn) historyBtn.hidden=showElo;
 }
 function clearChoiceSelection(){
