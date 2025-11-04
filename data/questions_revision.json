@@ -6,7 +6,7 @@
       "subjects": [
         {
           "id": "S5_dev_plantes",
-          "label": "Développement des plantes 🏗️ BIENTOT",
+          "label": "Développement des plantes",
           "questions": [
             {"id": "S5_dev_plantes_q001", "prompt": "Qu’est-ce qu’une hormone végétale ?", "choices": [{"id": "a", "text": "Substance chimique produite par la plante et agissant à distance sur le développement.", "correct": true}, {"id": "b", "text": "Molécule nutritive absorbée par les racines."}, {"id": "c", "text": "Protéine de signalisation spécifique à l’animal."}, {"id": "d", "text": "Substance excrétée uniquement dans le sol."}], "explanation": "Une hormone végétale est un signal chimique endogène modulant des processus de croissance à distance."},
             {"id": "S5_dev_plantes_q002", "prompt": "Quel est le rôle principal de l’auxine dans la plante ?", "choices": [{"id": "a", "text": "Inhibition de la photosynthèse."}, {"id": "b", "text": "Stimulation de l’allongement cellulaire et du phototropisme.", "correct": true}, {"id": "c", "text": "Induction de la sénescence foliaire."}, {"id": "d", "text": "Activation de la germination."}], "explanation": "L’auxine favorise l’élongation des cellules et oriente la croissance vers la lumière via le phototropisme."},
