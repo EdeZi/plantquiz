@@ -6,7 +6,7 @@
       "subjects": [
         {
           "id": "S5_dev_plantes",
-          "label": "Développement des plantes",
+          "label": "Développement des plantes 🏗️ BIENTOT",
           "questions": [
             {"id": "S5_dev_plantes_test1", "prompt": "Question test 1 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3", "correct": true}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
             {"id": "S5_dev_plantes_test2", "prompt": "Question test 2 pour Développement des plantes ?", "choices": [{"id": "a", "text": "Option 1"}, {"id": "b", "text": "Option 2", "correct": true}, {"id": "c", "text": "Option 3"}, {"id": "d", "text": "Option 4"}], "explanation": "Explication factice."}
@@ -19,7 +19,7 @@
       "label": "Semestre 6",
       "subjects": [
         {
-          "id": "S6_autotrophie",
+          "id": "S6_autotrophie 🏗️ BIENTOT",
           "label": "Autotrophie",
           "questions": [
             {"id": "S6_autotrophie_test1", "prompt": "Question test 1 pour Autotrophie ?", "choices": [{"id": "a", "text": "Réponse 1", "correct": true}, {"id": "b", "text": "Réponse 2"}, {"id": "c", "text": "Réponse 3"}, {"id": "d", "text": "Réponse 4"}], "explanation": "Explication factice."},
@@ -34,7 +34,7 @@
       "subjects": [
         {
           "id": "S7_interactions_pm",
-          "label": "Interactions plantes–microorganismes",
+          "label": "Interactions plantes–microorganismes 🏗️ TRES BIENTOT",
           "questions": [
           ]
         },
