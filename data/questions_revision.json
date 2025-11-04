@@ -348,8 +348,6 @@
             {"id": "S7_nutrition_plantes_intro_q172", "prompt": "La coordination entre C, N et S permet :", "choices": [{"id": "a", "text": "D’éviter l’accumulation de métabolites non utilisés.", "correct": true}, {"id": "b", "text": "D’optimiser l’efficacité photosynthétique.", "correct": true}, {"id": "c", "text": "De maintenir le rapport redox cellulaire.", "correct": true}, {"id": "d", "text": "De stimuler la respiration mitochondriale."}], "explanation": "L’intégration C/N/S maintient un équilibre énergétique et métabolique global indispensable à la croissance."}
           ]
         }
-          ]
-        }
       ]
     }
   ]
