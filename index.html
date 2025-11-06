@@ -277,6 +277,11 @@ function strip(s){
   return val.replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
 
+function normalizeChoiceLabel(text){
+  var raw = typeof text === "string" ? text : String(text || "");
+  return strip(raw).replace(/\s+/g, ' ').trim();
+}
+
 /* ========= Navigation ========= */
 function go(mode){
   ["home","normal","revision","pedantix","prof"].forEach(id=>$(id).hidden=true);
@@ -782,6 +787,21 @@ function pickNormalQuestion(){
 function filteredChoicesForLevel(choices){
   if(!Array.isArray(choices)) return [];
   const clone = choices.map(choice=>choice && typeof choice==="object" ? ({...choice}) : {text:String(choice||"")});
+  const normalized = clone.map(choice=>normalizeChoiceLabel(choice && choice.text));
+  const hasVrai = normalized.includes("vrai");
+  const hasFaux = normalized.includes("faux");
+  if(clone.length===2 && hasVrai && hasFaux){
+    return clone.sort((a,b)=>{
+      const na = normalizeChoiceLabel(a && a.text);
+      const nb = normalizeChoiceLabel(b && b.text);
+      if(na===nb) return 0;
+      if(na==="faux") return -1;
+      if(nb==="faux") return 1;
+      if(na==="vrai") return -1;
+      if(nb==="vrai") return 1;
+      return na.localeCompare(nb,'fr',{sensitivity:'base'});
+    });
+  }
   return clone.sort(()=>Math.random()-0.5);
 }
 
