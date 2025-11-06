@@ -1,155 +1,116 @@
 # PlantQuiz
 
-**PlantQuiz** est une application web interactive destinée aux étudiant·e·s en biologie végétale.  
-Elle propose trois modes complémentaires (Quiz adaptatif, Révision ciblée et Pédantix végétal) pour réviser les notions du parcours Biologie Végétale de Montpellier de manière ludique et progressive.
+**PlantQuiz** est une application web interactive destinée aux étudiant·e·s en biologie végétale. Elle réunit plusieurs outils de révision autour du parcours Biologie Végétale de Montpellier dans une interface unique et légère.
+
+🎥 **Tutoriel enseignant (outil prof)** : https://youtu.be/wGEtw88RgNA
 
 Projet de M2 de : **Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu DRUENNE.**
 
-Contact (questions techniques sur le site) :  
+Contact (questions techniques sur le site) :
 **Louis GRARD – grard.louis34@gmail.com**
 
-PlantQuiz est un quiz web centré sur les sciences du végétal. Il propose trois modules complémentaires :
+---
 
-- **Quiz normal** – suit un système Elo qui adapte la difficulté des questions en fonction de vos réponses.
-- **Quiz révision** – permet de travailler des UE précises sans impact sur l’Elo et d’accéder à l’historique des questions déjà vues.
-- **Pédantix végétal** – variante façon « texte masqué » : tapez des mots pour dévoiler le contenu et devinez le titre.
+## Accès
 
-Le site est accessible en ligne sur :  
-👉 [https://edezi.github.io/plantquiz/](https://edezi.github.io/plantquiz/)  
-(le dépôt GitHub correspondant est `EdeZi/plantquiz`)  
+- **En ligne** : 👉 https://edezi.github.io/plantquiz/
+- **En local** : ouvrir simplement `index.html` dans un navigateur moderne (Chrome, Firefox, Edge, Safari…)
 
-Le projet peut également être ouvert **en local** en lançant simplement `index.html` dans un navigateur moderne.
+Le dépôt GitHub correspondant est [`EdeZi/plantquiz`](https://github.com/EdeZi/plantquiz).
 
 ---
 
-## 🧰 Technologies utilisées
+## Modules proposés
 
-- **Langages** : HTML5, CSS3, JavaScript (sans framework)
-- **Données** : fichiers JSON locaux (dossier `data/`)
-- **Déploiement** : GitHub Pages – [`https://edezi.github.io/plantquiz/`](https://edezi.github.io/plantquiz/)
-- **Versionnement** : Git & GitHub (`main` comme branche principale)
+### Quiz normal (adaptatif)
 
----
+- Banque de questions : `data/questions_normal.json` (jeu de démonstration intégré si le fichier est absent).
+- Difficulté pilotée par un Elo sur 6 niveaux : chaque bonne réponse augmente le score et débloque des questions plus exigeantes.
+- Les indicateurs affichés sont : `Elo` (score courant), `Q` (questions posées), `Bonnes` (réponses correctes), `Streak` (série de bonnes réponses).
+- Les questions à choix multiples nécessitent de sélectionner toutes les bonnes réponses puis de valider.
+- Un boost est appliqué sur les premières questions pour accélérer le calibrage.
 
-## Fonctionnement du système Elo
+### Quiz révision (par semestre)
 
-En mode **Quiz normal**, chaque bonne réponse augmente votre Elo et déverrouille des questions plus exigeantes.  
-Une mauvaise réponse fait légèrement baisser l’Elo, ce qui recentre la difficulté autour de votre niveau actuel.
-
-Les indicateurs affichés à l’écran sont :
-
-- **Elo** – estimation de votre maîtrise actuelle.
-- **↕️ Régler Elo** – permet de fixer manuellement votre point de départ.
-- **Q** – nombre de questions déjà posées lors de la session.
-- **Bonnes** – total des réponses correctes.
-- **Streak** – série de bonnes réponses consécutives.
-
-Ces compteurs sont masqués en mode Révision (sauf `Q` et `Bonnes`) afin de ne pas mélanger apprentissage ciblé et suivi de performance.
-
----
-
-## Modes de jeu
-
-### Quiz normal
-
-- Répondez pour faire évoluer votre Elo et accéder à des questions plus avancées.
-- Certaines questions peuvent comporter plusieurs bonnes réponses : sélectionnez toutes les propositions pertinentes puis utilisez le bouton **« Valider la sélection »** avant de passer à la question suivante.
-
-### Quiz révision
-
-- Choisissez un semestre puis les UE (obligatoires ou optionnelles) que vous souhaitez réviser.
-- Les questions sont tirées sans impact sur votre Elo.
-- Un bouton **« Historique »** permet de rouvrir les questions déjà posées avec leur correction.
-- Les statistiques se limitent à `Q` et `Bonnes` pour un retour rapide sur votre progression.
+- Sélectionne un semestre (S5 à S9) puis coche des UE tronc commun ou optionnelles.
+- Aucune influence sur l’Elo : les statistiques se limitent à `Q` et `Bonnes`.
+- Le bouton **Historique** ouvre, à la demande, un panneau listant les questions déjà vues avec la correction et les explications.
+- Les questions proviennent de `data/questions_revision.json` organisé par semestre et UE.
 
 ### Pédantix végétal
 
-- Accédez au module via la carte dédiée sur la page d’accueil.
-- Chaque jour, un texte thématique est masqué : saisissez des mots pour révéler les occurrences correspondantes.
-- L’objectif est de retrouver le **titre caché** ; un bouton **« Indice »** révèle progressivement des mots si besoin.
-- Les essais sont listés pour faciliter la stratégie et le suivi de vos hypothèses.
+- Texte quotidien tiré de `data/pedantix_daily.json`. À défaut d’entrée pour la date du jour, la première entrée du fichier est utilisée.
+- Tape des mots pour dévoiler leurs occurrences : les formes conjuguées et les accords sont reconnus grâce à un lemmatiseur interne.
+- L’objectif est de trouver le titre masqué (`target`). Le bouton **Réinitialiser du jour** recharge le texte pour retenter sa chance.
+- Le panneau **ℹ️ Info** rappelle les règles et peut être ouvert/fermé à volonté.
+
+### Outil prof (générateur JSON)
+
+- Accessible via le bouton **« Outil prof »** dans la barre supérieure.
+- Permet de sélectionner une UE, saisir l’identifiant de la question, l’énoncé, les réponses (2 à 5) et l’explication facultative.
+- Le bouton **« Ajouter »** génère une ligne JSON prête à être copiée dans `data/questions_revision.json` (une ligne par question).
+- **« Réinitialiser »** vide les champs, tandis que **« 🧹 Vider la sortie »** nettoie la zone d’export sans effacer les questions déjà générées.
+- Utiliser **« Retour »** dans la barre supérieure pour revenir à l’accueil.
+
+#### Tutoriel écrit : ajouter une question en tant que prof
+
+1. Ouvrir PlantQuiz et cliquer sur **« Outil prof »** dans la barre supérieure.
+2. Choisir dans la liste déroulante l’UE qui recevra la nouvelle question.
+3. Remplir les champs :
+   - **Identifiant** (ex. `S6_autotrophie_q1`) en respectant le format utilisé pour le semestre et la matière.
+   - **Niveau** entre 1 et 6 pour indiquer la difficulté.
+   - **Énoncé** de la question.
+   - **Réponses** : au moins deux propositions, cocher celles qui sont correctes.
+   - **Explication** (facultative) affichée après la correction.
+4. Cliquer sur **« Ajouter »** : la zone d’export en bas de page affiche la question générée sous forme de ligne JSON.
+5. Copier cette ligne et la coller dans le tableau `questions` de la matière correspondante dans `data/questions_revision.json` (une question = une ligne).
+6. Sauvegarder le fichier JSON, recharger PlantQuiz et vérifier dans le module Révision que la question apparaît correctement.
 
 ---
 
-## Guide enseignant – outil prof
+## Données & structure du projet
 
-La **vidéo tuto** est ici : https://youtu.be/wGEtw88RgNA
-
-L’outil prof est accessible via le bouton **« Outil prof »** présent dans la barre supérieure.  
-Il ouvre une page dédiée et génère automatiquement le JSON attendu pour le mode Révision.  
-Utilisez le bouton **« Retour »** de la navigation pour revenir à l’accueil.
-
-### 1. Ouvrir l’outil
-
-- Cliquez sur le bouton **« Outil prof »** dans la barre supérieure.
-- La page affiche le générateur ; vous pouvez revenir à l’accueil avec **« Retour »**.
-
-### 2. Sélectionner la matière
-
-- Le menu déroulant **« Matière »** liste les UE disponibles pour le semestre courant.
-- Si la matière souhaitée n’existe pas encore, ajoutez-la manuellement dans `data/questions_revision.json` (voir ci-dessous) puis rechargez la page.
-
-### 3. Renseigner la question
-
-1. Saisissez l’énoncé dans le champ **« Question »**.
-2. Ajoutez entre deux et cinq propositions (boutons **« + Ajouter une option »** / **« − Retirer la dernière option »**). Les intitulés sont libres.
-3. Cochez toutes les réponses correctes à l’aide des cases à cocher situées à gauche de chaque proposition (une ou plusieurs réponses peuvent être justes).
-4. (Optionnel) Ajoutez une explication dans **« Complément »** pour fournir un feedback aux étudiants.
-
-### 4. Générer et récupérer le JSON
-
-- Cliquez sur **« Ajouter »** : l’outil produit une ligne JSON compactée conforme au format de `questions_revision.json`.
-- Plusieurs questions peuvent être ajoutées successivement ; chacune apparaît sur une ligne séparée dans la zone de sortie.
-- Utilisez **« Réinitialiser »** pour vider les champs si besoin (la sortie reste inchangée).
-
-### 5. Intégrer les questions dans `data/questions_revision.json`
-
-1. Ouvrez le fichier `data/questions_revision.json` avec votre éditeur préféré.
-2. Repérez le semestre (`rev.semesters`) puis la matière (`subjects`) concernée.
-3. Collez les nouvelles lignes JSON dans le tableau `questions` correspondant.  
-   Chaque question doit rester sur **une seule ligne** pour rester compatible avec les outils d’import.
-4. Vérifiez que chaque entrée respecte la structure suivante :
-
-   ```json
-   {"id":"UE_identifiant_unique","level":1,"prompt":"Texte de la question ?","choices":[{"id":"a","text":"Réponse A","correct":true},{"id":"b","text":"Réponse B","correct":true},{"id":"c","text":"Réponse C"},{"id":"d","text":"Réponse D"}],"explanation":"Optionnel : explication"}
-   ```
-
-5. Enregistrez le fichier puis rechargez la page pour vérifier que les questions apparaissent correctement.
-
-### 6. Ajouter ou modifier des UE
-
-- Pour ajouter une nouvelle UE, insérez un objet dans le tableau `subjects` du semestre concerné :
-
-  ```json
-  {"id":"S7_nouvelle_ue","label":"Nom de l’UE","type":"core","questions":[]}
-  ```
-
-  - `type` accepte `core` (tronc commun) ou `elective` (option).
-  - Le champ `questions` doit contenir les questions générées avec l’outil prof.
-
-- Pour modifier l’intitulé affiché dans l’interface, ajustez simplement la valeur de `label`.
+- `index.html` – interface principale et logique JavaScript.
+- `data/questions_normal.json` – questions du quiz adaptatif (niveaux 1 à 6).
+- `data/questions_revision.json` – questions triées par semestre (`semesters`) puis par matières (`subjects`). Chaque matière contient :
+  - `id` (identifiant unique), `label` (intitulé affiché), `type` (`core` ou `elective`) et `questions` (tableau de questions).
+  - Une question type :
+    ```json
+    { "id": "S6_autotrophie_q1", "level": 2, "prompt": "Texte de la question ?", "choices": [ { "id": "a", "text": "Réponse A", "correct": true }, { "id": "b", "text": "Réponse B" } ], "explanation": "Optionnel : explication" }
+    ```
+- `data/pedantix_daily.json` – liste datée (`date`, `target`, `text`) pour le module Pédantix.
 
 ---
 
-## Structure du projet
+## Technologies utilisées
 
-- `index.html` – page principale contenant l’interface, la logique du quiz et l’outil prof.
-- `data/questions_normal.json` – banque de questions utilisée par le mode Quiz normal et le système Elo.
-- `data/questions_revision.json` – catalogue structuré par semestre et UE pour le mode Révision.
-- `data/pedantix_daily.json` – textes annexes utilisés par certaines fonctionnalités d’entraînement.
-
----
-
-## 🔐 Accès et gestion du dépôt
-
-- Le projet est hébergé sur GitHub : [`https://github.com/EdeZi/plantquiz`](https://github.com/EdeZi/plantquiz).
-- Les collaborateur·rice·s invité·e·s disposent d’un accès **Write** : ils peuvent modifier le code, ajouter des questions ou corriger des erreurs.
-- La configuration du dépôt (règles, protection de branche, suppression) est gérée par l’administrateur principal (**Louis GRARD**).
-- La branche principale `main` est **protégée contre la suppression accidentelle** et les `push --force`.
+- **HTML5 / CSS3 / JavaScript** sans framework.
+- **Données locales** : fichiers JSON servis depuis le dossier `data/` (chargés via `fetch` ou XHR de secours).
+- **Stockage local** : statistiques des questions normalisées conservées dans `localStorage` (`plantquiz.stats.v2`).
+- **Déploiement** : GitHub Pages (`main` comme branche principale).
 
 ---
 
-## Contribution et maintenance
+## Contribution
 
-- Les contributions se font principalement en ajoutant ou en corrigeant des questions dans les fichiers JSON du dossier `data/`.
-- Pour vérifier les changements, ouvrez `index.html` localement et testez les modes **Quiz normal** et **Révision**.
+1. Mettre à jour les fichiers JSON dans `data/` pour ajouter ou corriger des questions.
+2. Ouvrir `index.html` localement pour tester les trois modules.
+3. Vérifier que les nouveaux identifiants de question sont uniques et cohérents.
+4. Conserver une question par ligne dans les fichiers JSON afin de rester compatible avec l’outil prof.
+
+---
+
+## Caractéristiques techniques (ordre alphabétique)
+
+- **Archivage local des stats** : chaque question répondue en mode normal conserve nombre de vues, bonnes réponses et Elo associé dans `localStorage` pour améliorer la sélection future.
+- **Boost de début de partie** : les 12 premières questions du mode normal bénéficient d’un multiplicateur de gain (`x1,5`) pour accélérer le calibrage.
+- **Calibrage des niveaux** : la progression Elo repose sur un pas de 120 points. Les niveaux disponibles sont 1 à 6 et le score est toujours arrondi sur un niveau réellement présent dans la banque de questions.
+- **Disponibilité hors ligne** : si `data/questions_normal.json` est inaccessible, un petit jeu de démonstration embarqué permet malgré tout de lancer le quiz normal.
+- **Historique de révision** : un panneau modal regroupe les réponses données en mode Révision (question, réponse choisie, correction, explication) tant que la session n’est pas réinitialisée.
+- **Lemmatiseur Pédantix** : les essais sont comparés en supprimant les accents, en générant des variantes genre/nombre et en ramenant les verbes à leur infinitif pour dévoiler un maximum d’occurrences pertinentes.
+- **Malus progressif** : une erreur en mode normal soustrait un malus dépendant du niveau de la question (jusqu’à 28 points au niveau 6) pour recentrer la difficulté.
+- **Sélection anti-répétition** : un tampon de 40 identifiants empêche de reposer immédiatement les mêmes questions ; en cas d’erreur, la question peut réapparaître après un court délai.
+
+---
+
+Bonne révision !
