@@ -52,20 +52,6 @@ Le dépôt GitHub correspondant est [`EdeZi/plantquiz`](https://github.com/EdeZi
 - **« Réinitialiser »** vide les champs, tandis que **« 🧹 Vider la sortie »** nettoie la zone d’export sans effacer les questions déjà générées.
 - Utiliser **« Retour »** dans la barre supérieure pour revenir à l’accueil.
 
-#### Tutoriel écrit : ajouter une question en tant que prof
-
-1. Ouvrir PlantQuiz et cliquer sur **« Outil prof »** dans la barre supérieure.
-2. Choisir dans la liste déroulante l’UE qui recevra la nouvelle question.
-3. Remplir les champs :
-   - **Identifiant** (ex. `S6_autotrophie_q1`) en respectant le format utilisé pour le semestre et la matière.
-   - **Niveau** entre 1 et 6 pour indiquer la difficulté.
-   - **Énoncé** de la question.
-   - **Réponses** : au moins deux propositions, cocher celles qui sont correctes.
-   - **Explication** (facultative) affichée après la correction.
-4. Cliquer sur **« Ajouter »** : la zone d’export en bas de page affiche la question générée sous forme de ligne JSON.
-5. Copier cette ligne et la coller dans le tableau `questions` de la matière correspondante dans `data/questions_revision.json` (une question = une ligne).
-6. Sauvegarder le fichier JSON, recharger PlantQuiz et vérifier dans le module Révision que la question apparaît correctement.
-
 ---
 
 ## Données & structure du projet
@@ -76,7 +62,16 @@ Le dépôt GitHub correspondant est [`EdeZi/plantquiz`](https://github.com/EdeZi
   - `id` (identifiant unique), `label` (intitulé affiché), `type` (`core` ou `elective`) et `questions` (tableau de questions).
   - Une question type :
     ```json
-    { "id": "S6_autotrophie_q1", "level": 2, "prompt": "Texte de la question ?", "choices": [ { "id": "a", "text": "Réponse A", "correct": true }, { "id": "b", "text": "Réponse B" } ], "explanation": "Optionnel : explication" }
+    {
+      "id": "S6_autotrophie_q1",
+      "level": 2,
+      "prompt": "Texte de la question ?",
+      "choices": [
+        { "id": "a", "text": "Réponse A", "correct": true },
+        { "id": "b", "text": "Réponse B" }
+      ],
+      "explanation": "Optionnel : explication"
+    }
     ```
 - `data/pedantix_daily.json` – liste datée (`date`, `target`, `text`) pour le module Pédantix.
 
