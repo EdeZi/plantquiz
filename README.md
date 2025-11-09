@@ -86,15 +86,6 @@ Le dépôt GitHub correspondant est [`EdeZi/plantquiz`](https://github.com/EdeZi
 
 ---
 
-## Contribution
-
-1. Mettre à jour les fichiers JSON dans `data/` pour ajouter ou corriger des questions.
-2. Ouvrir `index.html` localement pour tester les trois modules.
-3. Vérifier que les nouveaux identifiants de question sont uniques et cohérents.
-4. Conserver une question par ligne dans les fichiers JSON afin de rester compatible avec l’outil prof.
-
----
-
 ## Caractéristiques techniques (ordre alphabétique)
 
 - **Archivage local des stats** : chaque question répondue en mode normal conserve nombre de vues, bonnes réponses et Elo associé dans `localStorage` pour améliorer la sélection future.
