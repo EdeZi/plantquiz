@@ -150,7 +150,7 @@
         },
         {
           "id": "S5_Biologie_moléculaire",
-          "label": "Biologie Moléculaire",
+          "label": "Biologie Moléculaire ✔️",
           "questions": [
             {"id": "S5_Biologie_moléculaire_q001", "prompt": "Quelle est la principale fonction du cytosquelette dans la cellule eucaryote ?", "choices": [{"id": "a", "text": "Transport actif intracellulaire et maintien de la forme cellulaire", "correct": true}, {"id": "b", "text": "Synthèse d’ATP dans la mitochondrie"}, {"id": "c", "text": "Dégradation des protéines cytoplasmiques"}, {"id": "d", "text": "Réplication de l’ADN"}], "explanation": "Le cytosquelette (microtubules, microfilaments, filaments intermédiaires) soutient la cellule, organise les organites et permet le trafic intracellulaire."},
             {"id": "S5_Biologie_moléculaire_q002", "prompt": "Le noyau cellulaire est séparé du cytoplasme par :", "choices": [{"id": "a", "text": "Une membrane simple lipidique"}, {"id": "b", "text": "Une double membrane avec pores nucléaires", "correct": true}, {"id": "c", "text": "Une membrane rigide de cellulose"}, {"id": "d", "text": "Une monocouche lipidique liée aux ribosomes"}], "explanation": "L’enveloppe nucléaire est formée de deux membranes continues avec le RE, percées de complexes de pores nucléaires assurant les échanges régulés ARN/protéines."},
@@ -551,7 +551,7 @@
         },
         {
           "id": "S7_genetique_moleculaire",
-          "label": "Génétique moléculaire végétale",
+          "label": "Génétique moléculaire végétale ✔️",
           "questions": [
             {"id": "S7_genetique_moleculaire_q001","prompt": "Quel est le principal niveau de contrôle de l’expression des gènes chez les eucaryotes ?","choices": [{"id": "a","text": "Régulation traductionnelle"},{"id": "b","text": "Régulation transcriptionnelle","correct": true},{"id": "c","text": "Régulation post-traductionnelle"},{"id": "d","text": "Régulation épigénétique"}],"explanation": "La régulation transcriptionnelle est le contrôle majeur, via les facteurs de transcription qui activent ou répriment l’expression des gènes."},
             {"id": "S7_genetique_moleculaire_q002","prompt": "Quel est l’effet principal de l’épissage alternatif ?","choices": [{"id": "a","text": "Augmente l’expression de mon gène"},{"id": "b","text": "Empêche la traduction de mon ARNm"},{"id": "c","text": "Réduit la stabilité des ARNm"},{"id": "d","text": "Augmente la diversité des protéines","correct": true}],"explanation": "Un même gène peut produire plusieurs ARNm et donc plusieurs isoformes protéiques, augmentant la diversité et la complexité fonctionnelle."},
