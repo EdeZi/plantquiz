@@ -579,42 +579,6 @@ h3 {
   text-decoration: none;
 }
 
-.stat-ribbon {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  margin-top: 18px;
-  border: 1px solid var(--line);
-  background: rgba(255, 253, 247, 0.58);
-  border-radius: var(--radius-md);
-}
-
-.stat-ribbon__item {
-  padding: 20px 24px;
-  border-right: 1px solid var(--line);
-}
-
-.stat-ribbon__item:last-child {
-  border-right: 0;
-}
-
-.stat-ribbon__item strong {
-  display: block;
-  color: var(--forest-900);
-  font-family: var(--font-display);
-  font-size: 1.9rem;
-  line-height: 1;
-}
-
-.stat-ribbon__item span {
-  display: block;
-  margin-top: 7px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 .page-heading {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1715,18 +1679,6 @@ input[type="radio"] {
     margin-top: 16px;
   }
 
-  .stat-ribbon {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stat-ribbon__item:nth-child(2) {
-    border-right: 0;
-  }
-
-  .stat-ribbon__item:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--line);
-  }
-
   .quiz-card__body {
     padding: 25px 18px;
   }
@@ -1786,10 +1738,6 @@ input[type="radio"] {
   .inline-actions--mobile-stack,
   .inline-actions--mobile-stack .btn {
     width: 100%;
-  }
-
-  .stat-ribbon__item {
-    padding: 16px;
   }
 
   .mode-card {

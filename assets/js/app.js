@@ -218,21 +218,6 @@ function renderHome() {
         </div>
       </section>
 
-      <section class="section-block" aria-labelledby="library-title">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Banque pédagogique</p>
-            <h2 id="library-title">Un contenu déjà riche.</h2>
-          </div>
-          <p>Les questions existantes restent intactes. PlantQuiz réorganise seulement la façon de les découvrir et de suivre votre progression.</p>
-        </div>
-        <div class="stat-ribbon">
-          <div class="stat-ribbon__item"><strong>${counts.totalQuestions}</strong><span>questions au total</span></div>
-          <div class="stat-ribbon__item"><strong>6</strong><span>niveaux adaptatifs</span></div>
-          <div class="stat-ribbon__item"><strong>${state.data.semesters.length}</strong><span>semestres renseignés</span></div>
-          <div class="stat-ribbon__item"><strong>${profile.bestStreak}</strong><span>meilleure série</span></div>
-        </div>
-      </section>
     </div>
   `;
 }
