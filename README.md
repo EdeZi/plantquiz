@@ -2,7 +2,7 @@
 
 ![PlantQuiz — Cultivez vos connaissances](./assets/og-card.png)
 
-> **Statut du projet — version finale.** PlantQuiz est un projet pédagogique réalisé en 2025, puis remis à niveau en 2026 avec l’aide d’outils d’intelligence artificielle. Cette remise à niveau a modernisé l’interface, séparé le code en modules, reconstruit le Pédantix et ajouté des tests et de la documentation. Les banques de questions existantes ont été conservées. Le dépôt est désormais présenté comme une ressource pédagogique stable et transmissible, sans feuille de route de développement actif.
+> **Statut du projet — version finale.** PlantQuiz est un projet pédagogique réalisé en 2025. En 2026, les progrès des outils d’intelligence artificielle ont été mis à profit pour lui apporter rapidement et efficacement un dernier coup de fraîcheur : moderniser son apparence, remettre au propre sa présentation et surtout structurer la documentation afin de faciliter sa transmission à d’autres étudiants. Il ne s’agit pas d’un redéveloppement du projet ni d’une refonte de ses contenus, mais d’une dernière passe de finition destinée à le clore et à le présenter proprement. Les banques de questions existantes ont été conservées.
 
 **PlantQuiz** est une application web de révision consacrée à la biologie végétale. Elle rassemble un quiz adaptatif, des sessions ciblées par semestre et un Pédantix végétal dans une interface légère, responsive et sans compte utilisateur.
 
