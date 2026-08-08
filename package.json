@@ -1,0 +1,13 @@
+{
+  "name": "plantquiz",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Quiz adaptatif et révisions de biologie végétale.",
+  "scripts": {
+    "serve": "node scripts/serve.mjs",
+    "test": "node --test",
+    "validate:data": "node scripts/validate-data.mjs",
+    "check": "node scripts/validate-data.mjs && node --test && node --check assets/js/app.js"
+  }
+}

@@ -1,102 +1,104 @@
 # PlantQuiz
 
-**PlantQuiz** est une application web interactive destinée aux étudiant·e·s en biologie végétale. Elle réunit plusieurs outils de révision autour du parcours Biologie Végétale de Montpellier dans une interface unique et légère.
+![PlantQuiz — Cultivez vos connaissances](./assets/og-card.png)
 
-🎥 **Tutoriel enseignant (outil prof)** : https://youtu.be/wGEtw88RgNA
+**PlantQuiz** est une application web de révision consacrée à la biologie végétale. Elle rassemble un quiz adaptatif, des sessions ciblées par semestre et un Pédantix végétal dans une interface légère, responsive et sans compte utilisateur.
 
-Projet de M2 de : **Louis GRARD, Alan GAUBERT, Léo Giornelli, Steven CHARMANT et Mathieu DRUENNE.**
+🌿 **[Ouvrir PlantQuiz](https://edezi.github.io/plantquiz/)**
 
-Contact (questions techniques sur le site) :
-**Louis GRARD – grard.louis34@gmail.com**
+## Les modes de jeu
 
----
+### Défi Elo
 
-## Accès
+Le niveau évolue après chaque réponse. Le moteur privilégie les questions proches du niveau estimé, présente progressivement les nouvelles notions et repropose les thèmes moins bien maîtrisés.
 
-- **En ligne** : 👉 https://edezi.github.io/plantquiz/
-- **En local** : ouvrir simplement `index.html` dans un navigateur moderne (Chrome, Firefox, Edge, Safari…)
+- 991 questions ;
+- 6 niveaux de difficulté ;
+- sessions de 10, 20 questions ou durée libre ;
+- prise en charge des QCU, QCM et Vrai/Faux ;
+- progression conservée localement dans le navigateur.
 
-Le dépôt GitHub correspondant est [`EdeZi/plantquiz`](https://github.com/EdeZi/plantquiz).
+### Révision ciblée
 
----
+Le mode Révision permet de choisir un semestre, une ou plusieurs unités d’enseignement et une durée de session. Il ne modifie jamais le score Elo.
 
-## Modules proposés
-
-### Quiz normal (adaptatif)
-
-- Banque de questions : `data/questions_normal.json` (jeu de démonstration intégré si le fichier est absent).
-- Difficulté pilotée par un Elo sur 6 niveaux : chaque bonne réponse augmente le score et débloque des questions plus exigeantes.
-- Les indicateurs affichés sont : `Elo` (score courant), `Q` (questions posées), `Bonnes` (réponses correctes), `Streak` (série de bonnes réponses).
-- Les questions à choix multiples nécessitent de sélectionner toutes les bonnes réponses puis de valider.
-- Un boost est appliqué sur les premières questions pour accélérer le calibrage.
-
-### Quiz révision (par semestre)
-
-- Sélectionne un semestre (S5 à S9) puis coche des UE tronc commun ou optionnelles.
-- Aucune influence sur l’Elo : les statistiques se limitent à `Q` et `Bonnes`.
-- Le bouton **Historique** ouvre, à la demande, un panneau listant les questions déjà vues avec la correction et les explications.
-- Les questions proviennent de `data/questions_revision.json` organisé par semestre et UE.
+- 792 questions réparties entre S5, S6 et S7 ;
+- sessions de 5, 10, 20 questions ou banque complète ;
+- bilan final avec les erreurs, les réponses attendues et les explications.
 
 ### Pédantix végétal
 
-- Texte quotidien tiré de `data/pedantix_daily.json`. À défaut d’entrée pour la date du jour, la première entrée du fichier est utilisée.
-- Tape des mots pour dévoiler leurs occurrences : les formes conjuguées et les accords sont reconnus grâce à un lemmatiseur interne.
-- L’objectif est de trouver le titre masqué (`target`). Le bouton **Réinitialiser du jour** recharge le texte pour retenter sa chance.
-- Le panneau **ℹ️ Info** rappelle les règles et peut être ouvert/fermé à volonté.
+Un titre est masqué ainsi que le texte qui le décrit. Chaque proposition révèle les occurrences correspondantes et certaines formes françaises proches.
 
-### Outil prof (générateur JSON)
+- 200 énigmes disponibles ;
+- énigme quotidienne déterministe, même après la dernière date de la banque ;
+- archives accessibles par date ;
+- indices, progression, abandon et reprise après rechargement ;
+- état sauvegardé uniquement sur l’appareil.
 
-- Accessible via le bouton **« Outil prof »** dans la barre supérieure.
-- Permet de sélectionner une UE, saisir l’identifiant de la question, l’énoncé, les réponses (2 à 5) et l’explication facultative.
-- Le bouton **« Ajouter »** génère une ligne JSON prête à être copiée dans `data/questions_revision.json` (une ligne par question).
-- **« Réinitialiser »** vide les champs, tandis que **« 🧹 Vider la sortie »** nettoie la zone d’export sans effacer les questions déjà générées.
-- Utiliser **« Retour »** dans la barre supérieure pour revenir à l’accueil.
+### Outil enseignant
 
----
+Un générateur aide à préparer de nouvelles questions au bon format JSON. Il produit un tableau à copier manuellement et ne modifie aucun fichier du dépôt.
 
-## Données & structure du projet
+## Choix techniques
 
-- `index.html` – interface principale et logique JavaScript.
-- `data/questions_normal.json` – questions du quiz adaptatif (niveaux 1 à 6).
-- `data/questions_revision.json` – questions triées par semestre (`semesters`) puis par matières (`subjects`). Chaque matière contient :
-  - `id` (identifiant unique), `label` (intitulé affiché), `type` (`core` ou `elective`) et `questions` (tableau de questions).
-  - Une question type :
-    ```json
-    {
-      "id": "S6_autotrophie_q1",
-      "level": 2,
-      "prompt": "Texte de la question ?",
-      "choices": [
-        { "id": "a", "text": "Réponse A", "correct": true },
-        { "id": "b", "text": "Réponse B" }
-      ],
-      "explanation": "Optionnel : explication"
-    }
-    ```
-- `data/pedantix_daily.json` – liste datée (`date`, `target`, `text`) pour le module Pédantix.
+PlantQuiz reste volontairement simple à héberger :
 
----
+- HTML5, CSS3 et JavaScript moderne sans framework ;
+- modules JavaScript séparés par responsabilité ;
+- aucune dépendance de production ;
+- stockage local pour la progression ;
+- déploiement direct avec GitHub Pages ;
+- tests basés uniquement sur le moteur de test intégré à Node.js.
 
-## Technologies utilisées
+Les banques de questions existantes n’ont pas été modifiées lors de la refonte de l’interface et des moteurs de jeu.
 
-- **HTML5 / CSS3 / JavaScript** sans framework.
-- **Données locales** : fichiers JSON servis depuis le dossier `data/` (chargés via `fetch` ou XHR de secours).
-- **Stockage local** : statistiques des questions normalisées conservées dans `localStorage` (`plantquiz.stats.v2`).
-- **Déploiement** : GitHub Pages (`main` comme branche principale).
+## Lancer le projet localement
 
----
+Node.js 22 ou une version récente suffit :
 
-## Caractéristiques techniques (ordre alphabétique)
+```bash
+git clone https://github.com/EdeZi/plantquiz.git
+cd plantquiz
+node scripts/serve.mjs
+```
 
-- **Archivage local des stats** : chaque question répondue en mode normal conserve nombre de vues, bonnes réponses et Elo associé dans `localStorage` pour améliorer la sélection future.
-- **Boost de début de partie** : les 12 premières questions du mode normal bénéficient d’un multiplicateur de gain (`x1,5`) pour accélérer le calibrage.
-- **Calibrage des niveaux** : la progression Elo repose sur un pas de 120 points. Les niveaux disponibles sont 1 à 6 et le score est toujours arrondi sur un niveau réellement présent dans la banque de questions.
-- **Disponibilité hors ligne** : si `data/questions_normal.json` est inaccessible, un petit jeu de démonstration embarqué permet malgré tout de lancer le quiz normal.
-- **Historique de révision** : un panneau modal regroupe les réponses données en mode Révision (question, réponse choisie, correction, explication) tant que la session n’est pas réinitialisée.
-- **Lemmatiseur Pédantix** : les essais sont comparés en supprimant les accents, en générant des variantes genre/nombre et en ramenant les verbes à leur infinitif pour dévoiler un maximum d’occurrences pertinentes.
-- **Malus progressif** : une erreur en mode normal soustrait un malus dépendant du niveau de la question (jusqu’à 28 points au niveau 6) pour recentrer la difficulté.
-- **Sélection anti-répétition** : un tampon de 40 identifiants empêche de reposer immédiatement les mêmes questions ; en cas d’erreur, la question peut réapparaître après un court délai.
+Ouvrez ensuite [http://127.0.0.1:4173](http://127.0.0.1:4173).
 
----
+## Vérifier le projet
 
-Bonne révision !
+```bash
+node scripts/validate-data.mjs
+node --test
+```
+
+Le premier contrôle valide la structure des trois banques JSON. Le second teste le calcul Elo, les réponses multiples, la préparation des sessions et le moteur Pédantix.
+
+## Structure
+
+```text
+plantquiz/
+├── assets/
+│   ├── js/
+│   │   ├── app.js                # écrans, navigation et interactions
+│   │   ├── data.js               # chargement et normalisation des banques
+│   │   ├── pedantix-engine.js    # moteur de révélation et sélection quotidienne
+│   │   ├── quiz-engine.js        # sélection adaptative et calcul Elo
+│   │   └── storage.js            # progression locale
+│   ├── og-card.png               # aperçu pour les partages
+│   └── styles.css                # identité visuelle et responsive
+├── data/
+│   ├── pedantix_daily.json
+│   ├── questions_normal.json
+│   └── questions_revision.json
+├── scripts/
+│   ├── serve.mjs
+│   └── validate-data.mjs
+├── tests/
+├── index.html
+└── package.json
+```
+
+## Origine du projet
+
+Projet pédagogique réalisé dans le cadre du M2 par **Louis Grard, Alan Gaubert, Léo Giornelli, Steven Charmant et Mathieu Druenne** pour le parcours Biologie Végétale de Montpellier.
